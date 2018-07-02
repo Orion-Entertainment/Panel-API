@@ -72,5 +72,3 @@ app.use((err, req, res, next) => {
 });
 
 module.exports = app;
-module.exports.API = API;
-module.exports.OrionPanel = OrionPanel;
