@@ -1,0 +1,16 @@
+{
+    "SessionStore": {
+        "checkExpirationInterval": 120000,
+        "expiration": 300000
+    },
+    "DB": {
+        "API": {
+            "host": "127.0.0.1",
+            "port": 3306,
+            "user": "api",
+            "password": "",
+            "database": "orionpanel_api",
+            "connectionLimit": 10
+        }
+    }
+}
