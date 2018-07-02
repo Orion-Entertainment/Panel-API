@@ -42,7 +42,7 @@ app.use(session({
 }));*/
 
 app.use((req, res, next) => {
-    req.API = API;
+    //req.API = API;
     next();
 });
 
