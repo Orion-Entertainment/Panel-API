@@ -1,7 +1,7 @@
 //Name
 Name = 'Panel-API';
 //HTTP Port
-Port = '3333';
+Port = '3334';
 
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
