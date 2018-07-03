@@ -48,5 +48,5 @@ app.use((err, req, res, next) => {
     //res.send(err.message);
 });
 
-module.exports.API = API;
 module.exports = app;
+module.exports.API = API;

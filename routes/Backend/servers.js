@@ -1,6 +1,6 @@
 module.exports = [
     {
-        "Name": "MaldenLife-TestServer",
+        "Name": "MaldenLife-Test",
         "IP": "66.70.180.170",
         "Port": "2322",
         "RCONPort": "2330",

@@ -1,5 +1,7 @@
 const BattleNode = require('battle-node');
 const GETServers = require('./servers');
+const API = require('../../core/app').API;
+const fs = require('fs'); //For Testing
 
 let Servers = [];
 for (let i = 0; i < GETServers.length; i++) {
@@ -15,13 +17,16 @@ for (let i = 0; i < GETServers.length; i++) {
         if (err) {
             console.log('<RCON> Unable to Connect to '+ServerName+'.');
         }
-       
+
         if (success == true) {
             Servers.push({
                 Name: ServerName,
                 BE: BE
             });
             console.log('<RCON> Successfully logged into '+ServerName+'.');
+            fs.writeFile('./test/'+ServerName+'_Messages.log', 'Successfully logged into '+ServerName+'.', function (err) {
+                if (err) throw err;
+            })
         }
         else if (success == false) {
             console.log('<RCON> Login Failed to '+ServerName+'! (password may be incorrect)');
@@ -36,7 +41,62 @@ for (let i = 0; i < GETServers.length; i++) {
             }
         }
     });
+
+    BE.on('message', async function(message) {
+        //console.log(message);
+        /*fs.appendFileSync('./test/'+ServerName+'_Messages.log', '\n'+message, function (err) {
+            if (err) throw err;
+            
+        });*/
+        await API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES('?','?','?');", [ServerName,'MSG',message], function (error, results, fields) {
+            if (error) throw error;
+            console.log(results)
+            console.log(fields)
+        });
+    });
 }
+
+let checkingPlayers = false;
+async function checkPlayers(time) {
+    setTimeout(function() {
+        if (checkingPlayers != true) {
+            checkingPlayers = true;
+            if (Servers.length > 0) {
+                for (let i = 0; i < Servers.length; i++) {
+                    const BE = Servers[i].BE;
+                    BE.sendCommand('players', async function(players) {
+                        let savePlayers = [];
+                        const getPlayers = /(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+\b)\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g;
+                        let Players = players.match(getPlayers);
+                        if (Players !== null) {
+                            for (let p = 0; p < Players.length; p++) {
+                                const Name = Players[p].match(/(\(\w+\)\s?)([\S ]+)/g)[0].replace(/\(\?\)\s|(.*OK)\)\s/g, '').replace(/\s(\(Lobby\))/g, '');
+                                const IP = Players[p].match(/(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/g);
+                                const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/g)[0].replace(/(\(\?\)|\(\w+\))/g, '');
+                                const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
+                                await savePlayers.push(Name, GUID, IP, Ping);
+    
+                                if (p + 1 == Players.length) {
+                                    //savePlayers
+                                }
+                            }
+                        }
+                        //console.log(players);
+                    });
+    
+                    if (i + 1 == Servers.length) {
+                        checkingPlayers = false;
+                    }
+                }
+            }
+        } else {
+            return;
+        }
+    checkPlayers(time);
+    }, time * 1000);
+}
+//checkPlayers(5); //Time in seconds
+
 
 async function Reconnect(BEConfig) {
     //Attempt to reconnect for 10 minutes if false console.log msg
