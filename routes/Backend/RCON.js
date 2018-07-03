@@ -24,9 +24,9 @@ for (let i = 0; i < GETServers.length; i++) {
                 BE: BE
             });
             console.log('<RCON> Successfully logged into '+ServerName+'.');
-            fs.writeFile('./test/'+ServerName+'_Messages.log', 'Successfully logged into '+ServerName+'.', function (err) {
+            /*fs.writeFile('./test/'+ServerName+'_Messages.log', 'Successfully logged into '+ServerName+'.', function (err) {
                 if (err) throw err;
-            })
+            })*/
         }
         else if (success == false) {
             console.log('<RCON> Login Failed to '+ServerName+'! (password may be incorrect)');
