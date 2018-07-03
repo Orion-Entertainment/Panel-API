@@ -1,16 +1,15 @@
 const BattleNode = require('battle-node');
 const GETServers = require('./servers');
 
-console.log(`RCON.js LENGTH: `, GETServers.length)
-
 let Servers = [];
 for (let i = 0; i < GETServers.length; i++) {
     const ServerName = GETServers[i].Name;
-    const BE = new BattleNode({
+    const BEConfig = {
         ip: GETServers[i].IP,
         port: GETServers[i].RCONPort,
         rconPassword: GETServers[i].RCONPassword
-    });
+    };
+    const BE = new BattleNode(BEConfig);
     BE.login();
     BE.on('login', function(err, success) {
         if (err) {
@@ -33,10 +32,14 @@ for (let i = 0; i < GETServers.length; i++) {
         for (let i = 0; i < Servers.length; i++) {
             if (ServerName == Servers[i].Name) {
                 Servers.splice(i, 1);
+                Reconnect(BEConfig);
             }
         }
-        //console.log('RCON server disconnected.');
     });
+}
+
+async function Reconnect(BEConfig) {
+    //Attempt to reconnect for 10 minutes if false console.log msg
 }
 
 module.exports = Servers;
