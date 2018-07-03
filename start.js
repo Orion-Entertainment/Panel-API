@@ -21,8 +21,7 @@ if (cluster.isMaster) {
         //console.log(`API: Worker ${worker.process.pid} died`);
     });
   
-    /* BACKGROUND TASKS */
-    //require('./routes/BackgroundTasks/index');
+    require('./routes/Backend/RCON');
 } else {
     
     const port = normalizePort(process.env.PORT || Port);

@@ -1,16 +1,10 @@
 {
-    "SessionStore": {
-        "checkExpirationInterval": 120000,
-        "expiration": 300000
-    },
-    "DB": {
-        "API": {
-            "host": "127.0.0.1",
-            "port": 3306,
-            "user": "api",
-            "password": "",
-            "database": "orionpanel_api",
-            "connectionLimit": 10
-        }
+    "API": {
+        "host": "127.0.0.1",
+        "port": 3306,
+        "user": "oe-api",
+        "password": "fa0255dfac6142c307a94c6ed4c206af2f43140f73adfe16460f247e612f58ae",
+        "database": "orion-entertainment_api",
+        "connectionLimit": 10
     }
 }
