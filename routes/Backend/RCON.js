@@ -1,7 +1,6 @@
 const BattleNode = require('battle-node');
 const GETServers = require('./servers');
 const API = require('../../core/app').API;
-const fs = require('fs'); //For Testing
 
 let Servers = [];
 for (let i = 0; i < GETServers.length; i++) {
@@ -24,9 +23,6 @@ for (let i = 0; i < GETServers.length; i++) {
                 BE: BE
             });
             console.log('<RCON> Successfully logged into '+ServerName+'.');
-            /*fs.writeFile('./test/'+ServerName+'_Messages.log', 'Successfully logged into '+ServerName+'.', function (err) {
-                if (err) throw err;
-            })*/
         }
         else if (success == false) {
             console.log('<RCON> Login Failed to '+ServerName+'! (password may be incorrect)');
@@ -43,15 +39,9 @@ for (let i = 0; i < GETServers.length; i++) {
     });
 
     BE.on('message', async function(message) {
-        //console.log(message);
-        /*fs.appendFileSync('./test/'+ServerName+'_Messages.log', '\n'+message, function (err) {
-            if (err) throw err;
-            
-        });*/
-        await API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,'MSG',message], function (error, results, fields) {
+        API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,'MSG',message], function (error, results, fields) {
             if (error) throw error;
-            console.log(results)
-            console.log(fields)
+            //console.log(results[0].insertid)
         });
     });
 }
