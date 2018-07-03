@@ -48,7 +48,7 @@ for (let i = 0; i < GETServers.length; i++) {
             if (err) throw err;
             
         });*/
-        await API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES('?','?','?');", [ServerName,'MSG',message], function (error, results, fields) {
+        await API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,'MSG',message], function (error, results, fields) {
             if (error) throw error;
             console.log(results)
             console.log(fields)
