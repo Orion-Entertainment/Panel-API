@@ -101,7 +101,7 @@ for (let i = 0; i < GETServers.length; i++) {
             Category = 'Other';
             Data = message;
         }
-        API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,await Category,message], function (error, results, fields) {
+        API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,await Category,Data], function (error, results, fields) {
             if (error) throw error;
             //console.log(results[0].insertid)
         });
