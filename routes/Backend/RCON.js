@@ -58,28 +58,28 @@ for (let i = 0; i < GETServers.length; i++) {
 
             getData = /\((Unknown|Vehicle|Direct)\) .+: (.+)/g.exec(message);
             Data = JSON.stringify({
-                Channel: getData[0],
-                MSG: getData[1]
+                Channel: getData[1],
+                MSG: getData[2]
             });
         } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected|- BE GUID: (.+))|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
             Category = 'PlayerConnect';
             if (/Player #\d+ (.+) - BE GUID: (.+)/g.test(message)) {
                 getData = /Player #\d+ (.+) - BE GUID: (.+)/g.exec(message);
                 Data = JSON.stringify({
-                    Name: getData[0],
-                    GUID: getData[1]
+                    Name: getData[1],
+                    GUID: getData[2]
                 });
             } else if (/Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
                 getData = /Verified GUID \((.+)\) of player #\d+ (.+)/g.exec(message);
                 Data = JSON.stringify({
-                    Name: getData[1],
-                    GUID: getData[0]
+                    Name: getData[2],
+                    GUID: getData[1]
                 });
             } else if (/Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.test(message)) {
                 getData = /Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.exec(message);
                 Data = JSON.stringify({
-                    Name: getData[0],
-                    IP: getData[1]
+                    Name: getData[1],
+                    IP: getData[2]
                 });
             }
         } else if (/Player #\d+ (.+) disconnected/g.test(message)) {
@@ -87,15 +87,15 @@ for (let i = 0; i < GETServers.length; i++) {
 
             getData = /Player #\d+ (.+) disconnected/g.exec(message);
             Data = JSON.stringify({
-                Name: getData[0]
+                Name: getData[1]
             });
         } else if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.test(message)) {
             Category = 'PlayerKick';
 
             getData = /Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.exec(message);
             Data = JSON.stringify({
-                Name: getData[0],
-                MSG: getData[1]
+                Name: getData[1],
+                MSG: getData[2]
             });
         } else {
             Category = 'Other';
