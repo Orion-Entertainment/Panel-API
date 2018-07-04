@@ -44,14 +44,14 @@ for (let i = 0; i < GETServers.length; i++) {
 
             getData = /RCon admin #\d: \(Global\) (.+)/g.exec(message);
             Data = JSON.stringify({
-                MSG: getData[0]
+                MSG: getData[1]
             });
         } else if (/RCon admin #\d+ \((\d+.\d+.\d+.\d+:\d+)\) logged in/g.test(message)) {
             Category = 'RConConnect';
 
             getData = /RCon admin #\d+ \((\d+.\d+.\d+.\d+:\d+)\) logged in/g.exec(message);
             Data = JSON.stringify({
-                IP: getData[0]
+                IP: getData[1]
             });
         } else if (/\((Unknown|Vehicle|Direct)\) .+: /g.test(message)) {
             Category = 'PlayerMSG';
