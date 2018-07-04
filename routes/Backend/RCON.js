@@ -64,11 +64,7 @@ for (let i = 0; i < GETServers.length; i++) {
         } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected|- BE GUID: (.+))|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
             Category = 'PlayerConnect';
             if (/Player #\d+ (.+) - BE GUID: (.+)/g.test(message)) {
-                getData = /Player #\d+ (.+) - BE GUID: (.+)/g.exec(message);
-                Data = JSON.stringify({
-                    Name: getData[1],
-                    GUID: getData[2]
-                });
+                Return = false;
             } else if (/Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
                 getData = /Verified GUID \((.+)\) of player #\d+ (.+)/g.exec(message);
                 Data = JSON.stringify({
@@ -101,10 +97,13 @@ for (let i = 0; i < GETServers.length; i++) {
             Category = 'Other';
             Data = message;
         }
-        API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,await Category,Data], function (error, results, fields) {
-            if (error) throw error;
-            //console.log(results[0].insertid)
-        });
+        
+        if (Return !== false) {
+            API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,await Category,Data], function (error, results, fields) {
+                if (error) throw error;
+                //console.log(results[0].insertid)
+            });
+        }
     });
 }
 
