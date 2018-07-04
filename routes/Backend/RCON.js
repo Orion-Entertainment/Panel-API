@@ -39,7 +39,20 @@ for (let i = 0; i < GETServers.length; i++) {
     });
 
     BE.on('message', async function(message) {
-        API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,'MSG',message], function (error, results, fields) {
+        if (/RCon admin #\d: \(Global\)/g.test(message)) {
+            Category = 'ServerMSG';
+        } else if (/\((Unknown|Vehicle|Direct)\) .+: /g.test(message)) {
+            Category = 'PlayerMSG';
+        } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected|- BE GUID: (.+))|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
+            Category = 'PlayerConnect';
+        } else if (/Player #\d+ (.+) disconnected/g.test(message)) {
+            Category = 'PlayerDisconnect';
+        } else if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.test(message)) {
+            Category = 'PlayerKick';
+        } else {
+            Category = 'Other';
+        }
+        API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,await Category,message], function (error, results, fields) {
             if (error) throw error;
             //console.log(results[0].insertid)
         });
