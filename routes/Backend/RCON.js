@@ -98,7 +98,7 @@ for (let i = 0; i < GETServers.length; i++) {
             Data = message;
         }
 
-        if (Return === undefined) {
+        if (Return == undefined) {
             API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,await Category,Data], function (error, results, fields) {
                 if (error) throw error;
                 //console.log(results[0].insertid)
