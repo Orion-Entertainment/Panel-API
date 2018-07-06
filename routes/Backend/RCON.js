@@ -3,13 +3,16 @@ const GETServers = require('./servers');
 const API = require('../../core/app').API;
 
 let Servers = [];
+
 for (let i = 0; i < GETServers.length; i++) {
-    const ServerName = GETServers[i].Name;
-    const BEConfig = {
+    connectRCon({
         ip: GETServers[i].IP,
         port: GETServers[i].RCONPort,
         rconPassword: GETServers[i].RCONPassword
-    };
+    }, GETServers[i].Name)
+}
+
+async function connectRCon (BEConfig, ServerName) {
     const BE = new BattleNode(BEConfig);
     BE.login();
     BE.on('login', function(err, success) {
@@ -33,7 +36,7 @@ for (let i = 0; i < GETServers.length; i++) {
         for (let i = 0; i < Servers.length; i++) {
             if (ServerName == Servers[i].Name) {
                 Servers.splice(i, 1);
-                Reconnect(BEConfig);
+                Reconnect(BEConfig, ServerName);
             }
         }
     });
@@ -150,8 +153,17 @@ async function checkPlayers(time) {
 //checkPlayers(5); //Time in seconds
 
 
-async function Reconnect(BEConfig) {
-    //Attempt to reconnect for 10 minutes if false console.log msg
+async function Reconnect(BEConfig, ServerName) {
+    for (let i = 0; i < Servers.length; i++) {
+        if (Servers.Name == ServerName) {
+            return;
+        } else if (i + 1 == Servers.length) {
+            setTimeout(() => {
+                connectRCon(BEConfig, ServerName)
+                Reconnect(BEConfig, ServerName)
+            }, 10000);
+        }
+    }
 }
 
 module.exports = Servers;
