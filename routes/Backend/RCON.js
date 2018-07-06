@@ -156,10 +156,8 @@ async function checkPlayers(time) {
 
 
 async function Reconnect(BEConfig, ServerName) {
-    console.log('Reconnect: '+ServerName)
-
     for (let i = 0; i < Servers.length; i++) {
-        if (Servers.Name == ServerName) {
+        if (Servers[i].Name == ServerName) {
             return;
         } else if (i + 1 == Servers.length) {
             setTimeout(() => {
