@@ -96,6 +96,10 @@ async function connectRCon (BEConfig, ServerName) {
                 MSG: getData[2]
             });
         } else {
+            if (/Player #\d+ (.+) - BE GUID: (.+)/g.test(message)) {
+                return; //????
+            }
+
             Category = 'Other';
             Data = message;
         }
