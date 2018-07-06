@@ -156,16 +156,16 @@ async function checkPlayers(time) {
 
 
 async function Reconnect(BEConfig, ServerName) {
-    for (let i = 0; i < Servers.length; i++) {
-        if (Servers[i].Name == ServerName) {
-            return;
-        } else if (i + 1 == Servers.length) {
-            setTimeout(() => {
+    setTimeout(() => {
+        for (let i = 0; i < Servers.length; i++) {
+            if (Servers[i].Name == ServerName) {
+                return;
+            } else if (i + 1 == Servers.length) {
                 connectRCon(BEConfig, ServerName)
                 Reconnect(BEConfig, ServerName)
-            }, 10000);
+            }
         }
-    }
+    }, 10000);
 }
 
 module.exports = Servers;
