@@ -67,7 +67,10 @@ async function connectRCon (BEConfig, ServerName) {
             });
         } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected)|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
             Category = 'PlayerConnect';
-            if (/Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
+            
+            if (/Player #\d+ (.+) - BE GUID: (.+)/g.test(message)) {
+                return;
+            } else if (/Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
                 getData = /Verified GUID \((.+)\) of player #\d+ (.+)/g.exec(message);
                 Data = JSON.stringify({
                     Name: getData[2],
@@ -87,19 +90,24 @@ async function connectRCon (BEConfig, ServerName) {
             Data = JSON.stringify({
                 Name: getData[1]
             });
-        } else if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.test(message)) {
-            Category = 'PlayerKick';
-
-            getData = /Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.exec(message);
-            Data = JSON.stringify({
-                Name: getData[1],
-                MSG: getData[2]
-            });
-        } else {
-            if (/Player #\d+ (.+) - BE GUID: (.+)/g.test(message)) {
-                return; //????
+        } else if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: /g.test(message)) {
+            if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.test(message)) {
+                Category = 'PlayerKick';
+                getData = /Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.exec(message);
+                Data = JSON.stringify({
+                    Name: getData[1],
+                    MSG: getData[2]
+                });
+            } else if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: (.+)/g.test(message)) {
+                Category = 'BEKick';
+                getData = /Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: (.+)/g.exec(message);
+                Data = JSON.stringify({
+                    Name: getData[1],
+                    GUID: getData[2],
+                    MSG: getData[3]
+                });
             }
-
+        } else {
             Category = 'Other';
             Data = message;
         }
