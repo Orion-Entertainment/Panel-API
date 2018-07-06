@@ -67,13 +67,13 @@ async function connectRCon (BEConfig, ServerName) {
             });
         } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected|- BE GUID: (.+))|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
             Category = 'PlayerConnect';
-            if (/Player #\d+ (.+) - BE GUID: (.+)/g.test(message)) {
+            /*if (/Player #\d+ (.+) - BE GUID: (.+)/g.test(message)) {
                 getData = /Player #\d+ (.+) - BE GUID: (.+)/g.exec(message);
                 Data = JSON.stringify({
                     Name: getData[1],
                     GUID: getData[2]
                 });
-            } else if (/Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
+            } else */if (/Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
                 getData = /Verified GUID \((.+)\) of player #\d+ (.+)/g.exec(message);
                 Data = JSON.stringify({
                     Name: getData[2],
@@ -157,7 +157,6 @@ async function checkPlayers(time) {
 async function Reconnect(BEConfig, ServerName) {
     setTimeout(() => {
         for (let i = 0; i < Servers.length; i++) {
-            console.log(Servers[i].Name, ServerName)
             if (Servers[i].Name == ServerName) {
                 return;
             } else if (i + 1 == Servers.length) {
