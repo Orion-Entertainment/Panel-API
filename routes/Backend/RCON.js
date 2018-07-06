@@ -118,7 +118,7 @@ async function connectRCon (BEConfig, ServerName) {
     });
 }
 
-let checkingPlayers = false;
+/*let checkingPlayers = false;
 async function checkPlayers(time) {
     setTimeout(function() {
         if (checkingPlayers != true) {
@@ -157,16 +157,20 @@ async function checkPlayers(time) {
     checkPlayers(time);
     }, time * 1000);
 }
-//checkPlayers(5); //Time in seconds
+//checkPlayers(5); //Time in seconds*/
 
 
 async function Reconnect(BEConfig, ServerName) {
     setTimeout(() => {
-        for (let i = 0; i < Servers.length; i++) {
-            if (Servers[i].Name == ServerName) {
-                return;
-            } else if (i + 1 == Servers.length) {
-                connectRCon(BEConfig, ServerName)
+        if (Servers.length < 1) {
+            connectRCon(BEConfig, ServerName)
+        } else {
+            for (let i = 0; i < Servers.length; i++) {
+                if (Servers[i].Name == ServerName) {
+                    return;
+                } else if (i + 1 == Servers.length) {
+                    connectRCon(BEConfig, ServerName)
+                }
             }
         }
     }, 10000);
