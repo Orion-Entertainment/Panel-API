@@ -18,6 +18,7 @@ async function connectRCon (BEConfig, ServerName) {
     BE.on('login', function(err, success) {
         if (err) {
             console.log('<RCON> Unable to Connect to '+ServerName+'.');
+            Reconnect(BEConfig, ServerName);
         }
 
         if (success == true) {
@@ -29,6 +30,7 @@ async function connectRCon (BEConfig, ServerName) {
         }
         else if (success == false) {
             console.log('<RCON> Login Failed to '+ServerName+'! (password may be incorrect)');
+            Reconnect(BEConfig, ServerName);
         }
     });
 
@@ -154,6 +156,8 @@ async function checkPlayers(time) {
 
 
 async function Reconnect(BEConfig, ServerName) {
+    console.log('Reconnect: '+ServerName)
+
     for (let i = 0; i < Servers.length; i++) {
         if (Servers.Name == ServerName) {
             return;
