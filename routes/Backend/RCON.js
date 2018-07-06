@@ -20,8 +20,7 @@ async function connectRCon (BEConfig, ServerName) {
             console.log('<RCON> Unable to Connect to '+ServerName+'.');
             Reconnect(BEConfig, ServerName);
         }
-
-        if (success == true) {
+        else if (success == true) {
             Servers.push({
                 Name: ServerName,
                 BE: BE
@@ -158,6 +157,7 @@ async function checkPlayers(time) {
 async function Reconnect(BEConfig, ServerName) {
     setTimeout(() => {
         for (let i = 0; i < Servers.length; i++) {
+            console.log(Servers[i].Name, ServerName)
             if (Servers[i].Name == ServerName) {
                 return;
             } else if (i + 1 == Servers.length) {
