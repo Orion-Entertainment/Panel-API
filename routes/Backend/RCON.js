@@ -65,7 +65,7 @@ async function connectRCon (BEConfig, ServerName) {
                 Channel: getData[1],
                 MSG: getData[2]
             });
-        } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected)|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
+        } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected|- BE GUID: (.+))|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
             Category = 'PlayerConnect';
             
             if (/Player #\d+ (.+) - BE GUID: (.+)/g.test(message)) {
