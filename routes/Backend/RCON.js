@@ -65,15 +65,9 @@ async function connectRCon (BEConfig, ServerName) {
                 Channel: getData[1],
                 MSG: getData[2]
             });
-        } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected|- BE GUID: (.+))|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
+        } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected)|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
             Category = 'PlayerConnect';
-            /*if (/Player #\d+ (.+) - BE GUID: (.+)/g.test(message)) {
-                getData = /Player #\d+ (.+) - BE GUID: (.+)/g.exec(message);
-                Data = JSON.stringify({
-                    Name: getData[1],
-                    GUID: getData[2]
-                });
-            } else */if (/Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
+            if (/Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
                 getData = /Verified GUID \((.+)\) of player #\d+ (.+)/g.exec(message);
                 Data = JSON.stringify({
                     Name: getData[2],
