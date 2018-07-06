@@ -162,7 +162,6 @@ async function Reconnect(BEConfig, ServerName) {
                 return;
             } else if (i + 1 == Servers.length) {
                 connectRCon(BEConfig, ServerName)
-                Reconnect(BEConfig, ServerName)
             }
         }
     }, 10000);
