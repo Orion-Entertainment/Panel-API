@@ -189,6 +189,10 @@ async function checkPlayers(time) {
                                 const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/g)[0].replace(/(\(\?\)|\(\w+\))/g, '');
                                 const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
 
+                                if (Name == null | IP == null | GUID == null | Ping == null) {
+                                    return;
+                                }
+
                                 API.query("SELECT `IP`,`GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
                                     if (error) throw error;
                                     if (results[0] === undefined) {
@@ -196,11 +200,11 @@ async function checkPlayers(time) {
                                             if (error) throw error;
                                         });
                                     } else {
-                                        if (results[0].IP == null) {
+                                        if (results[0].IP == null | results[0].IP == "") {
                                             API.query("UPDATE `rcon_players` set `IP`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
                                                 if (error) throw error;
                                             });
-                                        } else if (results[0].GUID == null) {
+                                        } else if (results[0].GUID == null | results[0].GUID == "") {
                                             API.query("UPDATE `rcon_players` set `GUID`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
                                                 if (error) throw error;
                                             });
@@ -233,7 +237,7 @@ async function checkPlayers(time) {
     checkPlayers(time);
     }, time * 1000);
 }
-checkPlayers(10); //Time in seconds
+checkPlayers(2.5); //Time in seconds
 
 
 async function Reconnect(BEConfig, ServerName) {
