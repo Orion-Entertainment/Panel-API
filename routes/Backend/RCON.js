@@ -164,7 +164,7 @@ async function addPlayer(ServerName, Data) {
             if (error) throw error;
         });
     } else {
-        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?);", [ServerName,data.Name,data.IP], function (error, results, fields) {
+        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`) VALUES(?,?,?);", [ServerName,data.Name,data.IP], function (error, results, fields) {
             if (error) throw error;
         });
     }
