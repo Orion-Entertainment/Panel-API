@@ -179,8 +179,9 @@ async function getPlayerGUID(ServerName, Name) {
     API.query("SELECT `GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], async function (error, results, fields) {
         if (error) throw error;
         console.log(results)
-        console.log(results[0])
-        console.log(results[0].GUID)
+        const w = results[0];
+        console.log(w)
+        console.log(w[0])
         if (results[0] === undefined) {
             return false;
         } else {
