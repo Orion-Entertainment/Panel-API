@@ -203,11 +203,11 @@ async function checkPlayers(time) {
                                             if (error) throw error;
                                         });
                                     } else {
-                                        if (results[0].IP === undefined) {
+                                        if (results[0].IP == null) {
                                             API.query("UPDATE `rcon_players` set `IP`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
                                                 if (error) throw error;
                                             });
-                                        } else if (results[0].GUID === undefined) {
+                                        } else if (results[0].GUID == null) {
                                             API.query("UPDATE `rcon_players` set `GUID`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
                                                 if (error) throw error;
                                             });
