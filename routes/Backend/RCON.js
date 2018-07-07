@@ -21,6 +21,9 @@ async function connectRCon (BEConfig, ServerName) {
             Reconnect(BEConfig, ServerName);
         }
         else if (success == true) {
+            API.query("DELETE FROM `rcon_players` WHERE `Server`=?;", [ServerName], function (error, results, fields) {
+                if (error) throw error;
+            });
             Servers.push({
                 Name: ServerName,
                 BE: BE
@@ -34,6 +37,9 @@ async function connectRCon (BEConfig, ServerName) {
     });
 
     BE.on('disconnected', function() {
+        API.query("DELETE FROM `rcon_players` WHERE `Server`=?;", [ServerName], function (error, results, fields) {
+            if (error) throw error;
+        });
         for (let i = 0; i < Servers.length; i++) {
             if (ServerName == Servers[i].Name) {
                 Servers.splice(i, 1);
@@ -77,12 +83,14 @@ async function connectRCon (BEConfig, ServerName) {
                     Name: getData[2],
                     GUID: getData[1]
                 });
+                addPlayer(ServerName, Data)
             } else if (/Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.test(message)) {
                 getData = /Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.exec(message);
                 Data = JSON.stringify({
                     Name: getData[1],
                     IP: getData[2]
                 });
+                addPlayer(ServerName, Data)
             }
         } else if (/Player #\d+ (.+) disconnected/g.test(message)) {
             Category = 'PlayerDisconnect';
@@ -91,6 +99,8 @@ async function connectRCon (BEConfig, ServerName) {
             Data = JSON.stringify({
                 Name: getData[1]
             });
+
+            removePlayer(ServerName, getData[1]);
         } else if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: /g.test(message)) {
             if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.test(message)) {
                 Category = 'PlayerKick';
@@ -99,6 +109,8 @@ async function connectRCon (BEConfig, ServerName) {
                     Name: getData[1],
                     MSG: getData[2]
                 });
+
+                removePlayer(ServerName, getData[1]);
             } else if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: (.+)/g.test(message)) {
                 Category = 'BEKick';
                 getData = /Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: (.+)/g.exec(message);
@@ -107,6 +119,8 @@ async function connectRCon (BEConfig, ServerName) {
                     GUID: getData[2],
                     MSG: getData[3]
                 });
+
+                removePlayer(ServerName, getData[1]);
             }
         } else {
             Category = 'Other';
@@ -115,7 +129,26 @@ async function connectRCon (BEConfig, ServerName) {
         API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,await Category,Data], function (error, results, fields) {
             if (error) throw error;
             //console.log(results[0].insertid)
+            return;
         });
+    });
+}
+
+async function addPlayer(ServerName, Data) {
+    if (Data.IP === undefined) {
+        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,Name,GUID], function (error, results, fields) {
+            if (error) throw error;
+        });
+    } else {
+        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,);", [ServerName,Name,IP], function (error, results, fields) {
+            if (error) throw error;
+        });
+    }
+}
+
+async function removePlayer(ServerName, Name) {
+    API.query("DELETE FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,getData[1]], function (error, results, fields) {
+        if (error) throw error;
     });
 }
 
@@ -129,10 +162,6 @@ async function checkPlayers(time) {
                     const ServerName = Servers[i].Name;
                     const BE = Servers[i].BE;
                     BE.sendCommand('players', async function(players) {
-                        API.query("DELETE FROM `rcon_players` WHERE `Server`=?;", [ServerName], function (error, results, fields) {
-                            if (error) throw error;
-                        });
-
                         const getPlayers = /(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+\b)\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g;
                         let Players = players.match(getPlayers);
                         if (Players !== null) {
@@ -142,9 +171,30 @@ async function checkPlayers(time) {
                                 const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/g)[0].replace(/(\(\?\)|\(\w+\))/g, '');
                                 const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
 
-                                API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
+                                API.query("SELECT `IP`,`GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=? AND `IP`=? AND `GUID`=?;", [ServerName,Name,IP,GUID], function (error, results, fields) {
                                     if (error) throw error;
+                                    if (results[0] !== undefined) {
+                                        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
+                                            if (error) throw error;
+                                        });
+                                    } else {
+                                        if (results[0].IP === undefined) {
+                                            API.query("UPDATE `rcon_players` set `IP`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
+                                                if (error) throw error;
+                                            });
+                                        } else if (results[0].GUID === undefined) {
+                                            API.query("UPDATE `rcon_players` set `GUID`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
+                                                if (error) throw error;
+                                            });
+                                        } else {
+                                            API.query("UPDATE `rcon_players` set `Ping`=? WHERE `Server`=? AND `Name`=? AND `IP`=? AND `GUID`=?;", [Ping,ServerName,Name,IP,GUID], function (error, results, fields) {
+                                                if (error) throw error;
+                                            });
+                                        }
+                                    }
                                 });
+
+                                
                                 /*
                                 if (p + 1 == Players.length) {
                                     //savePlayers
