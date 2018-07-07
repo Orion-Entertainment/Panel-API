@@ -179,7 +179,7 @@ async function getPlayerGUID(ServerName, Name) {
     API.query("SELECT `GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], async function (error, results, fields) {
         if (error) throw error;
         console.log(results)
-        const w = results[0];
+        const w = await results[0];
         console.log(w)
         console.log(w.GUID)
         console.log(w[0])
