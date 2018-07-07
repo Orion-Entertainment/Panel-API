@@ -136,11 +136,11 @@ async function connectRCon (BEConfig, ServerName) {
 
 async function addPlayer(ServerName, Data) {
     if (Data.IP === undefined) {
-        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,Name,GUID], function (error, results, fields) {
+        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,Name,Data.GUID], function (error, results, fields) {
             if (error) throw error;
         });
     } else {
-        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,);", [ServerName,Name,IP], function (error, results, fields) {
+        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,);", [ServerName,Name,Data.IP], function (error, results, fields) {
             if (error) throw error;
         });
     }
