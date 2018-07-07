@@ -158,6 +158,7 @@ async function connectRCon (BEConfig, ServerName) {
 
 async function addPlayer(ServerName, Data) {
     const data = JSON.parse(Data)
+    console.log(data)
     if (data.IP === undefined) {
         API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,data.Name,data.GUID], function (error, results, fields) {
             if (error) throw error;
