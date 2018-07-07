@@ -57,13 +57,14 @@ async function connectRCon (BEConfig, ServerName) {
             Data = JSON.stringify({
                 IP: getData[1]
             });
-        } else if (/\((Unknown|Vehicle|Direct)\) .+: /g.test(message)) {
+        } else if (/\((Unknown|Vehicle|Direct)\) (.+): /g.test(message)) {
             Category = 'PlayerMSG';
 
-            getData = /\((Unknown|Vehicle|Direct)\) .+: (.+)/g.exec(message);
+            getData = /\((Unknown|Vehicle|Direct)\) (.+): (.+)/g.exec(message);
             Data = JSON.stringify({
                 Channel: getData[1],
-                MSG: getData[2]
+                Name: getData[2],
+                MSG: getData[3]
             });
         } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected|- BE GUID: (.+))|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
             Category = 'PlayerConnect';
