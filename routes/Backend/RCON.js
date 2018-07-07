@@ -73,7 +73,7 @@ async function connectRCon (BEConfig, ServerName) {
                 Data = JSON.stringify({
                     Channel: getData[1],
                     Name: getData[2],
-                    GUID: getPlayer,
+                    GUID: await getPlayer,
                     MSG: getData[3]
                 });
             } else {
@@ -113,7 +113,7 @@ async function connectRCon (BEConfig, ServerName) {
             if (getPlayer !== false) {
                 Data = JSON.stringify({
                     Name: getData[1],
-                    GUID: getPlayer
+                    GUID: await getPlayer
                 });
             } else {
                 Data = JSON.stringify({
@@ -182,7 +182,7 @@ async function getPlayerGUID(ServerName, Name) {
         if (results[0] === undefined) {
             return false;
         } else {
-            return await results[0].GUID;
+            return results[0].GUID;
         }
     });
 }
