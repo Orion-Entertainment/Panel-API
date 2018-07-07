@@ -142,7 +142,7 @@ async function checkPlayers(time) {
                                 const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/g)[0].replace(/(\(\?\)|\(\w+\))/g, '');
                                 const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
 
-                                API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`) VALUES(?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
+                                API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`) VALUES(?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
                                     if (error) throw error;
                                 });
                                 /*
