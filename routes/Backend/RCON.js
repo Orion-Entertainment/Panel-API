@@ -67,7 +67,7 @@ async function connectRCon (BEConfig, ServerName) {
             Category = 'PlayerMSG';
 
             getData = /\((Unknown|Vehicle|Direct)\) (.+): (.+)/g.exec(message);
-            getPlayer = getPlayer(ServerName, getData[1]);
+            getPlayer = getPlayerGUID(ServerName, getData[1]);
             console.log(getPlayer)
             if (getPlayer !== false) {
                 Data = JSON.stringify({
@@ -108,7 +108,7 @@ async function connectRCon (BEConfig, ServerName) {
             Category = 'PlayerDisconnect';
 
             getData = /Player #\d+ (.+) disconnected/g.exec(message);
-            getPlayer = getPlayer(ServerName, getData[1]);
+            getPlayer = getPlayerGUID(ServerName, getData[1]);
             console.log(getPlayer)
             if (getPlayer !== false) {
                 Data = JSON.stringify({
@@ -174,7 +174,7 @@ async function removePlayer(ServerName, Name) {
     });
 }
 
-async function getPlayer(ServerName, Name) {
+async function getPlayerGUID(ServerName, Name) {
     API.query("SELECT `GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
         if (error) throw error;
         if (results[0] === undefined) {
