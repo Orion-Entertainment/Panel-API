@@ -119,16 +119,20 @@ async function connectRCon (BEConfig, ServerName) {
     });
 }
 
-/*let checkingPlayers = false;
+let checkingPlayers = false;
 async function checkPlayers(time) {
     setTimeout(function() {
         if (checkingPlayers != true) {
             checkingPlayers = true;
             if (Servers.length > 0) {
                 for (let i = 0; i < Servers.length; i++) {
+                    const ServerName = Servers[i].Name;
                     const BE = Servers[i].BE;
                     BE.sendCommand('players', async function(players) {
-                        let savePlayers = [];
+                        await API.query("DELETE FROM `rcon_players` WHERE `Server`=?;", [ServerName], function (error, results, fields) {
+                            if (error) throw error;
+                        });
+
                         const getPlayers = /(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+\b)\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g;
                         let Players = players.match(getPlayers);
                         if (Players !== null) {
@@ -137,14 +141,17 @@ async function checkPlayers(time) {
                                 const IP = Players[p].match(/(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/g);
                                 const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/g)[0].replace(/(\(\?\)|\(\w+\))/g, '');
                                 const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
-                                await savePlayers.push(Name, GUID, IP, Ping);
-    
+
+                                API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`) VALUES(?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
+                                    if (error) throw error;
+                                });
+                                /*
                                 if (p + 1 == Players.length) {
                                     //savePlayers
-                                }
+
+                                }*/
                             }
                         }
-                        //console.log(players);
                     });
     
                     if (i + 1 == Servers.length) {
@@ -158,7 +165,7 @@ async function checkPlayers(time) {
     checkPlayers(time);
     }, time * 1000);
 }
-//checkPlayers(5); //Time in seconds*/
+checkPlayers(10); //Time in seconds
 
 
 async function Reconnect(BEConfig, ServerName) {
