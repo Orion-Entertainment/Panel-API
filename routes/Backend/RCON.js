@@ -67,7 +67,7 @@ async function connectRCon (BEConfig, ServerName) {
             Category = 'PlayerMSG';
 
             getData = /\((Unknown|Vehicle|Direct|Group)\) (.+): (.+)/g.exec(message);
-            getPlayer = await getPlayerGUID(ServerName, getData[1]);
+            getPlayer = await getPlayerGUID(ServerName, getData[2]);
             console.log(getPlayer)
             if (getPlayer !== false) {
                 Data = JSON.stringify({
