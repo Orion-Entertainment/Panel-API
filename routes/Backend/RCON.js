@@ -68,7 +68,7 @@ async function connectRCon (BEConfig, ServerName) {
 
             getData = /\((Unknown|Vehicle|Direct|Group)\) (.+): (.+)/g.exec(message);
             getPlayer = await getPlayerGUID(ServerName, getData[2]);
-            if (getPlayer !== undefined) {
+            if (getPlayer !== undefined | getPlayer !== null) {
                 Data = JSON.stringify({
                     Channel: getData[1],
                     Name: getData[2],
@@ -107,7 +107,7 @@ async function connectRCon (BEConfig, ServerName) {
 
             getData = /Player #\d+ (.+) disconnected/g.exec(message);
             getPlayer = await getPlayerGUID(ServerName, getData[1]);
-            if (getPlayer !== undefined) {
+            if (getPlayer !== undefined | getPlayer !== null) {
                 Data = JSON.stringify({
                     Name: getData[1],
                     GUID: await getPlayer.GUID
