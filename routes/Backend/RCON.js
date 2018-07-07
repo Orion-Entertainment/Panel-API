@@ -158,7 +158,6 @@ async function connectRCon (BEConfig, ServerName) {
 
 async function addPlayer(ServerName, Data) {
     const data = JSON.parse(Data)
-    console.log(data)
     if (data.IP === undefined) {
         API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,data.Name,data.GUID], function (error, results, fields) {
             if (error) throw error;
@@ -177,12 +176,13 @@ async function removePlayer(ServerName, Name) {
 }
 
 async function getPlayerGUID(ServerName, Name) {
-    API.query("SELECT `GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
+    API.query("SELECT `GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], async function (error, results, fields) {
         if (error) throw error;
         if (results[0] === undefined) {
             return false;
         } else {
-            return results[0].GUID;
+            console.log(results[0].GUID)
+            return await results[0].GUID;
         }
     });
 }
