@@ -196,7 +196,7 @@ async function checkPlayers(time) {
                                 const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/g)[0].replace(/(\(\?\)|\(\w+\))/g, '');
                                 const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
 
-                                API.query("SELECT `IP`,`GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=? AND `IP`=? AND `GUID`=?;", [ServerName,Name,IP,GUID], function (error, results, fields) {
+                                API.query("SELECT `IP`,`GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
                                     if (error) throw error;
                                     if (results[0] === undefined) {
                                         API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
