@@ -67,13 +67,13 @@ async function connectRCon (BEConfig, ServerName) {
             Category = 'PlayerMSG';
 
             getData = /\((Unknown|Vehicle|Direct)\) (.+): (.+)/g.exec(message);
-            getPlayer = getPlayerGUID(ServerName, getData[1]);
+            getPlayer = await getPlayerGUID(ServerName, getData[1]);
             console.log(getPlayer)
             if (getPlayer !== false) {
                 Data = JSON.stringify({
                     Channel: getData[1],
                     Name: getData[2],
-                    GUID: getPlayer.GUID,
+                    GUID: getPlayer,
                     MSG: getData[3]
                 });
             } else {
@@ -108,12 +108,12 @@ async function connectRCon (BEConfig, ServerName) {
             Category = 'PlayerDisconnect';
 
             getData = /Player #\d+ (.+) disconnected/g.exec(message);
-            getPlayer = getPlayerGUID(ServerName, getData[1]);
+            getPlayer = await getPlayerGUID(ServerName, getData[1]);
             console.log(getPlayer)
             if (getPlayer !== false) {
                 Data = JSON.stringify({
                     Name: getData[1],
-                    GUID: getPlayer.GUID
+                    GUID: getPlayer
                 });
             } else {
                 Data = JSON.stringify({
@@ -180,7 +180,7 @@ async function getPlayerGUID(ServerName, Name) {
         if (results[0] === undefined) {
             return false;
         } else {
-            return results[0];
+            return results[0].GUID;
         }
     });
 }
