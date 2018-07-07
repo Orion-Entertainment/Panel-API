@@ -67,11 +67,22 @@ async function connectRCon (BEConfig, ServerName) {
             Category = 'PlayerMSG';
 
             getData = /\((Unknown|Vehicle|Direct)\) (.+): (.+)/g.exec(message);
-            Data = JSON.stringify({
-                Channel: getData[1],
-                Name: getData[2],
-                MSG: getData[3]
-            });
+            getPlayer = await getPlayer(ServerName, getData[1]);
+            if (getPlayer !== false) {
+                Data = JSON.stringify({
+                    Channel: getData[1],
+                    Name: getData[2],
+                    GUID: getPlayer.GUID,
+                    MSG: getData[3]
+                });
+            } else {
+                Data = JSON.stringify({
+                    Channel: getData[1],
+                    Name: getData[2],
+                    MSG: getData[3]
+                });
+            }
+            
         } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected|- BE GUID: (.+))|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
             Category = 'PlayerConnect';
             
@@ -96,9 +107,17 @@ async function connectRCon (BEConfig, ServerName) {
             Category = 'PlayerDisconnect';
 
             getData = /Player #\d+ (.+) disconnected/g.exec(message);
-            Data = JSON.stringify({
-                Name: getData[1]
-            });
+            getPlayer = await getPlayer(ServerName, getData[1]);
+            if (getPlayer !== false) {
+                Data = JSON.stringify({
+                    Name: getData[1],
+                    GUID: getPlayer.GUID
+                });
+            } else {
+                Data = JSON.stringify({
+                    Name: getData[1]
+                });
+            }
 
             removePlayer(ServerName, getData[1]);
         } else if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: /g.test(message)) {
@@ -150,6 +169,17 @@ async function addPlayer(ServerName, Data) {
 async function removePlayer(ServerName, Name) {
     API.query("DELETE FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,getData[1]], function (error, results, fields) {
         if (error) throw error;
+    });
+}
+
+async function getPlayer(ServerName, Name) {
+    API.query("SELECT `GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
+        if (error) throw error;
+        if (results[0] === undefined) {
+            return false;
+        } else {
+            return results[0];
+        }
     });
 }
 
