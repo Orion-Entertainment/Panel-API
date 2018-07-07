@@ -95,14 +95,20 @@ async function connectRCon (BEConfig, ServerName) {
                     Name: getData[2],
                     GUID: getData[1]
                 });
-                addPlayer(ServerName, Data)
+                addPlayer(ServerName, {
+                    Name: getData[2],
+                    GUID: getData[1]
+                })
             } else if (/Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.test(message)) {
                 getData = /Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.exec(message);
                 Data = JSON.stringify({
                     Name: getData[1],
                     IP: getData[2]
                 });
-                addPlayer(ServerName, Data)
+                addPlayer(ServerName, {
+                    Name: getData[1],
+                    IP: getData[2]
+                })
             }
         } else if (/Player #\d+ (.+) disconnected/g.test(message)) {
             Category = 'PlayerDisconnect';
