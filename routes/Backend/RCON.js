@@ -68,6 +68,7 @@ async function connectRCon (BEConfig, ServerName) {
 
             getData = /\((Unknown|Vehicle|Direct)\) (.+): (.+)/g.exec(message);
             getPlayer = await getPlayer(ServerName, getData[1]);
+            console.log(getPlayer)
             if (getPlayer !== false) {
                 Data = JSON.stringify({
                     Channel: getData[1],
@@ -108,6 +109,7 @@ async function connectRCon (BEConfig, ServerName) {
 
             getData = /Player #\d+ (.+) disconnected/g.exec(message);
             getPlayer = await getPlayer(ServerName, getData[1]);
+            console.log(getPlayer)
             if (getPlayer !== false) {
                 Data = JSON.stringify({
                     Name: getData[1],
