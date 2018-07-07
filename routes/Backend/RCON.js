@@ -170,7 +170,7 @@ async function addPlayer(ServerName, Data) {
 }
 
 async function removePlayer(ServerName, Name) {
-    API.query("DELETE FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,getData[1]], function (error, results, fields) {
+    API.query("DELETE FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
         if (error) throw error;
     });
 }
