@@ -173,7 +173,7 @@ async function checkPlayers(time) {
 
                                 API.query("SELECT `IP`,`GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=? AND `IP`=? AND `GUID`=?;", [ServerName,Name,IP,GUID], function (error, results, fields) {
                                     if (error) throw error;
-                                    if (results[0] !== undefined) {
+                                    if (results[0] === undefined) {
                                         API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
                                             if (error) throw error;
                                         });
