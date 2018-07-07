@@ -182,6 +182,7 @@ async function getPlayerGUID(ServerName, Name) {
         if (results[0] === undefined) {
             return false;
         } else {
+            console.log(results)
             return results[0].GUID;
         }
     });
