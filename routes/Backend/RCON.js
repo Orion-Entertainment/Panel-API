@@ -178,15 +178,11 @@ async function removePlayer(ServerName, Name) {
 async function getPlayerGUID(ServerName, Name) {
     API.query("SELECT `GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], async function (error, results, fields) {
         if (error) throw error;
-        console.log(results)
-        const w = await results[0];
-        console.log('1 '+w)
-        console.log('2 '+w.GUID)
-        console.log('3 '+w[0])
-        if (results[0] === undefined) {
+        const Results = await results[0];
+        if (Results === undefined) {
             return false;
         } else {
-            return await results[0].GUID;
+            return Results.GUID;
         }
     });
 }
