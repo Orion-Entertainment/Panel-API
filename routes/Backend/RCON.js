@@ -95,20 +95,14 @@ async function connectRCon (BEConfig, ServerName) {
                     Name: getData[2],
                     GUID: getData[1]
                 });
-                addPlayer(ServerName, {
-                    Name: getData[2],
-                    GUID: getData[1]
-                })
+                addPlayer(ServerName, Data)
             } else if (/Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.test(message)) {
                 getData = /Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.exec(message);
                 Data = JSON.stringify({
                     Name: getData[1],
                     IP: getData[2]
                 });
-                addPlayer(ServerName, {
-                    Name: getData[1],
-                    IP: getData[2]
-                })
+                addPlayer(ServerName, Data)
             }
         } else if (/Player #\d+ (.+) disconnected/g.test(message)) {
             Category = 'PlayerDisconnect';
@@ -163,12 +157,13 @@ async function connectRCon (BEConfig, ServerName) {
 }
 
 async function addPlayer(ServerName, Data) {
-    if (Data.IP === undefined) {
-        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,Data.Name,Data.GUID], function (error, results, fields) {
+    const data = JSON.parse(Data)
+    if (data.IP === undefined) {
+        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,data.Name,data.GUID], function (error, results, fields) {
             if (error) throw error;
         });
     } else {
-        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,);", [ServerName,Data.Name,Data.IP], function (error, results, fields) {
+        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,);", [ServerName,data.Name,data.IP], function (error, results, fields) {
             if (error) throw error;
         });
     }
