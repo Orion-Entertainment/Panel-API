@@ -101,7 +101,6 @@ async function connectRCon (BEConfig, ServerName) {
                     Name: getData[1],
                     IP: getData[2]
                 });
-                addPlayer(ServerName, Data)
             }
         } else if (/Player #\d+ (.+) disconnected/g.test(message)) {
             Category = 'PlayerDisconnect';
@@ -155,15 +154,9 @@ async function connectRCon (BEConfig, ServerName) {
 
 async function addPlayer(ServerName, Data) {
     const data = JSON.parse(Data)
-    if (data.IP === undefined) {
-        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,data.Name,data.GUID], function (error, results, fields) {
-            if (error) throw error;
-        });
-    } else {
-        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`) VALUES(?,?,?);", [ServerName,data.Name,data.IP], function (error, results, fields) {
-            if (error) throw error;
-        });
-    }
+    API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,data.Name,data.GUID], function (error, results, fields) {
+        if (error) throw error;
+    });
 }
 
 async function removePlayer(ServerName, Name) {
