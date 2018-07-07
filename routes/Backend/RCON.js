@@ -181,6 +181,7 @@ async function getPlayerGUID(ServerName, Name) {
         console.log(results)
         const w = results[0];
         console.log(w)
+        console.log(w.GUID)
         console.log(w[0])
         if (results[0] === undefined) {
             return false;
