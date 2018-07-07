@@ -145,7 +145,6 @@ async function checkPlayers(time) {
                                 API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
                                     if (error) throw error;
                                 });
-                                console.log([ServerName,Name,IP,GUID,Ping])
                                 /*
                                 if (p + 1 == Players.length) {
                                     //savePlayers
