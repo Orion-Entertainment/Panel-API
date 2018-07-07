@@ -148,7 +148,6 @@ async function connectRCon (BEConfig, ServerName) {
         }
         API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,await Category,Data], function (error, results, fields) {
             if (error) throw error;
-            //console.log(results[0].insertid)
             return;
         });
     });
