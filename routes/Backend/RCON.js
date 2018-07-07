@@ -129,7 +129,7 @@ async function checkPlayers(time) {
                     const ServerName = Servers[i].Name;
                     const BE = Servers[i].BE;
                     BE.sendCommand('players', async function(players) {
-                        await API.query("DELETE FROM `rcon_players` WHERE `Server`=?;", [ServerName], function (error, results, fields) {
+                        API.query("DELETE FROM `rcon_players` WHERE `Server`=?;", [ServerName], function (error, results, fields) {
                             if (error) throw error;
                         });
 
