@@ -107,7 +107,8 @@ async function connectRCon (BEConfig, ServerName) {
                 getData = /Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.exec(message);
                 Data = JSON.stringify({
                     Name: getData[1],
-                    MSG: getData[2]
+                    GUID: getData[2],
+                    MSG: getData[3]
                 });
 
                 removePlayer(ServerName, getData[1]);
