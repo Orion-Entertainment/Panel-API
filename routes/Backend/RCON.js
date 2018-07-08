@@ -172,67 +172,65 @@ async function getPlayerGUID(ServerName, Name) {
 
 let checkingPlayers = false;
 async function checkPlayers(time) {
-    setTimeout(function() {
-        if (checkingPlayers != true) {
-            checkingPlayers = true;
-            if (Servers.length > 0) {
-                for (let i = 0; i < Servers.length; i++) {
-                    const ServerName = Servers[i].Name;
-                    const BE = Servers[i].BE;
-                    BE.sendCommand('players', async function(players) {
-                        const getPlayers = /(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+\b)\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g;
-                        let Players = players.match(getPlayers);
-                        if (Players !== null) {
-                            for (let p = 0; p < Players.length; p++) {
-                                const Name = Players[p].match(/(\(\w+\)\s?)([\S ]+)/g)[0].replace(/\(\?\)\s|(.*OK)\)\s/g, '').replace(/\s(\(Lobby\))/g, '');
-                                const IP = Players[p].match(/(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/g);
-                                const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/g)[0].replace(/(\(\?\)|\(\w+\))/g, '');
-                                const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
-
-                                if (Name !== null && IP !== null && GUID !== null && Ping !== null) {
-                                    API.query("SELECT `IP`,`GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
-                                        if (error) throw error;
-                                        else if (results[0] == undefined) {
-                                            API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
-                                                if (error) throw error;
-                                            });
-                                        } else {
-                                            if (results[0].IP == null | results[0].IP == "") {
-                                                API.query("UPDATE `rcon_players` set `IP`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
-                                                    if (error) throw error;
-                                                });
-                                            } else if (results[0].GUID == null | results[0].GUID == "") {
-                                                API.query("UPDATE `rcon_players` set `GUID`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
+    try {
+        setTimeout(function() {
+            if (checkingPlayers != true) {
+                checkingPlayers = true;
+                if (Servers.length > 0) {
+                    for (let i = 0; i < Servers.length; i++) {
+                        const ServerName = Servers[i].Name;
+                        const BE = Servers[i].BE;
+                        BE.sendCommand('players', async function(players) {
+                            const getPlayers = /(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+\b)\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g;
+                            let Players = players.match(getPlayers);
+                            if (Players !== null) {
+                                for (let p = 0; p < Players.length; p++) {
+                                    const Name = Players[p].match(/(\(\w+\)\s?)([\S ]+)/g)[0].replace(/\(\?\)\s|(.*OK)\)\s/g, '').replace(/\s(\(Lobby\))/g, '');
+                                    const IP = Players[p].match(/(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/g);
+                                    const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/g)[0].replace(/(\(\?\)|\(\w+\))/g, '');
+                                    const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
+    
+                                    if (Name !== null && IP !== null && GUID !== null && Ping !== null) {
+                                        API.query("SELECT `IP`,`GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
+                                            if (error) throw error;
+                                            else if (results[0] == undefined) {
+                                                API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
                                                     if (error) throw error;
                                                 });
                                             } else {
-                                                API.query("UPDATE `rcon_players` set `Ping`=? WHERE `Server`=? AND `Name`=?;", [Ping,ServerName,Name], function (error, results, fields) {
-                                                    if (error) throw error;
-                                                });
+                                                if (results[0].IP == null | results[0].IP == "") {
+                                                    API.query("UPDATE `rcon_players` set `IP`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
+                                                        if (error) throw error;
+                                                    });
+                                                } else if (results[0].GUID == null | results[0].GUID == "") {
+                                                    API.query("UPDATE `rcon_players` set `GUID`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
+                                                        if (error) throw error;
+                                                    });
+                                                } else {
+                                                    API.query("UPDATE `rcon_players` set `Ping`=? WHERE `Server`=? AND `Name`=?;", [Ping,ServerName,Name], function (error, results, fields) {
+                                                        if (error) throw error;
+                                                    });
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
+                                    }
                                 }
-                                
-                                /*
-                                if (p + 1 == Players.length) {
-                                    //savePlayers
-
-                                }*/
                             }
+                        });
+        
+                        if (i + 1 == Servers.length) {
+                            checkingPlayers = false;
                         }
-                    });
-    
-                    if (i + 1 == Servers.length) {
-                        checkingPlayers = false;
                     }
                 }
             }
-        } else {
-            return;
-        }
-    checkPlayers(time);
-    }, time * 1000);
+            checkPlayers(time);
+        }, time * 1000);
+    } catch (error) {
+        setTimeout(function() {
+            checkPlayers(time);
+        }, time * 1000);
+    }
 }
 checkPlayers(1); //Time in seconds
 
