@@ -189,33 +189,30 @@ async function checkPlayers(time) {
                                 const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/g)[0].replace(/(\(\?\)|\(\w+\))/g, '');
                                 const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
 
-                                if (Name == null | IP == null | GUID == null | Ping == null) {
-                                    return;
-                                }
-
-                                API.query("SELECT `IP`,`GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
-                                    if (error) throw error;
-                                    if (results[0] === undefined) {
-                                        API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
-                                            if (error) throw error;
-                                        });
-                                    } else {
-                                        if (results[0].IP == null | results[0].IP == "") {
-                                            API.query("UPDATE `rcon_players` set `IP`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
-                                                if (error) throw error;
-                                            });
-                                        } else if (results[0].GUID == null | results[0].GUID == "") {
-                                            API.query("UPDATE `rcon_players` set `GUID`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
+                                if (Name !== null && IP !== null && GUID !== null && Ping !== null) {
+                                    API.query("SELECT `IP`,`GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
+                                        if (error) throw error;
+                                        else if (results[0] == undefined) {
+                                            API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
                                                 if (error) throw error;
                                             });
                                         } else {
-                                            API.query("UPDATE `rcon_players` set `Ping`=? WHERE `Server`=? AND `Name`=? AND `IP`=? AND `GUID`=?;", [Ping,ServerName,Name,IP,GUID], function (error, results, fields) {
-                                                if (error) throw error;
-                                            });
+                                            if (results[0].IP == null | results[0].IP == "") {
+                                                API.query("UPDATE `rcon_players` set `IP`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
+                                                    if (error) throw error;
+                                                });
+                                            } else if (results[0].GUID == null | results[0].GUID == "") {
+                                                API.query("UPDATE `rcon_players` set `GUID`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
+                                                    if (error) throw error;
+                                                });
+                                            } else {
+                                                API.query("UPDATE `rcon_players` set `Ping`=? WHERE `Server`=? AND `Name`=?;", [Ping,ServerName,Name], function (error, results, fields) {
+                                                    if (error) throw error;
+                                                });
+                                            }
                                         }
-                                    }
-                                });
-
+                                    });
+                                }
                                 
                                 /*
                                 if (p + 1 == Players.length) {
@@ -237,7 +234,7 @@ async function checkPlayers(time) {
     checkPlayers(time);
     }, time * 1000);
 }
-checkPlayers(2.5); //Time in seconds
+checkPlayers(1); //Time in seconds
 
 
 async function Reconnect(BEConfig, ServerName) {
