@@ -25,8 +25,7 @@ app.use((req, res, next) => {
 
 
 /* Routes */
-const index = require('../routes/index');
-    app.use('/', index);
+const v1 = require('../routes/v1'); app.use('/v1', v1);
 
 
 // catch 404 and forward to error handler

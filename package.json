@@ -21,6 +21,7 @@
     "fs": "0.0.1-security",
     "moment": "^2.22.1",
     "promise-mysql": "^3.2.0",
+    "random-string": "^0.2.0",
     "randomstring": "^1.1.5"
   }
 }
