@@ -80,7 +80,7 @@ router.post('/Check', async(req, res, next) => {
             if (error) throw error;
             
             if (results[0] !== undefined) {
-                const dataDEC = await EncryptData(req.body["token"],results[0].data);
+                const dataDEC = await DecryptData(req.body["token"],results[0].data);
 
                 return res.json({
                     "Check": true,
