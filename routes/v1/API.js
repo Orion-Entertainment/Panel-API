@@ -85,11 +85,18 @@ router.post('/Check', async(req, res, next) => {
 
         req.API.query("SELECT `data` FROM `login` WHERE `client_id`=? AND `token`=?;", [req.body["client_id"], token], function (error, results, fields) {
             if (error) throw error;
-            console.log(results)
-            return res.json({
-                "client_id": results.insertId,
-                "token": token
-            }).end();
+            console.log(fields)
+            
+            if (results[0] !== undefined) {
+                return res.json({
+                    "Success": true,
+                    "data": results[0].data
+                }).end();
+            } else {
+                return res.json({
+                    "Success": false
+                }).end();
+            }
         });
     } catch (error) {
         console.log(error)
