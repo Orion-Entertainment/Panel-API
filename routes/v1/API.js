@@ -74,4 +74,24 @@ router.post('/Create', async(req, res, next) => {
     }
 });
 
+router.post('/Check', async(req, res, next) => {
+    try {
+        /* Check Token */
+        if (req.body["client_id"] == undefined | req.body["token"] == undefined) {
+            return res.status(404).send("client_id or token undefined");
+        }
+        
+        req.API.query("INSERT INTO `login` (`token`,`data`) VALUES(?,?);", [tokenENC, Data], function (error, results, fields) {
+            if (error) throw error;
+            return res.json({
+                "client_id": results.insertId,
+                "token": token
+            }).end();
+        });
+    } catch (error) {
+        console.log(error)
+        return res.json({Error: "API Error"}).end();
+    }
+});
+
 module.exports = router;
