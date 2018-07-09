@@ -46,17 +46,16 @@ router.post('/Create', async(req, res, next) => {
             letters: true,
             special: false
         });
+
         const token = tokenPart1+"-"+tokenPart2;
-
-        const tokenENC = await EncryptData(APITokenKey,token);
-
-        const Data = JSON.stringify({
+        const data = JSON.stringify({
             Testing: true
         });
 
-        const DataENC = await EncryptData(tokenENC,Data);
+        const tokenENC = await EncryptData(APITokenKey,token);
+        const dataENC = await EncryptData(token,data);
 
-        req.API.query("INSERT INTO `login` (`token`,`data`) VALUES(?,?);", [tokenENC, DataENC], function (error, results, fields) {
+        req.API.query("INSERT INTO `login` (`token`,`data`) VALUES(?,?);", [tokenENC, dataENC], function (error, results, fields) {
             if (error) throw error;
             return res.json({
                 "client_id": results.insertId,
