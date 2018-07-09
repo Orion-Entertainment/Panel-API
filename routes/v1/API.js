@@ -78,11 +78,14 @@ router.post('/Check', async(req, res, next) => {
     try {
         /* Check Token */
         if (req.body["client_id"] == undefined | req.body["token"] == undefined) {
-            return res.status(404).send("client_id or token undefined");
+            return res.send("client_id or token undefined");
         }
         
-        req.API.query("INSERT INTO `login` (`token`,`data`) VALUES(?,?);", [tokenENC, Data], function (error, results, fields) {
+        const token = await EncryptData('M6uPseis3w8peRrKMdKhNKuoIk5X27Tn',req.body["token"]);
+
+        req.API.query("SELECT `data` FROM `login` WHERE `client_id`=? AND `token`=?;", [req.body["client_id"], token], function (error, results, fields) {
             if (error) throw error;
+            console.log(results)
             return res.json({
                 "client_id": results.insertId,
                 "token": token
