@@ -64,7 +64,7 @@ router.post('/Create', async(req, res, next) => {
         req.API.query("INSERT INTO `login` (`token`,`data`) VALUES(?,?);", [tokenENC, Data], function (error, results, fields) {
             if (error) throw error;
             return res.json({
-                "client_id": results,
+                "client_id": results.insertId,
                 "token": token
             }).end();
         });
