@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
+/* Set Variables */
+const APITokenKey = 'M6uPseis3w8peRrKMdKhNKuoIk5X27Tn';
+
 /* Added NPM Packages */
 const crypto = require('crypto');
 const randomString = require('random-string');
@@ -19,20 +22,10 @@ async function DecryptData(key, data) {
     return decrypted; 
 }
 
-router.post('/', async(req, res, next) => {
-    try {
-        /* Check Token */
-        
-        return res.json({Success: "Valid Token /v1/API"}).end();
-    } catch (error) {
-        return res.json({Error: "API Error"}).end();
-    }
-});
-
+/* Routers */
 router.post('/Create', async(req, res, next) => {
     try {
         /* Check Token */
-        
         
         const clientID = await randomString({
             length: 16,
@@ -55,13 +48,15 @@ router.post('/Create', async(req, res, next) => {
         });
         const token = tokenPart1+"-"+tokenPart2;
 
-        const tokenENC = await EncryptData('M6uPseis3w8peRrKMdKhNKuoIk5X27Tn',token);
+        const tokenENC = await EncryptData(APITokenKey,token);
 
         const Data = JSON.stringify({
             Testing: true
         });
 
-        req.API.query("INSERT INTO `login` (`token`,`data`) VALUES(?,?);", [tokenENC, Data], function (error, results, fields) {
+        const DataENC = await EncryptData(tokenENC,Data);
+
+        req.API.query("INSERT INTO `login` (`token`,`data`) VALUES(?,?);", [tokenENC, DataENC], function (error, results, fields) {
             if (error) throw error;
             return res.json({
                 "client_id": results.insertId,
@@ -81,26 +76,24 @@ router.post('/Check', async(req, res, next) => {
             return res.send("client_id or token undefined");
         }
         
-        const token = await EncryptData('M6uPseis3w8peRrKMdKhNKuoIk5X27Tn',req.body["token"]);
-
-        req.API.query("SELECT `data` FROM `login` WHERE `client_id`=? AND `token`=?;", [req.body["client_id"], token], function (error, results, fields) {
+        const token = await EncryptData(APITokenKey,req.body["token"]);
+        req.API.query("SELECT `data` FROM `login` WHERE `client_id`=? AND BINARY `token`=?;", [req.body["client_id"], token], function (error, results, fields) {
             if (error) throw error;
-            console.log(fields)
             
             if (results[0] !== undefined) {
                 return res.json({
-                    "Success": true,
+                    "Check": true,
                     "data": results[0].data
                 }).end();
             } else {
                 return res.json({
-                    "Success": false
+                    "Check": false
                 }).end();
             }
         });
     } catch (error) {
         console.log(error)
-        return res.json({Error: "API Error"}).end();
+        return res.send("API Error");
     }
 });
 
