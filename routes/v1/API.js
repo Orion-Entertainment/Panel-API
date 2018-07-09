@@ -76,12 +76,12 @@ router.post('/Check', async(req, res, next) => {
         }
         
         const token = await EncryptData(APITokenKey,req.body["token"]);
-        req.API.query("SELECT `data` FROM `login` WHERE `client_id`=? AND BINARY `token`=?;", [req.body["client_id"], token], function (error, results, fields) {
+        req.API.query("SELECT `data` FROM `login` WHERE `client_id`=? AND BINARY `token`=?;", [req.body["client_id"], token], async function (error, results, fields) {
             if (error) throw error;
             
             if (results[0] !== undefined) {
                 const dataDEC = await EncryptData(req.body["token"],results[0].data);
-                
+
                 return res.json({
                     "Check": true,
                     "data": dataDEC
