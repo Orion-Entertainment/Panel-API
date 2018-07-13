@@ -14,9 +14,11 @@ router.post('/Check', async(req, res, next) => {
         const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
         if (CheckLogin == false) {
             return res.send("Invalid Login");
-        } else {
-            return res.send("Success");
         }
+
+        console.log(req.headers['cf-connecting-ip']);
+        console.log(req);
+        return res.send("Success");
     } catch (error) {
         console.log(error)
         return res.send("API Error");
