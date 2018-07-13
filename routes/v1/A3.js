@@ -11,11 +11,11 @@ const router = express.Router();
 router.post('/Check', async(req, res, next) => {
     try {
         /* Check Login */
-        const CheckLogin = await req.Check(req.body["client_id"],req.body["token"]);
+        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
         if (CheckLogin == false) {
-            return req.send("Invalid Login");
+            return res.send("Invalid Login");
         } else {
-            return req.send("Success");
+            return res.send("Success");
         }
     } catch (error) {
         console.log(error)
