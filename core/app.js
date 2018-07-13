@@ -41,8 +41,7 @@ app.use((req, res, next) => {
         if (ClientID == undefined | Token == undefined) {return false;}
         
         const token = await EncryptData(APITokenKey, Token);
-        const Query = req.API.query("SELECT `client_id` FROM `login` WHERE `client_id`=? AND BINARY `token`=?;", [ClientID, token]);
-        console.log(Query)
+        const Query = await API.query("SELECT `client_id` FROM `login` WHERE `client_id`=? AND BINARY `token`=?;", [ClientID, token]);
         if (Query[0] == undefined) {return false;} else {return true;}
     };
 
