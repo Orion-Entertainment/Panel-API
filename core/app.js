@@ -1,8 +1,9 @@
 const express = require('express'); const app = express();
 const mysql = require('promise-mysql');
+const crypto = require('crypto');
+const bodyParser = require('body-parser');
 const config = require('./config.json');
 
-const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -18,7 +19,32 @@ const API = mysql.createPool({
     connectionLimit: config.API.connectionLimit,
 });
 
+
+
+const APITokenKey = 'M6uPseis3w8peRrKMdKhNKuoIk5X27Tn';
+
+async function EncryptData(key, data) {
+    const cipher = crypto.createCipher('aes-256-cbc', key);
+    let encrypted = cipher.update(data,'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
+}
+async function DecryptData(key, data) {
+    const decipher = crypto.createDecipher('aes-256-cbc', key) 
+    let decrypted = decipher.update(data,'hex','utf8') 
+    decrypted += decipher.final('utf8'); 
+    return decrypted; 
+}
+
 app.use((req, res, next) => {
+    req.Check = async function(ClientID, Token) {
+        if (ClientID == undefined | Token == undefined) {return false;}
+        
+        const token = await EncryptData(APITokenKey, Token);
+        const Query = req.API.query("SELECT `client_id` FROM `login` WHERE `client_id`=? AND BINARY `token`=?;", [ClientID, token]);
+        if (Query[0] == undefined) {return false;} else {return true;}
+    };
+
     req.API = API;
     next();
 });
