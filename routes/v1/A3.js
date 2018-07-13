@@ -17,7 +17,7 @@ router.post('/Check', async(req, res, next) => {
         }
 
         console.log(req.headers['cf-connecting-ip']);
-        console.log(req);
+        console.log(req.body);
         return res.send("Success");
     } catch (error) {
         console.log(error)
