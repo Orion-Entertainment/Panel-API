@@ -74,6 +74,7 @@ router.post('/Check', async(req, res, next) => {
         if (req.body["client_id"] == undefined | req.body["token"] == undefined) {
             return res.send("client_id or token undefined");
         }
+        console.log('/Check | '+req.body["client_id"]+':'+req.body["token"])
         
         const token = await EncryptData(APITokenKey,req.body["token"]);
         req.API.query("SELECT `data` FROM `login` WHERE `client_id`=? AND BINARY `token`=?;", [req.body["client_id"], token], async function (error, results, fields) {
