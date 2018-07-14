@@ -20,7 +20,7 @@ const pid2guid = function(pid) {
 
 async function checkNewPlayers(time) {
     try {
-        setTimeout(function() {
+        setTimeout(async function() {
             for (let i = 0; i < ServerDBs.length; i++) {
                 const DB = ServerDBs[Object.keys(ServerDBs)[i]];
                 const Query = await DB.query("SELECT `name`,`pid` FROM `players` WHERE `Tracked`='0' LIMIT 250;");
