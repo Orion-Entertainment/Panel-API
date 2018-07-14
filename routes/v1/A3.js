@@ -45,8 +45,6 @@ router.post('/Addon', async(req, res, next) => {
                     case "Killed":
                         const KillerName = Data[1];
                         const KillerPID = Data[2];
-                        console.log(KillerName)
-                        console.log(KillerPID)
 
                         if (KillerName === undefined | KillerPID === undefined) {return res.send("Invalid Log Data");}
 
