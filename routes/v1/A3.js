@@ -35,8 +35,9 @@ router.post('/Addon', async(req, res, next) => {
         } else if (req.body["option"] == undefined | req.body["data"] == undefined) {
             return res.send("Invalid Login");
         }
-        const Option = req.body["option"].replace(/["]/g, "");
+        const Option = req.body["option"].replace(/["']/g, "");
         const Data = req.body["data"];
+        console.log(JSON.stringify(Data))
 
         switch (Option) {
             case "Log":
@@ -45,7 +46,6 @@ router.post('/Addon', async(req, res, next) => {
                     case "Killed":
                         const KillerName = Data[1];
                         const KillerPID = Data[2];
-                        console.log(Data)
                         console.log(KillerName,KillerPID)
 
                         if (KillerName === undefined | KillerPID === undefined) {return res.send("Invalid Log Data");}
