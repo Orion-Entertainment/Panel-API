@@ -52,4 +52,4 @@ async function checkNewPlayers(time) {
         }, time * 1000);
     }
 }
-checkNewPlayers(5); //Time in seconds
+checkNewPlayers(15); //Time in seconds

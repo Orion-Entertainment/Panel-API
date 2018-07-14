@@ -29,13 +29,13 @@ const Servers = [{
 }]
 
 const ServerDBs = {
-    "maldenlife2": mysql.createPool({
-        host: config.API.host,
-        user: config.API.user,
-        password: config.API.password,
-        database: config.API.database,
-        port: config.API.port,
-        connectionLimit: config.API.connectionLimit,
+    "maldenlife": mysql.createPool({
+        host: config.Servers.host,
+        port: config.Servers.port,
+        user: config.Servers.user,
+        password: config.Servers.password,
+        database: "maldenlife",
+        connectionLimit: config.Servers.connectionLimit,
     })
 }
 
