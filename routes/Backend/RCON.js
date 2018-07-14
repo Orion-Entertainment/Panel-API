@@ -228,7 +228,7 @@ async function checkPlayers(time) {
                                                         return;
                                                     });
                                                 } else if (Ping !== results[0].Ping) {
-                                                    await updatePlayer(Name, IP, GUID);
+                                                    updatePlayer(Name, IP, GUID);
                                                     API.query("UPDATE `rcon_players` set `Ping`=? WHERE `Server`=? AND `Name`=?;", [Ping,ServerName,Name], function (error, results, fields) {
                                                         if (error) throw error;
                                                         return;
