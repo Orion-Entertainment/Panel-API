@@ -23,7 +23,7 @@ async function checkNewPlayers(time) {
         setTimeout(async function() {
             for (var i in ServerDBs) {
                 const DB = ServerDBs[i];
-                const Query = await DB.query("SELECT `name`,`pid`,`insert_time` FROM `players` WHERE `Tracked`='0' LIMIT 250;");
+                const Query = await DB.query("SELECT `name`,`pid`,`insert_time` FROM `players` WHERE `Tracked`='0' LIMIT 500;");
 
                 if (Query[0] !== undefined) {
                     for (let p = 0; p < Query.length; p++) {
