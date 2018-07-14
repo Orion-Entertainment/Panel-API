@@ -191,7 +191,7 @@ async function checkPlayers(time) {
                                     const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
     
                                     if (Name !== null && IP !== null && GUID !== null && Ping !== null) {
-                                        API.query("SELECT `IP`,`GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
+                                        API.query("SELECT `IP`,`GUID`,`Ping` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
                                             if (error) throw error;
                                             else if (results[0] == undefined) {
                                                 API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
@@ -209,12 +209,12 @@ async function checkPlayers(time) {
                                                         if (error) throw error;
                                                         return;
                                                     });
-                                                } else {
+                                                } else if (Ping !== results[0].Ping) {
                                                     API.query("UPDATE `rcon_players` set `Ping`=? WHERE `Server`=? AND `Name`=?;", [Ping,ServerName,Name], function (error, results, fields) {
                                                         if (error) throw error;
                                                         return;
                                                     });
-                                                }
+                                                } else {return}
                                             }
                                         });
                                     } else {return}
