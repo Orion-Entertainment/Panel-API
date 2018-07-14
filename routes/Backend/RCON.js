@@ -196,7 +196,7 @@ async function updatePlayer(Name, IP, GUID) {
             await API.query("UPDATE `servers_players` set `Last Name`=?,`Names`=? WHERE `GUID`=?;", [Name,JSON.stringify(Names),GUID]);
         }
         if (Player["Last IP"] !== IP) {
-            let IPs = Player["Last IPs"];
+            let IPs = Player["Last IP"];
             IPs.push({[IP]: Now})
             if (IPs.length > 20) { //Max to save = 20
                 IPs.shift();
