@@ -17,7 +17,7 @@ async function connectRCon (BEConfig, ServerName) {
     BE.login();
     BE.on('login', function(err, success) {
         if (err) {
-            console.log('<RCON> Unable to Connect to '+ServerName+'.');
+            //console.log('<RCON> Unable to Connect to '+ServerName+'.');
             Reconnect(BEConfig, ServerName);
         }
         else if (success == true) {
@@ -28,7 +28,7 @@ async function connectRCon (BEConfig, ServerName) {
                 Name: ServerName,
                 BE: BE
             });
-            console.log('<RCON> Successfully logged into '+ServerName+'.');
+            //console.log('<RCON> Successfully logged into '+ServerName+'.');
         }
         else if (success == false) {
             console.log('<RCON> Login Failed to '+ServerName+'! (password may be incorrect)');
