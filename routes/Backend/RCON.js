@@ -1,5 +1,5 @@
 const BattleNode = require('battle-node');
-const GETServers = require('./servers');
+const GETServers = require('../../core/app').Servers;
 const API = require('../../core/app').API;
 const moment = require('moment');
 
@@ -83,10 +83,10 @@ async function connectRCon (BEConfig, ServerName) {
                     MSG: getData[3]
                 });
             }
-            
+
         } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected|- BE GUID: (.+))|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
             Category = 'PlayerConnect';
-            
+
             if (/Player #\d+ (.+) - BE GUID: (.+)/g.test(message)) {
                 return;
             } else if (/Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
@@ -239,7 +239,7 @@ async function checkPlayers(time) {
                                     const IP = Players[p].match(/(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/g);
                                     const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/g)[0].replace(/(\(\?\)|\(\w+\))/g, '');
                                     const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
-    
+
                                     if (Name !== null && IP !== null && GUID !== null && Ping !== null) {
                                         API.query("SELECT `IP`,`GUID`,`Ping` FROM `rcon_players` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
                                             if (error) throw error;
@@ -272,7 +272,7 @@ async function checkPlayers(time) {
                                 }
                             }
                         });
-        
+
                         if (i + 1 == Servers.length) {
                             checkingPlayers = false;
                         }

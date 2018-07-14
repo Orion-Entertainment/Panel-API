@@ -22,6 +22,7 @@ if (cluster.isMaster) {
     });
   
     require('./routes/Backend/RCON');
+    require('./routes/Backend/Database');
 } else {
     
     const port = normalizePort(process.env.PORT || Port);

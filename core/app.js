@@ -19,6 +19,25 @@ const API = mysql.createPool({
     connectionLimit: config.API.connectionLimit,
 });
 
+const Servers = [{
+    "Name": "MaldenLife",
+    "IP": "66.70.180.170",
+    "Port": "2302",
+    "RCONPort": "2310",
+    "RCONPassword": "49e0fe27dc8ec85b8898519810a78b5f",
+    "Database": "maldenlife2"
+}]
+
+const ServerDBs = {
+    "maldenlife2": mysql.createPool({
+        host: config.API.host,
+        user: config.API.user,
+        password: config.API.password,
+        database: config.API.database,
+        port: config.API.port,
+        connectionLimit: config.API.connectionLimit,
+    })
+}
 
 
 const APITokenKey = 'M6uPseis3w8peRrKMdKhNKuoIk5X27Tn';
@@ -75,3 +94,5 @@ app.use((err, req, res, next) => {
 
 module.exports = app;
 module.exports.API = API;
+module.exports.Servers = Servers;
+module.exports.ServerDBs = ServerDBs;
