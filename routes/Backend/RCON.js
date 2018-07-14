@@ -1,6 +1,7 @@
 const BattleNode = require('battle-node');
 const GETServers = require('./servers');
 const API = require('../../core/app').API;
+const moment = require('moment');
 
 let Servers = [];
 
@@ -170,6 +171,23 @@ async function getPlayerGUID(ServerName, Name) {
     return query[0];
 }
 
+async function updatePlayer(Name, IP, GUID) {
+    const query = await API.query("SELECT `Last Name`,`Names`,`Last IP`,`IPs` FROM `servers_players` WHERE `GUID`=?;", [GUID]);
+    if (query[0] == undefined) {
+        const Names = JSON.stringify({
+            [Name]: await moment(new Date()).format('YYYY/MM/DD HH:mm:ss')
+        });
+        const IPs = JSON.stringify({
+            [IP]: await moment(new Date()).format('YYYY/MM/DD HH:mm:ss')
+        });
+
+        await API.query("INSERT INTO `servers_players` (`Last Name`,`Names`,`Last IP`,`IPs`) VALUES(?,?,?,?);", [Name,Names,IP,IPs]);
+        return;
+    } else {
+        return;////////////////////////////////////////////////////////////////////////////
+    }
+}
+
 let checkingPlayers = false;
 async function checkPlayers(time) {
     try {
@@ -210,6 +228,7 @@ async function checkPlayers(time) {
                                                         return;
                                                     });
                                                 } else if (Ping !== results[0].Ping) {
+                                                    await updatePlayer(Name, IP, GUID);
                                                     API.query("UPDATE `rcon_players` set `Ping`=? WHERE `Server`=? AND `Name`=?;", [Ping,ServerName,Name], function (error, results, fields) {
                                                         if (error) throw error;
                                                         return;
