@@ -52,10 +52,6 @@ router.post('/Addon', async(req, res, next) => {
                         const KillerGroup = Data[7];
                         const KillDistance = Data[8];
 
-                        if (KilledName == undefined | KilledPID == undefined | KilledGroup == undefined | KillerName == undefined | KillerPID == undefined |
-                            KillerWeapon == undefined | KillerGroup == undefined | KillDistance == undefined) {return res.send("Invalid Log Data");};
-                        //if (KilledName == "" | KilledPID == "" | KilledGroup == "" | KillerName == "" | KillerPID == "" | KillerWeapon == "" | KillerGroup == "" | KillDistance == "") {return res.send("Invalid Log Data");};
-
                         const SaveData = JSON.stringify({
                             KilledName: KilledName,
                             KilledPID: KilledPID,
