@@ -22,8 +22,9 @@ let checkingPlayers = false;
 async function checkNewPlayers(time) {
     try {
         setTimeout(async function() {
-            console.log(`check`)
             if (checkingPlayers == false) {
+                console.log(`check`)
+                console.log(ServerDBs)
                 checkingPlayers = true;
                 for (let i = 0; i < ServerDBs.length; i++) {
                     const DB = ServerDBs[Object.keys(ServerDBs)[i]];
