@@ -22,7 +22,7 @@ async function connectRCon (BEConfig, ServerName) {
             Reconnect(BEConfig, ServerName);
         }
         else if (success == true) {
-            API.query("DELETE FROM `rcon_players` WHERE `Server`=?;", [ServerName], function (error, results, fields) {
+            API.query("DELETE FROM `rcon_players` WHERE BINARY `Server`=?;", [ServerName], function (error, results, fields) {
                 if (error) throw error;
             });
             Servers.push({
@@ -38,7 +38,7 @@ async function connectRCon (BEConfig, ServerName) {
     });
 
     BE.on('disconnected', function() {
-        API.query("DELETE FROM `rcon_players` WHERE `Server`=?;", [ServerName], function (error, results, fields) {
+        API.query("DELETE FROM `rcon_players` WHERE BINARY `Server`=?;", [ServerName], function (error, results, fields) {
             if (error) throw error;
         });
         for (let i = 0; i < Servers.length; i++) {
@@ -161,18 +161,18 @@ async function addPlayer(ServerName, Data) {
 }
 
 async function removePlayer(ServerName, Name) {
-    API.query("DELETE FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
+    API.query("DELETE FROM `rcon_players` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
         if (error) throw error;
     });
 }
 
 async function getPlayerGUID(ServerName, Name) {
-    const query = await API.query("SELECT `GUID` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name]);
+    const query = await API.query("SELECT `GUID` FROM `rcon_players` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name]);
     return query[0];
 }
 
 async function updatePlayer(Name, IP, GUID) {
-    const query = await API.query("SELECT `Last Name`,`Names`,`Last IP`,`IPs` FROM `servers_players` WHERE `GUID`=?;", [GUID]);
+    const query = await API.query("SELECT `Last Name`,`Names`,`Last IP`,`IPs` FROM `servers_players` WHERE BINARY `GUID`=?;", [GUID]);
     const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
     if (query[0] == undefined) {
         const Names = JSON.stringify([{
@@ -188,20 +188,32 @@ async function updatePlayer(Name, IP, GUID) {
         const Player = query[0];
 
         if (Player["Last Name"] !== Name) {
-            let Names = Player["Names"];
-            Names.push({[Name]: Now})
+            let Names = [];
+            if (Player["Names"] != null) {
+                Names = JSON.parse(Player["Names"]);
+            } else {
+                Names = [];
+            }
+            Names.push({[Name]: Now});
+
             if (Names.length > 20) { //Max to save = 20
                 Names.shift();
             }
-            await API.query("UPDATE `servers_players` set `Last Name`=?,`Names`=? WHERE `GUID`=?;", [Name,JSON.stringify(Names),GUID]);
+            await API.query("UPDATE `servers_players` set `Last Name`=?,`Names`=? WHERE BINARY `GUID`=?;", [Name,JSON.stringify(Names),GUID]);
         }
         if (Player["Last IP"] !== IP) {
-            let IPs = Player["IPs"];
+            let IPs = [];
+            if (Player["IPs"] != null) {
+                IPs = JSON.parse(Player["IPs"]);
+            } else {
+                IPs = [];
+            }
             IPs.push({[IP]: Now})
+
             if (IPs.length > 20) { //Max to save = 20
                 IPs.shift();
             }
-            await API.query("UPDATE `servers_players` set `Last IP`=?,`IPs`=? WHERE `GUID`=?;", [IP,JSON.stringify(IPs),GUID]);
+            await API.query("UPDATE `servers_players` set `Last IP`=?,`IPs`=? WHERE BINARY `GUID`=?;", [IP,JSON.stringify(IPs),GUID]);
         }
 
         return;
@@ -229,7 +241,7 @@ async function checkPlayers(time) {
                                     const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
     
                                     if (Name !== null && IP !== null && GUID !== null && Ping !== null) {
-                                        API.query("SELECT `IP`,`GUID`,`Ping` FROM `rcon_players` WHERE `Server`=? AND `Name`=?;", [ServerName,Name], function (error, results, fields) {
+                                        API.query("SELECT `IP`,`GUID`,`Ping` FROM `rcon_players` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
                                             if (error) throw error;
                                             else if (results[0] == undefined) {
                                                 API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
@@ -238,18 +250,18 @@ async function checkPlayers(time) {
                                                 });
                                             } else {
                                                 if (results[0].IP == null | results[0].IP == "") {
-                                                    API.query("UPDATE `rcon_players` set `IP`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
+                                                    API.query("UPDATE `rcon_players` set `IP`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
                                                         if (error) throw error;
                                                         return;
                                                     });
                                                 } else if (results[0].GUID == null | results[0].GUID == "") {
-                                                    API.query("UPDATE `rcon_players` set `GUID`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
+                                                    API.query("UPDATE `rcon_players` set `GUID`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
                                                         if (error) throw error;
                                                         return;
                                                     });
                                                 } else if (Ping !== results[0].Ping) {
                                                     updatePlayer(Name, IP, GUID);
-                                                    API.query("UPDATE `rcon_players` set `Ping`=? WHERE `Server`=? AND `Name`=?;", [Ping,ServerName,Name], function (error, results, fields) {
+                                                    API.query("UPDATE `rcon_players` set `Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=?;", [Ping,ServerName,Name], function (error, results, fields) {
                                                         if (error) throw error;
                                                         return;
                                                     });
