@@ -38,6 +38,7 @@ router.post('/Addon', async(req, res, next) => {
         const Option = req.body["option"].replace(/["']/g, "");
         const Data = req.body["data"];
         console.log(JSON.stringify(Data))
+        console.log(JSON.parse(Data))
 
         switch (Option) {
             case "Log":
