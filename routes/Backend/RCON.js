@@ -226,7 +226,6 @@ async function checkPlayers(time) {
                         if (i + 1 == Servers.length) {
                             checkingPlayers = false;
                             console.log('checkingPlayers false')
-                            return;
                         }
                     }
                 }
