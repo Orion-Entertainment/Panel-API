@@ -189,7 +189,7 @@ async function updatePlayer(Name, IP, GUID) {
 
         if (Player["Last Name"] !== Name) {
             let Names = [];
-            if (Player["Names"] != null) {
+            if (Player["Names"] !== null) {
                 Names = JSON.parse(Player["Names"]);
             } else {
                 Names = [];
@@ -203,7 +203,7 @@ async function updatePlayer(Name, IP, GUID) {
         }
         if (Player["Last IP"] !== IP) {
             let IPs = [];
-            if (Player["IPs"] != null) {
+            if (Player["IPs"] !== null) {
                 IPs = JSON.parse(Player["IPs"]);
             } else {
                 IPs = [];
