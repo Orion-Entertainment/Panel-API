@@ -36,12 +36,29 @@ router.post('/Addon', async(req, res, next) => {
             return res.send("Invalid Login");
         }
         const Option = req.body["option"].replace(/["]/g, "");
-        console.log(Option)
+        const Data = req.body["data"];
 
         switch (Option) {
             case "Log":
-                console.log('log 1')
-                return res.send("Success");
+                const Action = Data[0];
+                switch (Action) {
+                    case "Killed":
+                        const KillerName = Data[1];
+                        const KillerPID = Data[2];
+
+                        if (KillerName == undefined | KillerPID == undefined) {return res.send("Invalid Log Data");}
+
+                        const Data = JSON.stringify({
+                            KillerName: KillerName,
+                            KillerPID: KillerPID
+                        });
+
+                        req.API.query("INSERT INTO `servers_logs` (`Option`,`Action`,`Data`) VALUES(?,?,?);", [Option,Action,Data]);
+                        return res.send("Success");
+
+                    default:
+                        return res.send("Invalid Log Action");
+                }
             
             default:
                 return res.send("Invalid Option");
