@@ -193,7 +193,7 @@ async function updatePlayer(Name, IP, GUID) {
             if (Names.length > 20) { //Max to save = 20
                 Names.shift();
             }
-            await API.query("UPDATE `servers_players` set `Last Name`=?,`Names`=?;", [Name,JSON.stringify(Names)]);
+            await API.query("UPDATE `servers_players` set `Last Name`=?,`Names`=? WHERE `GUID`=?;", [Name,JSON.stringify(Names),GUID]);
         }
         if (Player["Last IP"] !== IP) {
             let IPs = Player["Last IPs"];
@@ -201,7 +201,7 @@ async function updatePlayer(Name, IP, GUID) {
             if (IPs.length > 20) { //Max to save = 20
                 IPs.shift();
             }
-            await API.query("UPDATE `servers_players` set `Last IP`=?,`IPs`=?;", [IP,JSON.stringify(IPs)]);
+            await API.query("UPDATE `servers_players` set `Last IP`=?,`IPs`=? WHERE `GUID`=?;", [IP,JSON.stringify(IPs),GUID]);
         }
 
         return;
