@@ -36,6 +36,30 @@ const ServerDBs = {
         password: config.Servers.password,
         database: "maldenlife",
         connectionLimit: config.Servers.connectionLimit,
+    }),
+    "maldenlife2": mysql.createPool({
+        host: config.Servers.host,
+        port: config.Servers.port,
+        user: config.Servers.user,
+        password: config.Servers.password,
+        database: "maldenlife2",
+        connectionLimit: config.Servers.connectionLimit,
+    }),
+    "altislife": mysql.createPool({
+        host: config.Servers.host,
+        port: config.Servers.port,
+        user: config.Servers.user,
+        password: config.Servers.password,
+        database: "altislife",
+        connectionLimit: config.Servers.connectionLimit,
+    }),
+    "altislife2": mysql.createPool({
+        host: config.Servers.host,
+        port: config.Servers.port,
+        user: config.Servers.user,
+        password: config.Servers.password,
+        database: "altislife2",
+        connectionLimit: config.Servers.connectionLimit,
     })
 }
 
