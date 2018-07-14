@@ -36,9 +36,8 @@ router.post('/Addon', async(req, res, next) => {
             return res.send("Invalid Login");
         }
         const Option = req.body["option"].replace(/["']/g, "");
-        const Data = req.body["data"];
-        console.log(JSON.stringify(Data))
-        console.log(JSON.parse(Data))
+        const Data = JSON.parse(req.body["data"]);
+        console.log(Data)
 
         switch (Option) {
             case "Log":
