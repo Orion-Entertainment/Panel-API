@@ -41,7 +41,7 @@ async function checkNewPlayers(time) {
                         await DB.query("UPDATE `players` set `Tracked`='1' WHERE BINARY `pid`=?;", [Query[p].pid]);
                         return;
                     }
-                } else {return}
+                }
             }
             checkNewPlayers(time);
         }, time * 1000);
