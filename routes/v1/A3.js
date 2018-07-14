@@ -43,14 +43,29 @@ router.post('/Addon', async(req, res, next) => {
                 const Action = Data[0];
                 switch (Action) {
                     case "Killed":
-                        const KillerName = Data[1];
-                        const KillerPID = Data[2];
+                        const KilledName = Data[1];
+                        const KilledPID = Data[2];
+                        const KilledGroup = Data[3];
+                        const KillerName = Data[4];
+                        const KillerPID = Data[5];
+                        const KillerWeapon = Data[6];
+                        const KillerGroup = Data[7];
+                        const KillDistance = Data[8];
 
-                        if (KillerName === undefined | KillerPID === undefined) {return res.send("Invalid Log Data");}
+                        if (KilledName == undefined | KilledPID == undefined | KilledGroup == undefined | KillerName == undefined | KillerPID == undefined |
+                            KillerWeapon == undefined | KillerGroup == undefined | KillDistance == undefined) {return res.send("Invalid Log Data");}
+                        if (KilledName == "" | KilledPID == "" | KilledGroup == "" | KillerName == "" | KillerPID == "" |
+                            KillerWeapon == "" | KillerGroup == "" | KillDistance == "") {return res.send("Invalid Log Data");}
 
                         const SaveData = JSON.stringify({
+                            KilledName: KilledName,
+                            KilledPID: KilledPID,
+                            KilledGroup: KilledGroup,
                             KillerName: KillerName,
-                            KillerPID: KillerPID
+                            KillerPID: KillerPID,
+                            KillerWeapon: KillerWeapon,
+                            KillerGroup: KillerGroup,
+                            KillDistance: KillDistance
                         });
 
                         req.API.query("INSERT INTO `servers_logs` (`Option`,`Action`,`Data`) VALUES(?,?,?);", [Option,Action,SaveData]);
