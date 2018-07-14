@@ -174,14 +174,15 @@ async function getPlayerGUID(ServerName, Name) {
 async function updatePlayer(Name, IP, GUID) {
     const query = await API.query("SELECT `Last Name`,`Names`,`Last IP`,`IPs` FROM `servers_players` WHERE `GUID`=?;", [GUID]);
     if (query[0] == undefined) {
+        const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
         const Names = JSON.stringify({
-            [Name]: await moment(new Date()).format('YYYY/MM/DD HH:mm:ss')
+            [Name]: Now
         });
         const IPs = JSON.stringify({
-            [IP]: await moment(new Date()).format('YYYY/MM/DD HH:mm:ss')
+            [IP]: Now
         });
 
-        await API.query("INSERT INTO `servers_players` (`Last Name`,`Names`,`Last IP`,`IPs`) VALUES(?,?,?,?);", [Name,Names,IP,IPs]);
+        await API.query("INSERT INTO `servers_players` (`Last Name`,`Names`,`Last IP`,`IPs`,`GUID`,`First Seen`) VALUES(?,?,?,?,?,?);", [Name,Names,IP,IPs,GUID,Now]);
         return;
     } else {
         return;////////////////////////////////////////////////////////////////////////////
