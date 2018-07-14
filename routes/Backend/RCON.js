@@ -177,7 +177,6 @@ async function checkPlayers(time) {
             if (checkingPlayers == false) {
                 if (Servers.length > 0) {
                     checkingPlayers = true;
-                    console.log('checkingPlayers true')
                     for (let i = 0; i < Servers.length; i++) {
                         const ServerName = Servers[i].Name;
                         const BE = Servers[i].BE;
@@ -225,7 +224,6 @@ async function checkPlayers(time) {
         
                         if (i + 1 == Servers.length) {
                             checkingPlayers = false;
-                            console.log('checkingPlayers false')
                         }
                     }
                 }
@@ -234,8 +232,8 @@ async function checkPlayers(time) {
         }, time * 1000);
     } catch (error) {
         console.error(error)
-        checkingPlayers = false;
         setTimeout(function() {
+            checkingPlayers = false;
             checkPlayers(time);
         }, time * 1000);
     }
