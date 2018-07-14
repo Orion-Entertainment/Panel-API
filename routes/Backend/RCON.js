@@ -194,7 +194,20 @@ async function updatePlayer(Name, IP, GUID) {
             } else {
                 Names = [];
             }
-            Names.push({[Name]: Now});
+
+            //Check if name is in array if not push new one
+            if (Names.length > 0) {
+                for (let i = 0; i < Names.length; i++) {
+                    const checkName = Names[i];
+                    if (Object.getOwnPropertyNames(checkName)[0] == Name) {
+                        checkName[Name] = Now;
+                    } else {
+                        Names.push({[Name]: Now});
+                    }
+                }
+            } else {
+                Names.push({[Name]: Now});
+            }
 
             if (Names.length > 20) { //Max to save = 20
                 Names.shift();
