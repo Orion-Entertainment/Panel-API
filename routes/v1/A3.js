@@ -59,11 +59,11 @@ router.post('/Addon', async(req, res, next) => {
                         return res.send("Success");
 
                     default:
-                        return res.send("Invalid Log Action");
+                        return res.send("Invalid Log Action: "+Action);
                 }
             
             default:
-                return res.send("Invalid Option");
+                return res.send("Invalid Option: "+Option);
         }
         
     } catch (error) {
