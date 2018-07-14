@@ -81,6 +81,7 @@ router.post('/Addon', async(req, res, next) => {
         
     } catch (error) {
         console.log(error)
+        console.log(req.body)
         return res.send("API Error");
     }
 });
