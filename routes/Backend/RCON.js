@@ -202,6 +202,7 @@ async function updatePlayer(Name, IP, GUID) {
             await API.query("UPDATE `servers_players` set `Last Name`=?,`Names`=? WHERE BINARY `GUID`=?;", [Name,JSON.stringify(Names),GUID]);
         }
         if (Player["Last IP"] !== IP) {
+            console.log(IP,Player["Last IP"])
             let IPs = [];
             if (Player["IPs"] !== null) {
                 IPs = JSON.parse(Player["IPs"]);
