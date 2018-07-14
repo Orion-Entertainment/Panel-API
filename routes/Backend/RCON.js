@@ -174,9 +174,9 @@ let checkingPlayers = false;
 async function checkPlayers(time) {
     try {
         setTimeout(function() {
-            if (checkingPlayers != true) {
-                checkingPlayers = true;
+            if (checkingPlayers == false) {
                 if (Servers.length > 0) {
+                    checkingPlayers = true;
                     for (let i = 0; i < Servers.length; i++) {
                         const ServerName = Servers[i].Name;
                         const BE = Servers[i].BE;
@@ -196,29 +196,23 @@ async function checkPlayers(time) {
                                             else if (results[0] == undefined) {
                                                 API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
                                                     if (error) throw error;
-                                                    return;
                                                 });
                                             } else {
                                                 if (results[0].IP == null | results[0].IP == "") {
                                                     API.query("UPDATE `rcon_players` set `IP`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
                                                         if (error) throw error;
-                                                        return;
                                                     });
                                                 } else if (results[0].GUID == null | results[0].GUID == "") {
                                                     API.query("UPDATE `rcon_players` set `GUID`=?,`Ping`=? WHERE `Server`=? AND `Name`=? AND `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
                                                         if (error) throw error;
-                                                        return;
                                                     });
                                                 } else {
                                                     API.query("UPDATE `rcon_players` set `Ping`=? WHERE `Server`=? AND `Name`=?;", [Ping,ServerName,Name], function (error, results, fields) {
                                                         if (error) throw error;
-                                                        return;
                                                     });
                                                 }
                                             }
                                         });
-                                    } else {
-                                        return;
                                     }
                                 }
                             }
@@ -234,6 +228,8 @@ async function checkPlayers(time) {
             checkPlayers(time);
         }, time * 1000);
     } catch (error) {
+        console.error(error)
+        checkingPlayers = false;
         setTimeout(function() {
             checkPlayers(time);
         }, time * 1000);
