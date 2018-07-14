@@ -201,7 +201,7 @@ async function updatePlayer(Name, IP, GUID) {
                     const checkName = Names[i];
                     if (Object.keys(checkName)[0] == Name) {
                         checkName[Name] = Now;
-                    } else {
+                    } else if (i + 1 == Names.length) {
                         Names.push({[Name]: Now});
                     }
                 }
