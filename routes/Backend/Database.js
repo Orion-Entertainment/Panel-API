@@ -36,10 +36,9 @@ async function checkNewPlayers(time) {
                             }])
                             await API.query("INSERT INTO `servers_players` (`Last Name`,`Names`,`GUID`,`Steam64ID`,`First Seen`) VALUES(?,?,?,?,?);", [Query[p].name,Names,GUID,Query[p].pid,Now]);
                         } else if (CheckPlayer[0].Steam64ID == undefined) {
-                            await DB.query("UPDATE `servers_players` set `Steam64ID`=? WHERE BINARY `GUID`=?;", [Query[p].pid,GUID]);
+                            await API.query("UPDATE `servers_players` set `Steam64ID`=? WHERE BINARY `GUID`=?;", [Query[p].pid,GUID]);
                         }
                         await DB.query("UPDATE `players` set `Tracked`='1' WHERE BINARY `pid`=?;", [Query[p].pid]);
-                        return;
                     }
                 }
             }
