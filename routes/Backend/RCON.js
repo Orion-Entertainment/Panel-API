@@ -173,19 +173,38 @@ async function getPlayerGUID(ServerName, Name) {
 
 async function updatePlayer(Name, IP, GUID) {
     const query = await API.query("SELECT `Last Name`,`Names`,`Last IP`,`IPs` FROM `servers_players` WHERE `GUID`=?;", [GUID]);
+    const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
     if (query[0] == undefined) {
-        const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
-        const Names = JSON.stringify({
+        const Names = JSON.stringify([{
             [Name]: Now
-        });
-        const IPs = JSON.stringify({
+        }]);
+        const IPs = JSON.stringify([{
             [IP]: Now
-        });
+        }]);
 
         await API.query("INSERT INTO `servers_players` (`Last Name`,`Names`,`Last IP`,`IPs`,`GUID`,`First Seen`) VALUES(?,?,?,?,?,?);", [Name,Names,IP,IPs,GUID,Now]);
         return;
     } else {
-        return;////////////////////////////////////////////////////////////////////////////
+        const Player = query[0];
+
+        if (Player["Last Name"] !== Name) {
+            let Names = Player["Names"];
+            Names.push({[Name]: Now})
+            if (Names.length > 20) { //Max to save = 20
+                Names.shift();
+            }
+            await API.query("UPDATE `servers_players` set `Last Name`=?,`Names`=?;", [Name,JSON.stringify(Names)]);
+        }
+        if (Player["Last IP"] !== IP) {
+            let IPs = Player["Last IPs"];
+            IPs.push({[IP]: Now})
+            if (IPs.length > 20) { //Max to save = 20
+                IPs.shift();
+            }
+            await API.query("UPDATE `servers_players` set `Last IP`=?,`IPs`=?;", [IP,JSON.stringify(IPs)]);
+        }
+
+        return;
     }
 }
 
