@@ -28,7 +28,7 @@ async function checkNewPlayers(time) {
                 if (Query[0] !== undefined) {
                     for (let p = 0; p < Query.length; p++) {
                         const Q = Query[p];
-                        const Seen = Q["insert_time"];
+                        const Seen = await moment(Q["insert_time"]).format('YYYY/MM/DD HH:mm:ss');;
                         const GUID = await pid2guid(Q.pid);
                         const CheckPlayer = await API.query("SELECT `Last Name`,`Names`,`Last IP`,`IPs` FROM `servers_players` WHERE BINARY `GUID`=?;", [GUID]);
                         if (CheckPlayer[0] == undefined) {

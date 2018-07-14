@@ -199,7 +199,7 @@ async function updatePlayer(Name, IP, GUID) {
             if (Names.length > 0) {
                 for (let i = 0; i < Names.length; i++) {
                     const checkName = Names[i];
-                    if (Object.getOwnPropertyNames(checkName)[0] == Name) {
+                    if (Object.keys(checkName)[0] == Name) {
                         checkName[Name] = Now;
                     } else {
                         Names.push({[Name]: Now});
@@ -214,6 +214,7 @@ async function updatePlayer(Name, IP, GUID) {
             }
             await API.query("UPDATE `servers_players` set `Last Name`=?,`Names`=? WHERE BINARY `GUID`=?;", [Name,JSON.stringify(Names),GUID]);
         }
+
         if (Player["Last IP"] !== IP) {
             let IPs = [];
             if (Player["IPs"] !== null) {
