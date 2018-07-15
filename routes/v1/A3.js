@@ -55,14 +55,14 @@ router.post('/Addon', async(req, res, next) => {
                         const KillDistance = Data[8];
 
                         const SaveData = JSON.stringify({
-                            KilledName: KilledName,
-                            KilledPID: KilledPID,
+                            //KilledName: KilledName,
+                            Killed: KilledPID,
                             KilledGroup: KilledGroup,
-                            KillerName: KillerName,
-                            KillerPID: KillerPID,
-                            KillerWeapon: KillerWeapon,
+                            //KillerName: KillerName,
+                            Killer: KillerPID,
                             KillerGroup: KillerGroup,
-                            KillDistance: KillDistance
+                            Weapon: KillerWeapon,
+                            Distance: KillDistance
                         });
 
                         req.API.query("INSERT INTO `servers_logs` (`Option`,`Action`,`Data`) VALUES(?,?,?);", [Option,Action,SaveData]);
