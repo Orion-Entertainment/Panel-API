@@ -35,6 +35,10 @@ router.post('/Addon', async(req, res, next) => {
         } else if (req.body["option"] == undefined | req.body["data"] == undefined) {
             return res.send("Invalid Login");
         }
+
+        console.log(req.body["option"])
+        console.log(req.body["data"])
+
         const Option = JSON.parse(req.body["option"]);
         const Data = JSON.parse(req.body["data"]);
 
