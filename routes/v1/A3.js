@@ -39,7 +39,7 @@ router.post('/Addon', async(req, res, next) => {
         console.log(req.body["option"])
         console.log(req.body["data"])
 
-        const Option = JSON.parse(req.body["option"]);
+        const Option = req.body["option"];
         const Data = JSON.parse(req.body["data"]);
 
         switch (Option) {
