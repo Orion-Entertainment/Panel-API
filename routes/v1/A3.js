@@ -38,8 +38,8 @@ router.post('/Addon', async(req, res, next) => {
 
 
         const Option = JSON.parse(req.body["option"]);
-        if (/<NULL-object>/g.test(req.body["data"])) {
-            const fix = await req.body["data"].match(/(.+)(<NULL-object>)(.+)/);
+        if (/<NULL-object>|B Alpha 1-\d:\d+/g.test(req.body["data"])) {
+            const fix = await req.body["data"].match(/(.+)(<NULL-object>|B Alpha 1-\d:\d+)(.+)/);
             Data = fix[1]+'""'+fix[3];
         } else {
             Data = JSON.parse(req.body["data"]);
@@ -50,27 +50,16 @@ router.post('/Addon', async(req, res, next) => {
                 const Action = Data[0];
                 switch (Action) {
                     case "Killed":
-                        const KilledName = Data[1];
+                        //const KilledName = Data[1];
                         const KilledPID = Data[2];
                         const KilledGroup = Data[3];
-                        const KillerName = Data[4];
+                       // const KillerName = Data[4];
                         const KillerPID = Data[5];
-                        const KillerWeapon = Data[6];
+                        const Weapon = Data[6];
                         const KillerGroup = Data[7];
-                        const KillDistance = Data[8];
+                        const Distance = Data[8];
 
-                        const SaveData = JSON.stringify({
-                            //KilledName: KilledName,
-                            Killed: KilledPID,
-                            KilledGroup: KilledGroup,
-                            //KillerName: KillerName,
-                            Killer: KillerPID,
-                            KillerGroup: KillerGroup,
-                            Weapon: KillerWeapon,
-                            Distance: KillDistance
-                        });
-
-                        req.API.query("INSERT INTO `servers_logs` (`Option`,`Action`,`Data`) VALUES(?,?,?);", [Option,Action,SaveData]);
+                        req.API.query("INSERT INTO `arma_kills` (`Killer`,`KillerGroup`,`Killed`,`KilledGroup`,`Weapon`,`Distance`) VALUES(?,?,?,?,?,?);", [KillerPID,KillerGroup,KilledPID,KilledGroup,Weapon,Distance]);
                         return res.send("Success");
 
                     default:
