@@ -59,16 +59,16 @@ router.post('/Addon', async(req, res, next) => {
                         let KillerGroup = Data[7];
                         let Distance = Data[8];
 
-                        if (KilledGroup === "" | KilledGroup === "No Group" | KilledGroup === "No Gang") {
+                        if (KilledGroup == "" | KilledGroup == "No Group" | KilledGroup == "No Gang") {
                             KilledGroup = null;
                         };
                         if (KillerPID === "") {
                             KillerPID = null;
                         };
-                        if (KillerGroup === "" | KilledGroup === "No Group" | KilledGroup === "No Gang") {
+                        if (KillerGroup == "" | KilledGroup == "No Group" | KilledGroup == "No Gang") {
                             KillerGroup = null;
                         };
-                        if (Weapon === "") {
+                        if (Weapon == "") {
                             Weapon = null;
                         };
                         if (Distance < 0) {
