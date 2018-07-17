@@ -144,11 +144,7 @@ async function connectRCon (BEConfig, ServerName) {
             }
         } else {
             /* Shouldn't need this but .-. */
-            //Save to DB
-            API.query("INSERT INTO `arma_rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,'Other',message], function (error, results, fields) {
-                if (error) throw error;
-                return;
-            });
+            console.log(message)
         }
     });
 }
