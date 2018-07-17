@@ -191,7 +191,7 @@ async function updatePlayer(Name, IP, GUID) {
         if (Player["Last Name"] !== Name) {
             let Names = [];
             if (Player["Names"] !== null) {
-                Names = JSON.parse(Player["Names"]);
+                Names = await JSON.parse(Player["Names"]);
             } else {
                 Names = [];
             }
