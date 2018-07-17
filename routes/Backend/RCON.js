@@ -22,7 +22,7 @@ async function connectRCon (BEConfig, ServerName) {
             Reconnect(BEConfig, ServerName);
         }
         else if (success == true) {
-            API.query("DELETE FROM `rcon_players` WHERE BINARY `Server`=?;", [ServerName], function (error, results, fields) {
+            API.query("DELETE FROM `arma_liveplayers` WHERE BINARY `Server`=?;", [ServerName], function (error, results, fields) {
                 if (error) throw error;
             });
             Servers.push({
@@ -38,7 +38,7 @@ async function connectRCon (BEConfig, ServerName) {
     });
 
     BE.on('disconnected', function() {
-        API.query("DELETE FROM `rcon_players` WHERE BINARY `Server`=?;", [ServerName], function (error, results, fields) {
+        API.query("DELETE FROM `arma_liveplayers` WHERE BINARY `Server`=?;", [ServerName], function (error, results, fields) {
             if (error) throw error;
         });
         for (let i = 0; i < Servers.length; i++) {
@@ -51,123 +51,123 @@ async function connectRCon (BEConfig, ServerName) {
 
     BE.on('message', async function(message) {
         if (/RCon admin #\d: \(Global\)/g.test(message)) {
-            Category = 'ServerMSG';
-
             getData = /RCon admin #\d: \(Global\) (.+)/g.exec(message);
-            Data = JSON.stringify({
-                MSG: getData[1]
+
+            //Save to DB
+            API.query("INSERT INTO `arma_chat` (`Server`,`Channel`,`MSG`) VALUES(?,?,?);", [ServerName,"RCONAdmin",getData[1]], function (error, results, fields) {
+                if (error) throw error;
+                return;
             });
         } else if (/RCon admin #\d+ \((\d+.\d+.\d+.\d+:\d+)\) logged in/g.test(message)) {
-            Category = 'RConConnect';
-
             getData = /RCon admin #\d+ \((\d+.\d+.\d+.\d+:\d+)\) logged in/g.exec(message);
-            Data = JSON.stringify({
-                IP: getData[1]
+
+            //Save to DB
+            API.query("INSERT INTO `arma_chat` (`Server`,`Channel`,`MSG`) VALUES(?,?,?);", [ServerName,"RCONConnect",getData[1]], function (error, results, fields) {
+                if (error) throw error;
+                return;
             });
         } else if (/\((Unknown|Vehicle|Direct|Group)\) (.+): /g.test(message)) {
-            Category = 'PlayerMSG';
-
             getData = /\((Unknown|Vehicle|Direct|Group)\) (.+): (.+)/g.exec(message);
             getPlayer = await getPlayerGUID(ServerName, getData[2]);
             if (getPlayer !== undefined && getPlayer !== null) {
-                Data = JSON.stringify({
-                    Channel: getData[1],
-                    Name: getData[2],
-                    GUID: getPlayer.GUID,
-                    MSG: getData[3]
+                //Save to DB
+                API.query("INSERT INTO `arma_chat` (`Server`,`Channel`,`Name`,`GUID`,`MSG`) VALUES(?,?,?,?,?);", [ServerName,getData[1],getData[2],getPlayer.GUID,getData[3]], function (error, results, fields) {
+                    if (error) throw error;
+                    return;
                 });
             } else {
-                Data = JSON.stringify({
-                    Channel: getData[1],
-                    Name: getData[2],
-                    MSG: getData[3]
+                //Save to DB
+                API.query("INSERT INTO `arma_chat` (`Server`,`Channel`,`Name`,`MSG`) VALUES(?,?,?,?);", [ServerName,getData[1],getData[2],getData[3]], function (error, results, fields) {
+                    if (error) throw error;
+                    return;
                 });
             }
 
         } else if (/Player #\d+ (.+) (\((\d+.\d+.\d+.\d+):\d+\) connected|- BE GUID: (.+))|Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
-            Category = 'PlayerConnect';
-
             if (/Player #\d+ (.+) - BE GUID: (.+)/g.test(message)) {
                 return;
             } else if (/Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
                 getData = /Verified GUID \((.+)\) of player #\d+ (.+)/g.exec(message);
-                Data = JSON.stringify({
-                    Name: getData[2],
-                    GUID: getData[1]
-                });
                 addPlayer(ServerName, Data)
+
+                //Save to DB
+                API.query("UPDATE `arma_connect` set `GUID`=? WHERE `Name`=? ORDER BY `Time` DESC LIMIT 1;", [getData[1],getData[2]], function (error, results, fields) {
+                    if (error) throw error;
+                    return;
+                });
             } else if (/Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.test(message)) {
                 getData = /Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.exec(message);
-                Data = JSON.stringify({
-                    Name: getData[1],
-                    IP: getData[2]
+
+                //Save to DB
+                API.query("INSERT INTO `arma_connect` (`Server`,`Option`,`Name`,`IP`) VALUES(?,?,?,?);", [ServerName,"Connect",getData[1],getData[2]], function (error, results, fields) {
+                    if (error) throw error;
+                    return;
                 });
             }
         } else if (/Player #\d+ (.+) disconnected/g.test(message)) {
-            Category = 'PlayerDisconnect';
-
             getData = /Player #\d+ (.+) disconnected/g.exec(message);
             getPlayer = await getPlayerGUID(ServerName, getData[1]);
             if (getPlayer !== undefined && getPlayer !== null) {
-                Data = JSON.stringify({
-                    Name: getData[1],
-                    GUID: await getPlayer.GUID
+                //Save to DB
+                API.query("INSERT INTO `arma_connect` (`Server`,`Option`,`Name`,`GUID`) VALUES(?,?,?,?);", [ServerName,"Disconnect",getData[1],getPlayer.GUID], function (error, results, fields) {
+                    if (error) throw error;
+                    return;
                 });
             } else {
-                Data = JSON.stringify({
-                    Name: getData[1]
+                //Save to DB
+                API.query("INSERT INTO `arma_connect` (`Server`,`Option`,`Name`) VALUES(?,?,?);", [ServerName,"Disconnect",getData[1]], function (error, results, fields) {
+                    if (error) throw error;
+                    return;
                 });
             }
 
             removePlayer(ServerName, getData[1]);
         } else if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: /g.test(message)) {
             if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.test(message)) {
-                Category = 'PlayerKick';
                 getData = /Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.exec(message);
-                Data = JSON.stringify({
-                    Name: getData[1],
-                    GUID: getData[2],
-                    MSG: getData[3]
-                });
-
                 removePlayer(ServerName, getData[1]);
+
+                //Save to DB
+                API.query("INSERT INTO `arma_kick` (`Server`,`By`,`Name`,`GUID`,`Reason`) VALUES(?,?,?,?,?);", [ServerName,"Admin",getData[1],getData[2],getData[3]], function (error, results, fields) {
+                    if (error) throw error;
+                    return;
+                });
             } else if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: (.+)/g.test(message)) {
-                Category = 'BEKick';
                 getData = /Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: (.+)/g.exec(message);
-                Data = JSON.stringify({
-                    Name: getData[1],
-                    GUID: getData[2],
-                    MSG: getData[3]
-                });
-
                 removePlayer(ServerName, getData[1]);
+
+                //Save to DB
+                API.query("INSERT INTO `arma_kick` (`Server`,`By`,`Name`,`GUID`,`Reason`) VALUES(?,?,?,?,?);", [ServerName,"Battleye",getData[1],getData[2],getData[3]], function (error, results, fields) {
+                    if (error) throw error;
+                    return;
+                });
             }
         } else {
-            Category = 'Other';
-            Data = message;
+            /* Shouldn't need this but .-. */
+            //Save to DB
+            API.query("INSERT INTO `arma_rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,'Other',message], function (error, results, fields) {
+                if (error) throw error;
+                return;
+            });
         }
-        API.query("INSERT INTO `rcon` (`Server`,`Category`,`Data`) VALUES(?,?,?);", [ServerName,await Category,Data], function (error, results, fields) {
-            if (error) throw error;
-            return;
-        });
     });
 }
 
 async function addPlayer(ServerName, Data) {
     const data = JSON.parse(Data)
-    API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,data.Name,data.GUID], function (error, results, fields) {
+    API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,data.Name,data.GUID], function (error, results, fields) {
         if (error) throw error;
     });
 }
 
 async function removePlayer(ServerName, Name) {
-    API.query("DELETE FROM `rcon_players` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
+    API.query("DELETE FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
         if (error) throw error;
     });
 }
 
 async function getPlayerGUID(ServerName, Name) {
-    const query = await API.query("SELECT `GUID` FROM `rcon_players` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name]);
+    const query = await API.query("SELECT `GUID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name]);
     return query[0];
 }
 
@@ -255,27 +255,27 @@ async function checkPlayers(time) {
                                     const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
 
                                     if (Name !== null && IP !== null && GUID !== null && Ping !== null) {
-                                        API.query("SELECT `IP`,`GUID`,`Ping` FROM `rcon_players` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
+                                        API.query("SELECT `IP`,`GUID`,`Ping` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
                                             if (error) throw error;
                                             else if (results[0] == undefined) {
-                                                API.query("INSERT INTO `rcon_players` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
+                                                API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
                                                     if (error) throw error;
                                                     return;
                                                 });
                                             } else {
                                                 if (results[0].IP == null | results[0].IP == "") {
-                                                    API.query("UPDATE `rcon_players` set `IP`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
+                                                    API.query("UPDATE `arma_liveplayers` set `IP`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
                                                         if (error) throw error;
                                                         return;
                                                     });
                                                 } else if (results[0].GUID == null | results[0].GUID == "") {
-                                                    API.query("UPDATE `rcon_players` set `GUID`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
+                                                    API.query("UPDATE `arma_liveplayers` set `GUID`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
                                                         if (error) throw error;
                                                         return;
                                                     });
                                                 } else if (Ping !== results[0].Ping) {
                                                     updatePlayer(Name, results[0].IP, results[0].GUID);
-                                                    API.query("UPDATE `rcon_players` set `Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=?;", [Ping,ServerName,Name], function (error, results, fields) {
+                                                    API.query("UPDATE `arma_liveplayers` set `Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=?;", [Ping,ServerName,Name], function (error, results, fields) {
                                                         if (error) throw error;
                                                         return;
                                                     });

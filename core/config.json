@@ -4,7 +4,7 @@
         "port": 3306,
         "user": "oe-api",
         "password": "fa0255dfac6142c307a94c6ed4c206af2f43140f73adfe16460f247e612f58ae",
-        "database": "orion-entertainment_api",
+        "database": "orion-entertainment",
         "connectionLimit": 20
     },
     "Servers": {
