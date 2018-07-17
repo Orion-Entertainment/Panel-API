@@ -91,7 +91,7 @@ async function connectRCon (BEConfig, ServerName) {
                 addPlayer(ServerName, getData[2], getData[1])
 
                 //Save to DB
-                API.query("UPDATE `arma_connect` set `GUID`=? WHERE `Name`=? ORDER BY `Time` DESC LIMIT 1;", [getData[1],getData[2]], function (error, results, fields) {
+                API.query("UPDATE `arma_connect` set `GUID`=? WHERE BINARY `Name`=? ORDER BY `Time` DESC LIMIT 1;", [getData[1],getData[2]], function (error, results, fields) {
                     if (error) throw error;
                     return;
                 });
@@ -175,10 +175,12 @@ async function updatePlayer(Name, IP, GUID) {
     const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
     if (query[0] == undefined) {
         const Names = JSON.stringify([{
-            [Name]: Now
+            Name: Name,
+            Time: Now
         }]);
         const IPs = JSON.stringify([{
-            [IP]: Now
+            IP: IP,
+            Time: Now
         }]);
 
         await API.query("INSERT INTO `arma_players` (`Last Name`,`Names`,`Last IP`,`IPs`,`GUID`,`First Seen`) VALUES(?,?,?,?,?,?);", [Name,Names,IP,IPs,GUID,Now]);
@@ -197,19 +199,28 @@ async function updatePlayer(Name, IP, GUID) {
             //Check if name is in array if not push new one
             if (Names.length > 0) {
                 for (let i = 0; i < Names.length; i++) {
-                    const checkName = Names[i];
-                    if (Object.keys(checkName)[0] == Name) {
-                        checkName[Name] = Now;
+                    if (Names[i].Name == Name) {
+                        Names.spilce(i,1);
+                        Names.push({
+                            Name: Name,
+                            Time: Now
+                        });
                     } else if (i + 1 == Names.length) {
-                        Names.push({[Name]: Now});
+                        Names.push({
+                            Name: Name,
+                            Time: Now
+                        });
                     }
                 }
             } else {
-                Names.push({[Name]: Now});
+                Names.push({
+                    Name: Name,
+                    Time: Now
+                });
             }
 
             if (Names.length > 20) { //Max to save = 20
-                Names.shift();
+                Names.splice(0,1);
             }
             await API.query("UPDATE `arma_players` set `Last Name`=?,`Names`=? WHERE BINARY `GUID`=?;", [Name,JSON.stringify(Names),GUID]);
         }
@@ -221,10 +232,33 @@ async function updatePlayer(Name, IP, GUID) {
             } else {
                 IPs = [];
             }
-            IPs.push({[IP]: Now})
+            
+            
+            if (IPs.length > 0) {
+                for (let i = 0; i < IPs.length; i++) {
+                    if (IPs[i].IP == IP) {
+                        IPs.spilce(i,1);
+                        IPs.push({
+                            IP: IP,
+                            Time: Now
+                        });
+                    } else if (i + 1 == IPs.length) {
+                        IPs.push({
+                            IP: IP,
+                            Time: Now
+                        });
+                    }
+                }
+            } else {
+                IPs.push({
+                    IP: IP,
+                    Time: Now
+                });
+            }
+
 
             if (IPs.length > 20) { //Max to save = 20
-                IPs.shift();
+                IPs.splice(0,1);
             }
             await API.query("UPDATE `arma_players` set `Last IP`=?,`IPs`=? WHERE BINARY `GUID`=?;", [IP,JSON.stringify(IPs),GUID]);
         }

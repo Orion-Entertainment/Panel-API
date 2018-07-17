@@ -18,12 +18,13 @@ const pid2guid = function(pid) {
 	return hash.toString();
 };
 
+const TrackedNum = 2;
 async function checkNewPlayers(time) {
     try {
         setTimeout(async function() {
             for (var i in ServerDBs) {
                 const DB = ServerDBs[i];
-                const Query = await DB.query("SELECT `name`,`pid`,`insert_time` FROM `players` WHERE `Tracked`='0' LIMIT 500;");
+                const Query = await DB.query("SELECT `name`,`pid`,`insert_time` FROM `players` WHERE `Tracked`<? LIMIT 250;", [TrackedNum]);
 
                 if (Query[0] !== undefined) {
                     for (let p = 0; p < Query.length; p++) {
@@ -33,13 +34,14 @@ async function checkNewPlayers(time) {
                         const CheckPlayer = await API.query("SELECT `Last Name`,`Names`,`Last IP`,`IPs` FROM `arma_players` WHERE BINARY `GUID`=?;", [GUID]);
                         if (CheckPlayer[0] == undefined) {
                             const Names = JSON.stringify([{
-                                [Q.name]: Seen
+                                Name: Q.name,
+                                Time: Seen
                             }])
                             await API.query("INSERT INTO `arma_players` (`Last Name`,`Names`,`GUID`,`Steam64ID`,`First Seen`) VALUES(?,?,?,?,?);", [Q.name,Names,GUID,Q.pid,Seen]);
                         } else if (CheckPlayer[0].Steam64ID == undefined) {
                             await API.query("UPDATE `arma_players` set `Steam64ID`=? WHERE BINARY `GUID`=?;", [Q.pid,GUID]);
                         }
-                        await DB.query("UPDATE `players` set `Tracked`='1' WHERE BINARY `pid`=?;", [Q.pid]);
+                        await DB.query("UPDATE `players` set `Tracked`=? WHERE BINARY `pid`=?;", [TrackedNum,Q.pid]);
                     }
                 }
             }
