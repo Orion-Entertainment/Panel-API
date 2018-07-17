@@ -172,7 +172,7 @@ async function getPlayerGUID(ServerName, Name) {
 }
 
 async function updatePlayer(Name, IP, GUID) {
-    const query = await API.query("SELECT `Last Name`,`Names`,`Last IP`,`IPs` FROM `servers_players` WHERE BINARY `GUID`=?;", [GUID]);
+    const query = await API.query("SELECT `Last Name`,`Names`,`Last IP`,`IPs` FROM `arma_players` WHERE BINARY `GUID`=?;", [GUID]);
     const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
     if (query[0] == undefined) {
         const Names = JSON.stringify([{
@@ -182,7 +182,7 @@ async function updatePlayer(Name, IP, GUID) {
             [IP]: Now
         }]);
 
-        await API.query("INSERT INTO `servers_players` (`Last Name`,`Names`,`Last IP`,`IPs`,`GUID`,`First Seen`) VALUES(?,?,?,?,?,?);", [Name,Names,IP,IPs,GUID,Now]);
+        await API.query("INSERT INTO `arma_players` (`Last Name`,`Names`,`Last IP`,`IPs`,`GUID`,`First Seen`) VALUES(?,?,?,?,?,?);", [Name,Names,IP,IPs,GUID,Now]);
         return;
     } else {
         const Player = query[0];
@@ -212,7 +212,7 @@ async function updatePlayer(Name, IP, GUID) {
             if (Names.length > 20) { //Max to save = 20
                 Names.shift();
             }
-            await API.query("UPDATE `servers_players` set `Last Name`=?,`Names`=? WHERE BINARY `GUID`=?;", [Name,JSON.stringify(Names),GUID]);
+            await API.query("UPDATE `arma_players` set `Last Name`=?,`Names`=? WHERE BINARY `GUID`=?;", [Name,JSON.stringify(Names),GUID]);
         }
 
         if (Player["Last IP"] !== IP) {
@@ -227,7 +227,7 @@ async function updatePlayer(Name, IP, GUID) {
             if (IPs.length > 20) { //Max to save = 20
                 IPs.shift();
             }
-            await API.query("UPDATE `servers_players` set `Last IP`=?,`IPs`=? WHERE BINARY `GUID`=?;", [IP,JSON.stringify(IPs),GUID]);
+            await API.query("UPDATE `arma_players` set `Last IP`=?,`IPs`=? WHERE BINARY `GUID`=?;", [IP,JSON.stringify(IPs),GUID]);
         }
 
         return;

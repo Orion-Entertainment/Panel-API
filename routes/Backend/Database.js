@@ -30,14 +30,14 @@ async function checkNewPlayers(time) {
                         const Q = Query[p];
                         const Seen = await moment(Q["insert_time"]).format('YYYY/MM/DD HH:mm:ss');;
                         const GUID = await pid2guid(Q.pid);
-                        const CheckPlayer = await API.query("SELECT `Last Name`,`Names`,`Last IP`,`IPs` FROM `servers_players` WHERE BINARY `GUID`=?;", [GUID]);
+                        const CheckPlayer = await API.query("SELECT `Last Name`,`Names`,`Last IP`,`IPs` FROM `arma_players` WHERE BINARY `GUID`=?;", [GUID]);
                         if (CheckPlayer[0] == undefined) {
                             const Names = JSON.stringify([{
                                 [Q.name]: Seen
                             }])
-                            await API.query("INSERT INTO `servers_players` (`Last Name`,`Names`,`GUID`,`Steam64ID`,`First Seen`) VALUES(?,?,?,?,?);", [Q.name,Names,GUID,Q.pid,Seen]);
+                            await API.query("INSERT INTO `arma_players` (`Last Name`,`Names`,`GUID`,`Steam64ID`,`First Seen`) VALUES(?,?,?,?,?);", [Q.name,Names,GUID,Q.pid,Seen]);
                         } else if (CheckPlayer[0].Steam64ID == undefined) {
-                            await API.query("UPDATE `servers_players` set `Steam64ID`=? WHERE BINARY `GUID`=?;", [Q.pid,GUID]);
+                            await API.query("UPDATE `arma_players` set `Steam64ID`=? WHERE BINARY `GUID`=?;", [Q.pid,GUID]);
                         }
                         await DB.query("UPDATE `players` set `Tracked`='1' WHERE BINARY `pid`=?;", [Q.pid]);
                     }
