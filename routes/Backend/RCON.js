@@ -200,7 +200,7 @@ async function updatePlayer(Name, IP, GUID) {
             if (Names.length > 0) {
                 for (let i = 0; i < Names.length; i++) {
                     if (Names[i].Name == Name) {
-                        Names.spilce(i,1);
+                        Names.splice(i,1);
                         Names.push({
                             Name: Name,
                             Time: Now
@@ -220,7 +220,7 @@ async function updatePlayer(Name, IP, GUID) {
             }
 
             if (Names.length > 20) { //Max to save = 20
-                Names.splice(0,1);
+                await Names.splice(0,1);
             }
             await API.query("UPDATE `arma_players` set `Last Name`=?,`Names`=? WHERE BINARY `GUID`=?;", [Name,JSON.stringify(Names),GUID]);
         }
