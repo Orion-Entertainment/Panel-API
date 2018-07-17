@@ -53,21 +53,3 @@ async function checkNewPlayers(time) {
     }
 }
 checkNewPlayers(15); //Time in seconds
-
-
-
-/* Delete after next push */
-async function oneTime() {
-    try {
-        const GetOldLogs = await API.query("SELECT `id`,`Data`,`Time` FROM `servers_logs` ORDER BY `id` ASC;");
-        for (let i = 0; i < GetOldLogs.length; i++) {
-            const ID = GetOldLogs[i].id;
-            const Data = JSON.parse(GetOldLogs[i].Data);
-            await API.query("INSERT INTO `arma_kills` (`Killer`,`KillerGroup`,`Killed`,`KilledGroup`,`Weapon`,`Distance`) VALUES(?,?,?,?,?,?);", [Data.Killer,Data.KillerGroup,Data.Killed,Data.KilledGroup,Data.Weapon,Data.Distance]);
-            await API.query("DELETE FROM `servers_logs` WHERE id=?;", [ID]);
-        };
-    } catch (error) {
-        console.error(error)
-    }
-}
-oneTime();
