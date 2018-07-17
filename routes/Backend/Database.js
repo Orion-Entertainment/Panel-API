@@ -59,7 +59,7 @@ checkNewPlayers(15); //Time in seconds
 /* Delete after next push */
 async function oneTime() {
     try {
-        const GetOldLogs = await DB.query("SELECT `id`,`Data`,`Time` FROM `servers_logs` ORDER BY `id` ASC;");
+        const GetOldLogs = await API.query("SELECT `id`,`Data`,`Time` FROM `servers_logs` ORDER BY `id` ASC;");
         for (let i = 0; i < GetOldLogs.length; i++) {
             const ID = GetOldLogs[i].id;
             const Data = JSON.parse(GetOldLogs[i].Data);
