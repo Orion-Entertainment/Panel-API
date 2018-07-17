@@ -88,7 +88,7 @@ async function connectRCon (BEConfig, ServerName) {
                 return;
             } else if (/Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
                 getData = /Verified GUID \((.+)\) of player #\d+ (.+)/g.exec(message);
-                addPlayer(ServerName, Data)
+                addPlayer(ServerName, getData[2], getData[1])
 
                 //Save to DB
                 API.query("UPDATE `arma_connect` set `GUID`=? WHERE `Name`=? ORDER BY `Time` DESC LIMIT 1;", [getData[1],getData[2]], function (error, results, fields) {
@@ -153,9 +153,8 @@ async function connectRCon (BEConfig, ServerName) {
     });
 }
 
-async function addPlayer(ServerName, Data) {
-    const data = JSON.parse(Data)
-    API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,data.Name,data.GUID], function (error, results, fields) {
+async function addPlayer(ServerName, Name, GUID) {
+    API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,Name,GUID], function (error, results, fields) {
         if (error) throw error;
     });
 }
