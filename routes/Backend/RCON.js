@@ -233,7 +233,7 @@ async function updatePlayer(Name, IP, GUID) {
             if (IPs.length > 0) {
                 for (let i = 0; i < IPs.length; i++) {
                     if (IPs[i].IP == IP) {
-                        IPs.spilce(i,1);
+                        IPs.splice(i,1);
                         IPs.push({
                             IP: IP,
                             Time: Now
