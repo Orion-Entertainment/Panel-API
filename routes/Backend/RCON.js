@@ -126,9 +126,14 @@ async function connectRCon (BEConfig, ServerName) {
             if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.test(message)) {
                 getData = /Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.exec(message);
                 removePlayer(ServerName, getData[1]);
+                if (getData[2] == "" | getData[2] == "-") {
+                    guid = null;
+                } else {
+                    guid = getData[2];
+                }
 
                 //Save to DB
-                API.query("INSERT INTO `arma_kick` (`Server`,`By`,`Name`,`GUID`,`Reason`) VALUES(?,?,?,?,?);", [ServerName,"Admin",getData[1],getData[2],getData[3]], function (error, results, fields) {
+                API.query("INSERT INTO `arma_kick` (`Server`,`By`,`Name`,`GUID`,`Reason`) VALUES(?,?,?,?,?);", [ServerName,"Admin",getData[1],guid,getData[3]], function (error, results, fields) {
                     if (error) throw error;
                     return;
                 });
@@ -179,8 +184,16 @@ async function updatePlayer(Name, IP, GUID) {
             Time: Now
         }]);
 
-        await API.query("INSERT INTO `arma_players` (`Last Name`,`Names`,`Last IP`,`IPs`,`GUID`,`First Seen`) VALUES(?,?,?,?,?,?);", [Name,Names,IP,IPs,GUID,Now]);
-        return;
+        API.query("INSERT INTO `arma_players` (`Last Name`,`Names`,`Last IP`,`IPs`,`GUID`,`First Seen`) VALUES(?,?,?,?,?,?);", [Name,Names,IP,IPs,GUID,Now], function (error, results, fields) {
+            if (error) {
+                if (error = "ER_DUP_ENTRY") {
+                    return;
+                } else {
+                    throw error
+                }
+            };
+            return;
+        });
     } else {
         const Player = query[0];
 
