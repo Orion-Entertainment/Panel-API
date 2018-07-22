@@ -91,6 +91,10 @@ async function connectRCon (BEConfig, ServerName) {
                 return;
             } else if (/Verified GUID \((.+)\) of player #\d+ (.+)/g.test(message)) {
                 getData = /Verified GUID \((.+)\) of player #\d+ (.+)/g.exec(message);
+
+                //Check if banned
+
+
                 addPlayer(ServerName, getData[2], getData[1])
 
                 //Save to DB
@@ -146,7 +150,7 @@ async function connectRCon (BEConfig, ServerName) {
 
                 if (HackingREGEX.test(getData[3])) {
                     //Add ban for hacking
-                    API.query("INSERT INTO `arma_bans` (`GUID`,`Notes`) VALUES(?,?);", [getData[2],getData[3]], function (error, results, fields) {
+                    API.query("INSERT INTO `arma_bans` (`GUID`,`Notes`,`Reason`) VALUES(?,?);", [getData[2],getData[3],"+Flabby - Perm - Hacking"], function (error, results, fields) {
                         if (error) throw error;
                     });
                 }
@@ -179,6 +183,15 @@ async function removePlayer(ServerName, Name) {
 async function getPlayerGUID(ServerName, Name) {
     const query = await API.query("SELECT `GUID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name]);
     return query[0];
+}
+
+async function checkForBan(GUID) {
+    const query = await API.query("SELECT `id` FROM `arma_bans` WHERE BINARY `GUID`=?;", [GUID]);
+    if (query[0] !== undefined) {
+        if (query[0] !== null) {
+
+        } else return false;
+    } else return false;
 }
 
 async function updatePlayer(Name, IP, GUID) {
