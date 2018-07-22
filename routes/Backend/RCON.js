@@ -70,6 +70,7 @@ async function connectRCon (BEConfig, ServerName) {
             getData = /\((Unknown|Vehicle|Direct|Group)\) (.+): (.+)/g.exec(message);
             getPlayer = await getPlayerGUID(ServerName, getData[2]);
             if (getPlayer !== undefined && getPlayer !== null) {
+                if (getData[3] == null) return;
                 //Save to DB
                 API.query("INSERT INTO `arma_chat` (`Server`,`Channel`,`Name`,`GUID`,`MSG`) VALUES(?,?,?,?,?);", [ServerName,getData[1],getData[2],getPlayer.GUID,getData[3]], function (error, results, fields) {
                     if (error) throw error;
