@@ -305,8 +305,6 @@ async function updatePlayer(Name, IP, GUID) {
     }
 }
 
-let TEST = 0;
-
 let checkingPlayers = false;
 async function checkPlayers(time) {
     try {
@@ -321,25 +319,19 @@ async function checkPlayers(time) {
                             const Players = players.match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g);
                             if (Players !== null) {
                                 for (let p = 0; p < Players.length; p++) {
-                                    if (TEST == 0) {
-                                        const TESTs = Players[p].match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/);
-                                        console.log(TESTs[0])
-                                        console.log(TESTs[1])
-                                        console.log(TESTs[2])
-                                        TEST++
-                                    }
+                                    const getInfo = Players[p].match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/);
 
-                                    const Name = Players[p].match(/(\(\w+\)\s?)([\S ]+)/)[0].replace(/\(\?\)\s|(.*OK)\)\s/, '').replace(/\s(\(Lobby\))/, '');
-                                    const IP = Players[p].match(/(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
-                                    const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/)[0].replace(/(\(\?\)|\(\w+\))/, '');
-                                    const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/);
-                                    //const ID = Players[p].match(/(?<=:\d+\b\s*)(\d+)/);
+                                    const Name = getInfo[5].replace(/\s(\(Lobby\))/, '');
+                                    const IP = getInfo[2];
+                                    const GUID = getInfo[4];
+                                    const Ping = getInfo[3];
+                                    const ID = getInfo[1];
 
                                     if (Name !== null && IP !== null && GUID !== null && Ping !== null) {
                                         API.query("SELECT `IP`,`GUID`,`Ping` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
                                             if (error) throw error;
                                             else if (results[0] == undefined) {
-                                                API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`IP`,`GUID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,Ping], function (error, results, fields) {
+                                                API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`IP`,`GUID`,`ID`,`Ping`) VALUES(?,?,?,?,?);", [ServerName,Name,IP,GUID,ID,Ping], function (error, results, fields) {
                                                     if (error) throw error;
                                                     return;
                                                 });
