@@ -318,15 +318,17 @@ async function checkPlayers(time) {
                         const ServerName = Servers[i].Name;
                         const BE = Servers[i].BE;
                         BE.sendCommand('players', async function(players) {
+                            if (TEST == 0) {
+                                const PlayersTEST = /(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g.exec(players)
+                                console.log(PlayersTEST)
+                                console.log(PlayersTEST[0])
+                                console.log(PlayersTEST[0][1])
+                                TEST++
+                            }
+
                             const Players = players.match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g);
                             if (Players !== null) {
                                 for (let p = 0; p < Players.length; p++) {
-                                    if (TEST == 0) {
-                                        console.log(Players[p])
-                                        console.log(Players[p][0])
-                                        console.log(Players[p][1])
-                                        TEST++
-                                    }
 
                                     const Name = Players[p].match(/(\(\w+\)\s?)([\S ]+)/g)[0].replace(/\(\?\)\s|(.*OK)\)\s/g, '').replace(/\s(\(Lobby\))/g, '');
                                     const IP = Players[p].match(/(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/g);
