@@ -185,11 +185,17 @@ async function getPlayerGUID(ServerName, Name) {
     return query[0];
 }
 
-async function checkForBan(GUID) {
+async function checkForBan(ServerName, GUID) {
     const query = await API.query("SELECT `id` FROM `arma_bans` WHERE BINARY `GUID`=?;", [GUID]);
     if (query[0] !== undefined) {
         if (query[0] !== null) {
-
+            for (let i = 0; i < Servers.length; i++) {
+                if (ServerName == Servers[i].Name) {
+                    const BE = Servers[i].BE;
+                    BE.sendCommand('say -1 Hello World');
+                }
+            }
+            
         } else return false;
     } else return false;
 }
@@ -299,6 +305,8 @@ async function updatePlayer(Name, IP, GUID) {
     }
 }
 
+let TEST = 0;
+
 let checkingPlayers = false;
 async function checkPlayers(time) {
     try {
@@ -314,10 +322,16 @@ async function checkPlayers(time) {
                             let Players = players.match(getPlayers);
                             if (Players !== null) {
                                 for (let p = 0; p < Players.length; p++) {
+                                    if (TEST == 0) {
+                                        console.log(Players[p])
+                                        TEST++
+                                    }
+
                                     const Name = Players[p].match(/(\(\w+\)\s?)([\S ]+)/g)[0].replace(/\(\?\)\s|(.*OK)\)\s/g, '').replace(/\s(\(Lobby\))/g, '');
                                     const IP = Players[p].match(/(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/g);
                                     const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/g)[0].replace(/(\(\?\)|\(\w+\))/g, '');
                                     const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
+                                    //const ID = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
 
                                     if (Name !== null && IP !== null && GUID !== null && Ping !== null) {
                                         API.query("SELECT `IP`,`GUID`,`Ping` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
