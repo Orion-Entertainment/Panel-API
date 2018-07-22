@@ -318,12 +318,13 @@ async function checkPlayers(time) {
                         const ServerName = Servers[i].Name;
                         const BE = Servers[i].BE;
                         BE.sendCommand('players', async function(players) {
-                            const getPlayers = /(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+\b)\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g;
+                            const getPlayers = /(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g;
                             let Players = players.match(getPlayers);
                             if (Players !== null) {
                                 for (let p = 0; p < Players.length; p++) {
                                     if (TEST == 0) {
-                                        console.log(Players[p])
+                                        const Player = Players[p];
+                                        console.log(Player[1])
                                         TEST++
                                     }
 
