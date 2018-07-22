@@ -322,10 +322,10 @@ async function checkPlayers(time) {
                             if (Players !== null) {
                                 for (let p = 0; p < Players.length; p++) {
                                     if (TEST == 0) {
-                                        const TEST = Players[p].match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/);
-                                        console.log(TEST[0])
-                                        console.log(TEST[1])
-                                        console.log(TEST[2])
+                                        const TESTs = Players[p].match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/);
+                                        console.log(TESTs[0])
+                                        console.log(TESTs[1])
+                                        console.log(TESTs[2])
                                         TEST++
                                     }
 
