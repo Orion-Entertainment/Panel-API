@@ -3,6 +3,8 @@ const GETServers = require('../../core/app').Servers;
 const API = require('../../core/app').API;
 const moment = require('moment');
 
+const HackingREGEX = /.+ Restriction #\d+/;
+
 let Servers = [];
 
 for (let i = 0; i < GETServers.length; i++) {
@@ -133,7 +135,7 @@ async function connectRCon (BEConfig, ServerName) {
                     guid = getData[2];
                 }
 
-                //Save to DB
+                //Save kick
                 API.query("INSERT INTO `arma_kick` (`Server`,`By`,`Name`,`GUID`,`Reason`) VALUES(?,?,?,?,?);", [ServerName,"Admin",getData[1],guid,getData[3]], function (error, results, fields) {
                     if (error) throw error;
                     return;
@@ -142,7 +144,14 @@ async function connectRCon (BEConfig, ServerName) {
                 getData = /Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: (.+)/g.exec(message);
                 removePlayer(ServerName, getData[1]);
 
-                //Save to DB
+                if (HackingREGEX.test(getData[3])) {
+                    //Add ban for hacking
+                    API.query("INSERT INTO `arma_bans` (`GUID`,`Notes`) VALUES(?,?);", [getData[2],getData[3]], function (error, results, fields) {
+                        if (error) throw error;
+                    });
+                }
+
+                //Save kick
                 API.query("INSERT INTO `arma_kick` (`Server`,`By`,`Name`,`GUID`,`Reason`) VALUES(?,?,?,?,?);", [ServerName,"Battleye",getData[1],getData[2],getData[3]], function (error, results, fields) {
                     if (error) throw error;
                     return;
