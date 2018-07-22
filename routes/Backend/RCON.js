@@ -324,6 +324,7 @@ async function checkPlayers(time) {
                                 for (let p = 0; p < Players.length; p++) {
                                     if (TEST == 0) {
                                         const Player = Players[p];
+                                        console.log(Player)
                                         console.log(Player[1])
                                         TEST++
                                     }
