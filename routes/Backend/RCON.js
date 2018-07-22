@@ -318,23 +318,22 @@ async function checkPlayers(time) {
                         const ServerName = Servers[i].Name;
                         const BE = Servers[i].BE;
                         BE.sendCommand('players', async function(players) {
-                            if (TEST == 0) {
-                                const PlayersTEST = /(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g.exec(players)
-                                console.log(PlayersTEST)
-                                console.log(PlayersTEST[0])
-                                console.log(PlayersTEST[0][1])
-                                TEST++
-                            }
-
                             const Players = players.match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g);
                             if (Players !== null) {
                                 for (let p = 0; p < Players.length; p++) {
+                                    if (TEST == 0) {
+                                        const TEST = Players[p].match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/);
+                                        console.log(TEST[0])
+                                        console.log(TEST[1])
+                                        console.log(TEST[2])
+                                        TEST++
+                                    }
 
-                                    const Name = Players[p].match(/(\(\w+\)\s?)([\S ]+)/g)[0].replace(/\(\?\)\s|(.*OK)\)\s/g, '').replace(/\s(\(Lobby\))/g, '');
-                                    const IP = Players[p].match(/(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/g);
-                                    const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/g)[0].replace(/(\(\?\)|\(\w+\))/g, '');
-                                    const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
-                                    //const ID = Players[p].match(/(?<=:\d+\b\s*)(\d+)/g);
+                                    const Name = Players[p].match(/(\(\w+\)\s?)([\S ]+)/)[0].replace(/\(\?\)\s|(.*OK)\)\s/, '').replace(/\s(\(Lobby\))/, '');
+                                    const IP = Players[p].match(/(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
+                                    const GUID = Players[p].match(/([0-9a-fA-F]+)(\(\w+\))/)[0].replace(/(\(\?\)|\(\w+\))/, '');
+                                    const Ping = Players[p].match(/(?<=:\d+\b\s*)(\d+)/);
+                                    //const ID = Players[p].match(/(?<=:\d+\b\s*)(\d+)/);
 
                                     if (Name !== null && IP !== null && GUID !== null && Ping !== null) {
                                         API.query("SELECT `IP`,`GUID`,`Ping` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
