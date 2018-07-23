@@ -194,7 +194,10 @@ async function getPlayerID(ServerName, GUID, checkID) {
         setTimeout(getPlayerID(ServerName, GUID, checkID+1), 1000);
     } else if (query[0].ID == null) {
         setTimeout(getPlayerID(ServerName, GUID, checkID+1), 1000);
-    } else return query[0];
+    } else {
+        console.log(query[0])
+        return query[0].ID
+    };
 }
 
 async function checkForBan(ServerName, GUID) {
