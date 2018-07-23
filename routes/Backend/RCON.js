@@ -93,6 +93,8 @@ async function connectRCon (BEConfig, ServerName) {
                 getData = /Verified GUID \((.+)\) of player #\d+ (.+)/g.exec(message);
 
                 //Check if banned
+                const CheckBan = await checkForBan(ServerName, getData[1]);
+                if (CheckBan == true) return;
 
 
                 addPlayer(ServerName, getData[2], getData[1])
@@ -185,14 +187,30 @@ async function getPlayerGUID(ServerName, Name) {
     return query[0];
 }
 
+async function getPlayerID(ServerName, GUID) {
+    const query = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
+    return query[0];
+}
+
 async function checkForBan(ServerName, GUID) {
-    const query = await API.query("SELECT `id` FROM `arma_bans` WHERE BINARY `GUID`=?;", [GUID]);
+    const query = await API.query("SELECT `Reason` FROM `arma_bans` WHERE BINARY `GUID`=?;", [GUID]);
     if (query[0] !== undefined) {
         if (query[0] !== null) {
             for (let i = 0; i < Servers.length; i++) {
                 if (ServerName == Servers[i].Name) {
                     const BE = Servers[i].BE;
-                    BE.sendCommand('say -1 Hello World');
+                    const KickID = await getPlayerID(ServerName, GUID);
+                    if (KickID == undefined) return true;
+                    if (KickID == null | KickID == "") {
+                        setTimeout(function(){ 
+                            return checkForBan(ServerName, GUID);
+                        }, 1000);
+                    } else {
+                        const SendCommand = 'kick '+KickID+' '+query[0].Reason;
+                        console.log(SendCommand)
+                        //BE.sendCommand(SendCommand);
+                        return true;
+                    }
                 }
             }
             
