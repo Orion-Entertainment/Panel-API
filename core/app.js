@@ -91,16 +91,16 @@ async function EncryptData(key, data) {
     return encrypted;
 }
 async function DecryptData(key, data) {
-    const decipher = crypto.createDecipher('aes-256-cbc', key) 
-    let decrypted = decipher.update(data,'hex','utf8') 
-    decrypted += decipher.final('utf8'); 
-    return decrypted; 
+    const decipher = crypto.createDecipher('aes-256-cbc', key)
+    let decrypted = decipher.update(data,'hex','utf8')
+    decrypted += decipher.final('utf8');
+    return decrypted;
 }
 
 app.use((req, res, next) => {
     req.Check = async function(ClientID, Token) {
         if (ClientID == undefined | Token == undefined) {return false;}
-        
+
         const token = await EncryptData(APITokenKey, Token);
         const Query = await API.query("SELECT `client_id` FROM `login` WHERE `client_id`=? AND BINARY `token`=?;", [ClientID, token]);
         if (Query[0] == undefined) {return false;} else {return true;}

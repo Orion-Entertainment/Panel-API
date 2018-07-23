@@ -271,7 +271,6 @@ async function updatePlayer(Name, IP, GUID) {
                 IPs = [];
             }
 
-
             if (IPs.length > 0) {
                 for (let i = 0; i < IPs.length; i++) {
                     if (IPs[i].IP == IP) {
@@ -357,7 +356,7 @@ async function checkPlayers(time) {
                                                         return;
                                                     });
                                                 }
-                                                
+
                                                 //Check if banned
                                                 checkForBan(ServerName, GUID);
                                                 return;

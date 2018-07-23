@@ -36,6 +36,11 @@ router.post('/Addon', async(req, res, next) => {
             return res.send("Invalid Login");
         }
 
+        switch (req.body["client_id"]) {
+            case 1:
+                server = "MaldenLife";
+        }
+
 
         const Option = JSON.parse(req.body["option"]);
         if (/<NULL-object>|B Alpha 1-\d:\d+/g.test(req.body["data"])) {
@@ -75,7 +80,7 @@ router.post('/Addon', async(req, res, next) => {
                             Distance = 0;
                         };
 
-                        req.API.query("INSERT INTO `arma_kills` (`Killer`,`KillerGroup`,`Killed`,`KilledGroup`,`Weapon`,`Distance`) VALUES(?,?,?,?,?,?);", [KillerPID,KillerGroup,KilledPID,KilledGroup,Weapon,Distance]);
+                        req.API.query("INSERT INTO `arma_kills` (`Server`,`Killer`,`KillerGroup`,`Killed`,`KilledGroup`,`Weapon`,`Distance`) VALUES(?,?,?,?,?,?);", [server,KillerPID,KillerGroup,KilledPID,KilledGroup,Weapon,Distance]);
                         return res.send("Success");
 
                     default:
@@ -89,6 +94,30 @@ router.post('/Addon', async(req, res, next) => {
     } catch (error) {
         console.log(error)
         console.log(req.body)
+        return res.send("API Error");
+    }
+});
+
+
+router.post('/Killfeed', async(req, res, next) => {
+    try {
+        /* Check Login */
+        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
+        if (CheckLogin == false) {
+            return res.send("Invalid Login");
+        } else if (req.body["option"] == undefined | req.body["data"] == undefined) {
+            return res.send("Invalid Login");
+        }
+
+        const getRecentKills = req.API.query("SELECT * FROM `arma_kills` WHERE", []);
+        if (getRecentKills[0] == undefined) {
+            return [];
+        } else {
+
+        }
+
+    } catch (error) {
+        console.log(error)
         return res.send("API Error");
     }
 });
