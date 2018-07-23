@@ -46,7 +46,7 @@ router.post('/Addon', async(req, res, next) => {
             const Option = JSON.parse(req.body["option"]);
             if (/<NULL-object>|B Alpha 1-\d:\d+/g.test(req.body["data"])) {
                 const fix = await req.body["data"].match(/(.+)(<NULL-object>|B Alpha 1-\d:\d+)(.+)/);
-                Data = fix[1]+'""'+fix[3];
+                Data = JSON.parse(fix[1]+'""'+fix[3]);
             } else {
                 Data = JSON.parse(req.body["data"]);
             }
@@ -86,7 +86,8 @@ router.post('/Addon', async(req, res, next) => {
 
                         default:
                             console.log("Invalid Log Action: "+Action)
-                            console.log(req.body["data"])
+                            console.log(Option)
+                            console.log(Data)
                             return res.send("Invalid Log Action: "+Action);
                     }
                 
