@@ -191,7 +191,6 @@ async function checkForBan(ServerName, GUID) {
                         if (KickID[0] == undefined) return true;
                         if (KickID[0].ID == null) return true;
                         const SendCommand = 'kick '+KickID[0].ID +' '+query[0].Reason;
-                        console.log(SendCommand)
                         BE.sendCommand(SendCommand);
                         return true;
                     } else if (i + 1 == Servers.length) return false;
@@ -294,7 +293,6 @@ async function updatePlayer(Name, IP, GUID) {
                     Time: Now
                 });
             }
-
 
             if (IPs.length > 20) { //Max to save = 20
                 IPs.splice(0,1);

@@ -2,12 +2,22 @@ const express = require('express'); const app = express();
 const mysql = require('promise-mysql');
 const crypto = require('crypto');
 const bodyParser = require('body-parser');
+const RateLimit = require('express-rate-limit');
 const config = require('./config.json');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.enable('trust proxy');
+
+/* Rate Limiting */
+const limiter = new RateLimit ({
+    windowMs: 1*60*1000, // 1 minute window
+    delayAfter: 1, // begin slowing down responses after the first request
+    delayMs: 1*1000, // slow down subsequent responses by 1 second per request
+    max: 2 // start blocking after 5 requests
+});
+app.use(limiter);
 
 /* Database Pools */
 const API = mysql.createPool({
