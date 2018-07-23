@@ -37,7 +37,6 @@ router.post('/Addon', async(req, res, next) => {
         }
 
         const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
-        console.log(TokenData)
         if (TokenData == false) return res.send("Invalid Login")
         else {
             if (TokenData.Server == undefined) return res.send("Invalid Login")
