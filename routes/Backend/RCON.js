@@ -196,9 +196,12 @@ async function checkForBan(ServerName, GUID) {
     const query = await API.query("SELECT `Server`,`Reason` FROM `arma_bans` WHERE BINARY `GUID`=?;", [GUID]);
     if (query[0] !== undefined) {
         if (query[0] !== null) {
+            console.log('1')
             if (query[0].Server == ServerName | query[0].Server == null) {
+                console.log('2')
                 for (let i = 0; i < Servers.length; i++) {
                     if (ServerName == Servers[i].Name) {
+                        console.log('3')
                         //const BE = Servers[i].BE;
                         const KickID = await getPlayerID(ServerName, GUID);
                         if (KickID == undefined) return true;
