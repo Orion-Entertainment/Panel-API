@@ -193,7 +193,7 @@ async function checkForBan(ServerName, GUID) {
                         console.log(KickID)
                         if (KickID[0] == undefined) return true;
                         if (KickID[0].ID == null) return true;
-                        const SendCommand = 'kick '+KickID+' '+query[0].Reason;
+                        const SendCommand = 'kick '+KickID[0].ID +' '+query[0].Reason;
                         console.log(SendCommand)
                         //BE.sendCommand(SendCommand);
                         return true;
