@@ -339,34 +339,32 @@ async function checkPlayers(time) {
                                                     return;
                                                 });
                                             } else {
-                                                //Check if banned
-                                                const isBanned = await checkForBan(ServerName, GUID);
-                                                if (isBanned == true) {
-                                                    //return;
-                                                } else {
-                                                    if (results[0].IP == null | results[0].IP == "") {
-                                                        API.query("UPDATE `arma_liveplayers` set `IP`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
-                                                            if (error) throw error;
-                                                            return;
-                                                        });
-                                                    } else if (results[0].GUID == null | results[0].GUID == "") {
-                                                        API.query("UPDATE `arma_liveplayers` set `GUID`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
-                                                            if (error) throw error;
-                                                            return;
-                                                        });
-                                                    } else if (results[0].ID == null | results[0].ID == "") {
-                                                        API.query("UPDATE `arma_liveplayers` set `ID`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ID,Ping,ServerName,GUID], function (error, results, fields) {
-                                                            if (error) throw error;
-                                                            return;
-                                                        });
-                                                    } else if (Ping !== results[0].Ping) {
-                                                        updatePlayer(Name, results[0].IP, results[0].GUID);
-                                                        API.query("UPDATE `arma_liveplayers` set `Ping`=? WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [Ping,ServerName,GUID], function (error, results, fields) {
-                                                            if (error) throw error;
-                                                            return;
-                                                        });
-                                                    } else {return}
+                                                if (results[0].IP == null | results[0].IP == "") {
+                                                    API.query("UPDATE `arma_liveplayers` set `IP`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
+                                                        if (error) throw error;
+                                                        return;
+                                                    });
+                                                } else if (results[0].GUID == null | results[0].GUID == "") {
+                                                    API.query("UPDATE `arma_liveplayers` set `GUID`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
+                                                        if (error) throw error;
+                                                        return;
+                                                    });
+                                                } else if (results[0].ID == null | results[0].ID == "") {
+                                                    API.query("UPDATE `arma_liveplayers` set `ID`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ID,Ping,ServerName,GUID], function (error, results, fields) {
+                                                        if (error) throw error;
+                                                        return;
+                                                    });
+                                                } else if (Ping !== results[0].Ping) {
+                                                    updatePlayer(Name, results[0].IP, results[0].GUID);
+                                                    API.query("UPDATE `arma_liveplayers` set `Ping`=? WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [Ping,ServerName,GUID], function (error, results, fields) {
+                                                        if (error) throw error;
+                                                        return;
+                                                    });
                                                 }
+                                                
+                                                //Check if banned
+                                                checkForBan(ServerName, GUID);
+                                                return;
                                             }
                                         });
                                     } else {return}
