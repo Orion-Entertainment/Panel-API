@@ -187,17 +187,21 @@ async function getPlayerGUID(ServerName, Name) {
     return query[0];
 }
 
-async function getPlayerID(ServerName, GUID, Num) {
+async function getPlayerID(ServerName, GUID) {
     if (Num == undefined) Num = 0;
     if (Num >= 5) return false;
     
-    setTimeout(async function(){ 
-        const query = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
-        if (query[0] == undefined) return getPlayerID(ServerName, GUID, Num + 1);
-        if (query[0].ID == null) return getPlayerID(ServerName, GUID, Num + 1);
-        else return query[0];
-    }, 1000);
-    
+    checkID = 0;
+    async function getID(ServerName, GUID, checkID) {
+        if (checkID >= 5) return false;
+        setTimeout(async function(){ 
+            const query = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
+            if (query[0] == undefined) getID(ServerName, GUID, checkID + 1);
+            if (query[0].ID == null) getID(ServerName, GUID, checkID + 1);
+            else return query[0];
+        }, 1000);
+    };
+    getID(ServerName, GUID, checkID);
 }
 
 async function checkForBan(ServerName, GUID) {
