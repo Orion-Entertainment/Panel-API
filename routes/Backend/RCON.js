@@ -187,18 +187,18 @@ async function getPlayerGUID(ServerName, Name) {
     return query[0];
 }
 
-async function getPlayerID(ServerName, GUID) {
-    checkID = 0;
-    async function getID(ServerName, GUID, checkID) {
-        if (checkID >= 5) return false;
-        setTimeout(async function(){ 
-            const query = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
-            if (query[0] == undefined) getID(ServerName, GUID, checkID + 1);
-            else if (query[0].ID == null) getID(ServerName, GUID, checkID + 1);
-            else return query[0];
+async function getPlayerID(ServerName, GUID, checkID) {
+    if (checkID >= 5) return false;
+    const query = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
+    if (query[0] == undefined) {
+        setTimeout(async function() {
+            return getPlayerID(ServerName, GUID, checkID+1)
         }, 1000);
-    };
-    getID(ServerName, GUID, checkID);
+    } else if (query[0].ID == null) {
+        setTimeout(async function() {
+            return getPlayerID(ServerName, GUID, checkID+1)
+        }, 1000);
+    } else return query[0];
 }
 
 async function checkForBan(ServerName, GUID) {
@@ -292,8 +292,8 @@ async function updatePlayer(Name, IP, GUID) {
             } else {
                 IPs = [];
             }
-            
-            
+
+
             if (IPs.length > 0) {
                 for (let i = 0; i < IPs.length; i++) {
                     if (IPs[i].IP == IP) {
