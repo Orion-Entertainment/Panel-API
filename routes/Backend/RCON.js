@@ -214,7 +214,7 @@ async function checkForBan(ServerName, GUID) {
                 for (let i = 0; i < Servers.length; i++) {
                     if (ServerName == Servers[i].Name) {
                         //const BE = Servers[i].BE;
-                        const KickID = await getPlayerID(ServerName, GUID);
+                        const KickID = await getPlayerID(ServerName, GUID, 0);
                         if (KickID == false) return true;
                         const SendCommand = 'kick '+KickID+' '+query[0].Reason;
                         console.log(SendCommand)
