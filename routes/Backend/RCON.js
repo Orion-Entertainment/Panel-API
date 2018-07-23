@@ -193,12 +193,12 @@ async function getPlayerID(ServerName, GUID, checkID) {
     console.log(checkID)
     const query = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
     if (query[0] == undefined) {
-        setTimeout(function(){
-            return getPlayerID(ServerName, GUID, checkID);
+        setTimeout(async function(){
+            return await getPlayerID(ServerName, GUID, checkID);
         }, 500);
     } else if (query[0].ID == null) {
-        setTimeout(function(){
-            return getPlayerID(ServerName, GUID, checkID);
+        setTimeout(async function(){
+            return await getPlayerID(ServerName, GUID, checkID);
         }, 500);
     } else {
         console.log(query[0])
