@@ -338,9 +338,9 @@ async function checkPlayers(time) {
 
                                     if (Name !== null && IP !== null && GUID !== null && Ping !== null && ID !== null) {
                                         //Check if banned
-                                        const CheckBan = await checkForBan(ServerName, GUID);
-                                        if (CheckBan == true) {
-                                            return;
+                                        const isBanned = await checkForBan(ServerName, GUID);
+                                        if (isBanned == true) {
+                                            //return;
                                         } else {
                                             API.query("SELECT `IP`,`GUID`,`Ping`,`ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
                                                 if (error) throw error;
