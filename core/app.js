@@ -98,7 +98,6 @@ async function DecryptData(key, data) {
 }
 
 app.use((req, res, next) => {
-    console.log(req.cf_ip)
     req.Check = async function(ClientID, Token) {
         if (ClientID == undefined | Token == undefined) {return false;}
         
