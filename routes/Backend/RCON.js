@@ -3,8 +3,6 @@ const GETServers = require('../../core/app').Servers;
 const API = require('../../core/app').API;
 const moment = require('moment');
 
-const HackingREGEX = /.+ Restriction #\d+/;
-
 let Servers = [];
 
 for (let i = 0; i < GETServers.length; i++) {
@@ -144,7 +142,7 @@ async function connectRCon (BEConfig, ServerName) {
                 getData = /Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: (.+)/g.exec(message);
                 removePlayer(ServerName, getData[1]);
 
-                if (HackingREGEX.test(getData[3])) {
+                if (/.+ Restriction #\d+/.test(getData[3])) {
                     //Add ban for hacking
                     API.query("INSERT INTO `arma_bans` (`GUID`,`Notes`,`Reason`) VALUES(?,?);", [getData[2],getData[3],"+Flabby - Perm - Hacking"], function (error, results, fields) {
                         if (error) throw error;
