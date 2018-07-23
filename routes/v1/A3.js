@@ -80,7 +80,7 @@ router.post('/Addon', async(req, res, next) => {
                             Distance = 0;
                         };
 
-                        req.API.query("INSERT INTO `arma_kills` (`Server`,`Killer`,`KillerGroup`,`Killed`,`KilledGroup`,`Weapon`,`Distance`) VALUES(?,?,?,?,?,?);", [server,KillerPID,KillerGroup,KilledPID,KilledGroup,Weapon,Distance]);
+                        req.API.query("INSERT INTO `arma_kills` (`Server`,`Killer`,`KillerGroup`,`Killed`,`KilledGroup`,`Weapon`,`Distance`) VALUES(?,?,?,?,?,?,?);", [server,KillerPID,KillerGroup,KilledPID,KilledGroup,Weapon,Distance]);
                         return res.send("Success");
 
                     default:
