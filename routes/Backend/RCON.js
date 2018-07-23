@@ -196,9 +196,9 @@ async function checkForBan(ServerName, GUID) {
     const query = await API.query("SELECT `Server`,`Reason` FROM `arma_bans` WHERE BINARY `GUID`=?;", [GUID]);
     if (query[0] !== undefined) {
         console.log(ServerName, GUID, query[0])
-        console.log(query[0] !== null)
-        console.log(ServerName == query[0].Server | query[0].Server == null)
-        if (query[0] !== null && (ServerName == query[0].Server | query[0].Server == null)) {
+        console.log(ServerName == query[0].Server)
+        console.log(query[0].Server == null)
+        if (query[0] !== null && (query[0].Server == ServerName | query[0].Server == null)) {
             for (let i = 0; i < Servers.length; i++) {
                 if (ServerName == Servers[i].Name) {
                     //const BE = Servers[i].BE;
