@@ -23,6 +23,7 @@
     "moment": "^2.22.2",
     "promise-mysql": "^3.2.0",
     "random-string": "^0.2.0",
-    "randomstring": "^1.1.5"
+    "randomstring": "^1.1.5",
+    "request": "^2.87.0"
   }
 }

@@ -26,7 +26,7 @@ async function DecryptData(key, data) {
 router.post('/Create', async(req, res, next) => {
     try {
         /* Check Token */
-        if (req.data == undefined) return res.send("data undefined").end();
+        if (req.body.data == undefined) return res.send("data undefined").end();
 
         const tokenPart1 = await randomString({
             length: 32,
@@ -42,7 +42,7 @@ router.post('/Create', async(req, res, next) => {
         });
 
         const token = tokenPart1+"-"+tokenPart2;
-        const data = req.data;
+        const data = req.body.data;
 
         const tokenENC = await EncryptData(APITokenKey,token);
         const dataENC = await EncryptData(token,data);
