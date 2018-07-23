@@ -190,12 +190,11 @@ async function checkForBan(ServerName, GUID) {
                     if (ServerName == Servers[i].Name) {
                         //const BE = Servers[i].BE;
                         const KickID = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
-                        console.log(KickID)
                         if (KickID[0] == undefined) return true;
                         if (KickID[0].ID == null) return true;
                         const SendCommand = 'kick '+KickID[0].ID +' '+query[0].Reason;
                         console.log(SendCommand)
-                        //BE.sendCommand(SendCommand);
+                        BE.sendCommand(SendCommand);
                         return true;
                     } else if (i + 1 == Servers.length) return false;
                 }
