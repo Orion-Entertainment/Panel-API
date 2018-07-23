@@ -10,12 +10,20 @@ app.use(bodyParser.json());
 
 app.enable('trust proxy');
 
+/* Cloudflare to get IPs */
+const cloudflare = require('cloudflare-express');
+app.use(cloudflare.restore());
+
 /* Rate Limiting */
+const whitelist = ['66.70.180.170'];
 const limiter = new RateLimit ({
     windowMs: 30*1000, // 30 seconds window
-    delayAfter: 60, // begin slowing down responses after the first request
+    delayAfter: 30, // begin slowing down responses after 30 requests
     delayMs: 250, // slow down subsequent responses by 250ms per request
-    max: 120 // start blocking after 120 requests
+    max: 60, // start blocking after 60 requests
+    skip: function (req, res) {
+        return whitelist.includes(req.cf_ip);
+    }
 });
 app.use(limiter);
 
@@ -90,6 +98,7 @@ async function DecryptData(key, data) {
 }
 
 app.use((req, res, next) => {
+    console.log(req.cf_ip)
     req.Check = async function(ClientID, Token) {
         if (ClientID == undefined | Token == undefined) {return false;}
         
@@ -113,10 +122,6 @@ app.use((req, res, next) => {
     err.status = 404;
     next(err);
 });
-
-//Cloudflare to get IPs
-const cloudflare = require('cloudflare-express');
-app.use(cloudflare.restore());
 
 // error handler
 app.use((err, req, res, next) => {
