@@ -332,18 +332,18 @@ async function checkPlayers(time) {
                                     const ID = getInfo[1];
 
                                     if (Name !== null && IP !== null && GUID !== null && Ping !== null && ID !== null) {
-                                        //Check if banned
-                                        const isBanned = await checkForBan(ServerName, GUID);
-                                        if (isBanned == true) {
-                                            //return;
-                                        } else {
-                                            API.query("SELECT `IP`,`GUID`,`Ping`,`ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
-                                                if (error) throw error;
-                                                else if (results[0] == undefined) {
-                                                    API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`IP`,`GUID`,`ID`,`Ping`) VALUES(?,?,?,?,?,?);", [ServerName,Name,IP,GUID,ID,Ping], function (error, results, fields) {
-                                                        if (error) throw error;
-                                                        return;
-                                                    });
+                                        API.query("SELECT `IP`,`GUID`,`Ping`,`ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], function (error, results, fields) {
+                                            if (error) throw error;
+                                            else if (results[0] == undefined) {
+                                                API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`IP`,`GUID`,`ID`,`Ping`) VALUES(?,?,?,?,?,?);", [ServerName,Name,IP,GUID,ID,Ping], function (error, results, fields) {
+                                                    if (error) throw error;
+                                                    return;
+                                                });
+                                            } else {
+                                                //Check if banned
+                                                const isBanned = await checkForBan(ServerName, GUID);
+                                                if (isBanned == true) {
+                                                    //return;
                                                 } else {
                                                     if (results[0].IP == null | results[0].IP == "") {
                                                         API.query("UPDATE `arma_liveplayers` set `IP`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
@@ -368,8 +368,8 @@ async function checkPlayers(time) {
                                                         });
                                                     } else {return}
                                                 }
-                                            });
-                                        }
+                                            }
+                                        });
                                     } else {return}
                                 }
                             }
