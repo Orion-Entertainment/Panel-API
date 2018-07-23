@@ -39,10 +39,10 @@ router.post('/Addon', async(req, res, next) => {
         const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
         if (TokenData == undefined) {
             return res.send("Invalid Login")
-        }else if (TokenData.Server == false) {
+        } else if (TokenData.Server == false) {
             return res.send("Invalid Login")
         } else {
-            server = TokenData.Server
+            const Server = JSON.parse(TokenData).Server;
             const Option = JSON.parse(req.body["option"]);
             if (/<NULL-object>|B Alpha 1-\d:\d+/g.test(req.body["data"])) {
                 const fix = await req.body["data"].match(/(.+)(<NULL-object>|B Alpha 1-\d:\d+)(.+)/);
@@ -56,10 +56,10 @@ router.post('/Addon', async(req, res, next) => {
                     const Action = Data[0];
                     switch (Action) {
                         case "Killed":
-                            //const KilledName = Data[1];
+                            const KilledName = Data[1];
                             const KilledPID = Data[2];
                             let KilledGroup = Data[3];
-                            // const KillerName = Data[4];
+                            const KillerName = Data[4];
                             let KillerPID = Data[5];
                             let Weapon = Data[6];
                             let KillerGroup = Data[7];
@@ -81,7 +81,7 @@ router.post('/Addon', async(req, res, next) => {
                                 Distance = 0;
                             };
 
-                            req.API.query("INSERT INTO `arma_kills` (`Server`,`Killer`,`KillerGroup`,`Killed`,`KilledGroup`,`Weapon`,`Distance`) VALUES(?,?,?,?,?,?,?);", [server,KillerPID,KillerGroup,KilledPID,KilledGroup,Weapon,Distance]);
+                            req.API.query("INSERT INTO `arma_kills` (`Server`,`KillerName`,`Killer`,`KillerGroup`,`KilledName`,`Killed`,`KilledGroup`,`Weapon`,`Distance`) VALUES(?,?,?,?,?,?,?,?,?);", [Server,KillerName,KillerPID,KillerGroup,KilledName,KilledPID,KilledGroup,Weapon,Distance]);
                             return res.send("Success");
 
                         default:
