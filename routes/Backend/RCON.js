@@ -195,27 +195,26 @@ async function getPlayerID(ServerName, GUID) {
 async function checkForBan(ServerName, GUID) {
     const query = await API.query("SELECT `Server`,`Reason` FROM `arma_bans` WHERE BINARY `GUID`=?;", [GUID]);
     if (query[0] !== undefined) {
-        console.log(ServerName, GUID, query[0])
-        console.log(ServerName == query[0].Server)
-        console.log(query[0].Server == null)
-        if (query[0] !== null && (query[0].Server == ServerName | query[0].Server == null)) {
-            for (let i = 0; i < Servers.length; i++) {
-                if (ServerName == Servers[i].Name) {
-                    //const BE = Servers[i].BE;
-                    const KickID = await getPlayerID(ServerName, GUID);
-                    if (KickID == undefined) return true;
-                    if (KickID == null | KickID == "") {
-                        setTimeout(function(){ 
-                            return checkForBan(ServerName, GUID);
-                        }, 1000);
-                    } else {
-                        const SendCommand = 'kick '+KickID+' '+query[0].Reason;
-                        console.log(SendCommand)
-                        //BE.sendCommand(SendCommand);
-                        return true;
-                    }
-                } else if (i + 1 == Servers.length) return false;
-            }
+        if (query[0] !== null) {
+            if (query[0].Server == ServerName | query[0].Server == null) {
+                for (let i = 0; i < Servers.length; i++) {
+                    if (ServerName == Servers[i].Name) {
+                        //const BE = Servers[i].BE;
+                        const KickID = await getPlayerID(ServerName, GUID);
+                        if (KickID == undefined) return true;
+                        if (KickID == null | KickID == "") {
+                            setTimeout(function(){ 
+                                return checkForBan(ServerName, GUID);
+                            }, 1000);
+                        } else {
+                            const SendCommand = 'kick '+KickID+' '+query[0].Reason;
+                            console.log(SendCommand)
+                            //BE.sendCommand(SendCommand);
+                            return true;
+                        }
+                    } else if (i + 1 == Servers.length) return false;
+                }
+            } else return false;
         } else return false;
     } else return false;
 }
