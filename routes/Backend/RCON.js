@@ -188,7 +188,7 @@ async function checkForBan(ServerName, GUID) {
             if (query[0].Server == ServerName | query[0].Server == null) {
                 for (let i = 0; i < Servers.length; i++) {
                     if (ServerName == Servers[i].Name) {
-                        //const BE = Servers[i].BE;
+                        const BE = Servers[i].BE;
                         const KickID = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
                         if (KickID[0] == undefined) return true;
                         if (KickID[0].ID == null) return true;
