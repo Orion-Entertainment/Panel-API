@@ -195,10 +195,11 @@ async function getPlayerID(ServerName, GUID) {
 async function checkForBan(ServerName, GUID) {
     const query = await API.query("SELECT `Server`,`Reason` FROM `arma_bans` WHERE BINARY `GUID`=?;", [GUID]);
     if (query[0] !== undefined) {
+        console.log(ServerName, GUID, query[0])
         if (query[0] !== null && (ServerName == query[0].Server | query[0].Server == null)) {
             for (let i = 0; i < Servers.length; i++) {
                 if (ServerName == Servers[i].Name) {
-                    const BE = Servers[i].BE;
+                    //const BE = Servers[i].BE;
                     const KickID = await getPlayerID(ServerName, GUID);
                     if (KickID == undefined) return true;
                     if (KickID == null | KickID == "") {
