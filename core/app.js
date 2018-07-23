@@ -105,6 +105,12 @@ app.use((req, res, next) => {
         const Query = await API.query("SELECT `client_id` FROM `login` WHERE `client_id`=? AND BINARY `token`=?;", [ClientID, token]);
         if (Query[0] == undefined) {return false;} else {return true;}
     };
+    req.GetData = async function(ClientID, Token) {
+        const Query = await API.query("SELECT `data` FROM `login` WHERE `client_id`=?;", [ClientID]);
+        if (Query[0] == undefined) return false;
+        const Decrypted = await DecryptData(Token,Query[0].data);
+        return Decrypted;
+    };
 
     req.API = API;
     next();
