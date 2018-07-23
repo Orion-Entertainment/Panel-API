@@ -188,9 +188,6 @@ async function getPlayerGUID(ServerName, Name) {
 }
 
 async function getPlayerID(ServerName, GUID) {
-    if (Num == undefined) Num = 0;
-    if (Num >= 5) return false;
-    
     checkID = 0;
     async function getID(ServerName, GUID, checkID) {
         if (checkID >= 5) return false;
