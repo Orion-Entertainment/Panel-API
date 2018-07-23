@@ -37,7 +37,9 @@ router.post('/Addon', async(req, res, next) => {
         }
 
         switch (req.body["client_id"]) {
-            case 1:
+            case "1":
+                server = "MaldenLife";
+            case "3":
                 server = "MaldenLife";
         }
 
