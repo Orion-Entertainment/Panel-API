@@ -181,23 +181,11 @@ async function getPlayerGUID(ServerName, Name) {
     return query[0];
 }
 
-async function getPlayerID(ServerName, GUID, checkID) {
-    if (checkID >= 20) return false;
-    checkID++
-    console.log(checkID)
+async function getPlayerID(ServerName, GUID) {
     const query = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
-    if (query[0] == undefined) {
-        setTimeout(async function(){
-            return await getPlayerID(ServerName, GUID, checkID);
-        }, 500);
-    } else if (query[0].ID == null) {
-        setTimeout(async function(){
-            return await getPlayerID(ServerName, GUID, checkID);
-        }, 500);
-    } else {
-        console.log(query[0])
-        return query[0].ID
-    };
+    if (query[0] == undefined) return false;
+    else if (query[0].ID == null) return false;
+    else return query[0].ID
 }
 
 async function checkForBan(ServerName, GUID) {
@@ -208,7 +196,7 @@ async function checkForBan(ServerName, GUID) {
                 for (let i = 0; i < Servers.length; i++) {
                     if (ServerName == Servers[i].Name) {
                         //const BE = Servers[i].BE;
-                        const KickID = await getPlayerID(ServerName, GUID, 0);
+                        const KickID = await getPlayerID(ServerName, GUID);
                         if (KickID == false) return true;
                         const SendCommand = 'kick '+KickID+' '+query[0].Reason;
                         console.log(SendCommand)
