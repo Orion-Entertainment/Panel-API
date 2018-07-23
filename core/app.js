@@ -12,10 +12,10 @@ app.enable('trust proxy');
 
 /* Rate Limiting */
 const limiter = new RateLimit ({
-    windowMs: 1*60*1000, // 1 minute window
-    delayAfter: 1, // begin slowing down responses after the first request
-    delayMs: 1*1000, // slow down subsequent responses by 1 second per request
-    max: 2 // start blocking after 5 requests
+    windowMs: 30*1000, // 30 seconds window
+    delayAfter: 60, // begin slowing down responses after the first request
+    delayMs: 250, // slow down subsequent responses by 250ms per request
+    max: 120 // start blocking after 120 requests
 });
 app.use(limiter);
 
