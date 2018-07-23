@@ -187,34 +187,33 @@ async function getPlayerGUID(ServerName, Name) {
     return query[0];
 }
 
-async function getPlayerID(ServerName, GUID) {
-    const query = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
-    return query[0];
+async function getPlayerID(ServerName, GUID, Num) {
+    if (Num == undefined) Num = 0;
+    if (Num >= 5) return false;
+    
+    setTimeout(function(){ 
+        const query = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
+        if (query[0] == undefined) return getPlayerID(ServerName, GUID, Num + 1);
+        if (query[0].ID == null) return getPlayerID(ServerName, GUID, Num + 1);
+        else return query[0];
+    }, 1000);
+    
 }
 
 async function checkForBan(ServerName, GUID) {
     const query = await API.query("SELECT `Server`,`Reason` FROM `arma_bans` WHERE BINARY `GUID`=?;", [GUID]);
     if (query[0] !== undefined) {
         if (query[0] !== null) {
-            console.log('1')
             if (query[0].Server == ServerName | query[0].Server == null) {
-                console.log('2')
                 for (let i = 0; i < Servers.length; i++) {
                     if (ServerName == Servers[i].Name) {
-                        console.log('3')
                         //const BE = Servers[i].BE;
                         const KickID = await getPlayerID(ServerName, GUID);
-                        if (KickID == undefined) return true;
-                        if (KickID == null | KickID == "") {
-                            setTimeout(function(){ 
-                                return checkForBan(ServerName, GUID);
-                            }, 1000);
-                        } else {
-                            const SendCommand = 'kick '+KickID+' '+query[0].Reason;
-                            console.log(SendCommand)
-                            //BE.sendCommand(SendCommand);
-                            return true;
-                        }
+                        if (KickID == false) return true;
+                        const SendCommand = 'kick '+KickID+' '+query[0].Reason;
+                        console.log(SendCommand)
+                        //BE.sendCommand(SendCommand);
+                        return true;
                     } else if (i + 1 == Servers.length) return false;
                 }
             } else return false;
