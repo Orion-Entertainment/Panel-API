@@ -317,7 +317,8 @@ async function checkPlayers(time) {
                             const Players = players.match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g);
                             if (Players !== null) {
                                 for (let p = 0; p < Players.length; p++) {
-                                    const getInfo = Players[p].match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/);
+                                    const first = Players[p].match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/);
+                                    const getInfo = first.replace(/Players on server:/, '')
 
                                     const Name = getInfo[5].replace(/\s(\(Lobby\))/, '');
                                     const IP = getInfo[2];
