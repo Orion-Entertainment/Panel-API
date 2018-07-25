@@ -42,7 +42,7 @@ router.post('/Addon', async(req, res, next) => {
         } else if (TokenData.Server == false) {
             return res.send("Invalid Login")
         } else {
-            const Server = JSON.parse(TokenData).Server;
+            const ServerName = JSON.parse(TokenData).Server;
             const Option = JSON.parse(req.body["option"]);
             if (/<NULL-object>|B Alpha 1-\d:\d+/g.test(req.body["data"])) {
                 const fix = await req.body["data"].match(/(.+)(<NULL-object>|B Alpha 1-\d:\d+)(.+)/);
@@ -56,32 +56,25 @@ router.post('/Addon', async(req, res, next) => {
                     const Action = Data[0];
                     switch (Action) {
                         case "Killed":
-                            const KilledName = Data[1];
+                            let KilledName = Data[1];
                             const KilledPID = Data[2];
                             let KilledGroup = Data[3];
-                            const KillerName = Data[4];
+                            let KillerName = Data[4];
                             let KillerPID = Data[5];
                             let Weapon = Data[6];
                             let KillerGroup = Data[7];
                             let Distance = Data[8];
 
-                            if (KilledGroup == "" | KilledGroup == "No Group" | KilledGroup == "No Gang") {
-                                KilledGroup = null;
-                            };
-                            if (KillerPID === "") {
-                                KillerPID = null;
-                            };
-                            if (KillerGroup == "" | KilledGroup == "No Group" | KilledGroup == "No Gang") {
-                                KillerGroup = null;
-                            };
-                            if (Weapon == "") {
-                                Weapon = null;
-                            };
-                            if (Distance < 0) {
-                                Distance = 0;
-                            };
+                            //Changes some values to null
+                            if (KilledGroup == "" | KilledGroup == "No Group" | KilledGroup == "No Gang") KilledGroup = null;
+                            if (KillerGroup == "" | KillerGroup == "No Group" | KillerGroup == "No Gang") KillerGroup = null;
+                            if (KilledName == "") KilledName = null;
+                            if (KillerName == "") KillerName = null;
+                            if (KillerPID === "") KillerPID = null;
+                            if (Weapon == "") Weapon = null;
+                            if (Distance < 0) Distance = 0;
 
-                            req.API.query("INSERT INTO `arma_kills` (`Server`,`KillerName`,`Killer`,`KillerGroup`,`KilledName`,`Killed`,`KilledGroup`,`Weapon`,`Distance`) VALUES(?,?,?,?,?,?,?,?,?);", [Server,KillerName,KillerPID,KillerGroup,KilledName,KilledPID,KilledGroup,Weapon,Distance]);
+                            req.API.query("INSERT INTO `arma_kills` (`Server`,`KillerName`,`Killer`,`KillerGroup`,`KilledName`,`Killed`,`KilledGroup`,`Weapon`,`Distance`) VALUES(?,?,?,?,?,?,?,?,?);", [ServerName,KillerName,KillerPID,KillerGroup,KilledName,KilledPID,KilledGroup,Weapon,Distance]);
                             return res.send("Success");
 
                         default:
