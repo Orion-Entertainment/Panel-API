@@ -314,7 +314,8 @@ async function checkPlayers(time) {
                         const ServerName = Servers[i].Name;
                         const BE = Servers[i].BE;
                         BE.sendCommand('players', async function(players) {
-                            const First = players.replace(/Players on server:/, '');
+                            const GetPlayers = players;
+                            const First = GetPlayers.replace(/Players on server:/g, '');
                             if (First == null) return;
                             const Players = First.match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g);
                             if (Players == null) return;
