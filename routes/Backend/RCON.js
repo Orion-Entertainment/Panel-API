@@ -329,7 +329,7 @@ async function checkPlayers(time) {
                                 const ID = getInfo[1];
 
                                 if (Name !== null && IP !== null && GUID !== null && Ping !== null && ID !== null) {
-                                    API.query("SELECT `IP`,`GUID`,`Ping`,`ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `Name`=?;", [ServerName,Name], async function (error, results, fields) {
+                                    API.query("SELECT `IP`,`GUID`,`Ping`,`ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID], async function (error, results, fields) {
                                         if (error) throw error;
                                         else if (results[0] == undefined) {
                                             API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`IP`,`GUID`,`ID`,`Ping`) VALUES(?,?,?,?,?,?);", [ServerName,Name,IP,GUID,ID,Ping], function (error, results, fields) {
