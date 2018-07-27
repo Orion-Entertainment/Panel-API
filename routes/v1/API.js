@@ -25,7 +25,11 @@ async function DecryptData(key, data) {
 /* Routers */
 router.post('/Create', async(req, res, next) => {
     try {
-        /* Check Token */
+        /* Check Login */
+        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
+        if (CheckLogin == false) return res.send("Invalid Login"); 
+
+
         if (req.body.data == undefined) return res.send("data undefined").end();
 
         const tokenPart1 = await randomString({
