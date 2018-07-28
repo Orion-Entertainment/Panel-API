@@ -42,9 +42,10 @@ router.post('/Verify', async(req, res, next) => {
                 else if (req.body["Steam64ID"] == "") return res.json({Error: "Steam64ID Empty"})
 
                 req.API.query("SELECT `id` FROM `accounts` WHERE BINARY `Steam64ID`=?;", [req.body["Steam64ID"]], async function (error, results, fields) {
-                    if (error) 
+                    if (error) {
                         console.error(error)
                         return res.json({Error: error})
+                    }
                     
                     if (results[0] == undefined) {
                         return res.json({
