@@ -35,7 +35,7 @@ router.post('/Verify', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
         const Check = req.body.Option;
-        if (Checkn == undefined) return res.json({Error: "Option Undefined"})
+        if (Check == undefined) return res.json({Error: "Option Undefined"})
         else if (Check.Option == undefined) return res.json({Error: "Option Undefined"})
         else if (Check.Option == "") return res.json({Error: "Option Empty"})
 
