@@ -83,7 +83,7 @@ router.post('/Register', async(req, res, next) => {
         else if (req.body.Option == "") return res.json({Error: "Option Empty"})
         else if (req.body.IP == undefined) return res.json({Error: "IP Undefined"})
         else if (req.body.IP == "") return res.json({Error: "IP Empty"})
-        else if (Data == undefined) return res.json({Error: "Data Undefined"})
+        else if (req.body.Data == undefined) return res.json({Error: "Data Undefined"})
         const Data = JSON.parse(req.body.Data);
         if (Data.Name == undefined) return res.json({Error: "Name Undefined"})
         else if (Data.Name == "") return res.json({Error: "Name Empty"})
