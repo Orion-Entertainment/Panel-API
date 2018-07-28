@@ -33,15 +33,18 @@ router.post('/Verify', async(req, res, next) => {
         if (TokenData == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
-        else if (req.body["Option"] == undefined) return res.json({Error: "Option Undefined"})
-        else if (req.body["Option"] == "") return res.json({Error: "Option Empty"})
 
-        switch (req.body["Option"]) {
+        const Check = req.body.Option;
+        if (Checkn == undefined) return res.json({Error: "Option Undefined"})
+        else if (Check.Option == undefined) return res.json({Error: "Option Undefined"})
+        else if (Check.Option == "") return res.json({Error: "Option Empty"})
+
+        switch (Check.Option) {
             case "Steam":
-                if (req.body["Steam64ID"] == undefined) return res.json({Error: "Steam64ID Undefined"})
-                else if (req.body["Steam64ID"] == "") return res.json({Error: "Steam64ID Empty"})
+                if (Check.SteamID == undefined) return res.json({Error: "SteamID Undefined"})
+                else if (Check.SteamID == "") return res.json({Error: "SteamID Empty"})
 
-                req.API.query("SELECT `id` FROM `accounts` WHERE BINARY `Steam64ID`=?;", [req.body["Steam64ID"]], async function (error, results, fields) {
+                req.API.query("SELECT `id` FROM `accounts` WHERE BINARY `Steam64ID`=?;", [Check.SteamID], async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
