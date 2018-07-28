@@ -15,7 +15,7 @@ const cloudflare = require('cloudflare-express');
 app.use(cloudflare.restore());
 
 /* Rate Limiting */
-const whitelist = ['66.70.180.170'];
+const whitelist = ['127.0.0.1','142.44.247.22','66.70.180.170'];
 const limiter = new RateLimit ({
     windowMs: 30*1000, // 30 seconds window
     delayAfter: 30, // begin slowing down responses after 30 requests
