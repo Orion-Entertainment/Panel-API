@@ -79,6 +79,9 @@ router.post('/Register', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
         else if (req.body.Option == undefined) return res.json({Error: "Option Undefined"})
+        else if (req.body.Option == "") return res.json({Error: "Option Empty"})
+        else if (req.body.IP == undefined) return res.json({Error: "IP Undefined"})
+        else if (req.body.IP == "") return res.json({Error: "IP Empty"})
         else if (req.body.Data == undefined) return res.json({Error: "Data Undefined"})
         else if (req.body.Data.Name == undefined) return res.json({Error: "Name Undefined"})
         else if (req.body.Data.Email == undefined) return res.json({Error: "Email Undefined"})
@@ -91,7 +94,7 @@ router.post('/Register', async(req, res, next) => {
                 if (req.body.Data.Steam64ID == undefined) return res.json({Error: "Steam64ID Undefined"})
                 if (req.body.Data.Steam64ID == "" | !isNaN(req.body.Data.Steam64ID)) return res.json({Error: "Steam64ID Invalid"})
 
-                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`) VALUES(?,?,?,?,?,?);", [req.body.Data.Name,[{Name: req.body.Data.Name, Time: Now}],Email,req.body.Data.Steam64ID], async function (error, results, fields) {
+                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`) VALUES(?,?,?,?,?,?);", [req.body.Data.Name,[{Name: req.body.Data.Name, Time: Now}],Email,req.body.Data.Steam64ID,req.body.IP,[{IP: req.body.IP, Time: Now}]], async function (error, results, fields) {
                     if (error) {
                         if (error = "ER_DUP_ENTRY") {
                             return res.send("Already Registered")
