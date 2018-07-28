@@ -83,9 +83,11 @@ router.post('/Register', async(req, res, next) => {
         else if (req.body.IP == undefined) return res.json({Error: "IP Undefined"})
         else if (req.body.IP == "") return res.json({Error: "IP Empty"})
         else if (req.body.Data == undefined) return res.json({Error: "Data Undefined"})
-        else if (req.body.Data.Name == undefined) return res.json({Error: "Name Undefined"})
-        else if (req.body.Data.Email == undefined) return res.json({Error: "Email Undefined"})
-        else if (req.body.Data.Email == false | req.body.Data.Email == "") Email = null;
+        const Data = JSON.parse(req.body.Data);
+        if (Data.Name == undefined) return res.json({Error: "Name Undefined"})
+        else if (Data.Name == "") return res.json({Error: "Name Empty"})
+        else if (Data.Email == undefined) return res.json({Error: "Email Undefined"})
+        else if (Data.Email == false | req.body.Data.Email == "") Email = null;
 
         const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
 
