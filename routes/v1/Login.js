@@ -68,4 +68,48 @@ router.post('/Verify', async(req, res, next) => {
     }
 });
 
+router.post('/Register', async(req, res, next) => {
+    try {
+        /* Check Login */
+        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
+        if (CheckLogin == false) return res.send("Invalid Login"); 
+        const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
+
+        if (TokenData == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
+        else if (req.body.Option == undefined) return res.json({Error: "Option Undefined"})
+        else if (req.body.Data == undefined) return res.json({Error: "Data Undefined"})
+        else if (req.body.Data.Name == undefined) return res.json({Error: "Name Undefined"})
+        else if (req.body.Data.Email == undefined) return res.json({Error: "Email Undefined"})
+        else if (req.body.Data.Email == false | req.body.Data.Email == "") Email = null;
+
+        const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
+
+        switch (req.body.Option) {
+            case "Steam":
+                if (req.body.Data.Steam64ID == undefined) return res.json({Error: "Steam64ID Undefined"})
+                if (req.body.Data.Steam64ID == "" | !isNaN(req.body.Data.Steam64ID)) return res.json({Error: "Steam64ID Invalid"})
+
+                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`) VALUES(?,?,?,?,?,?);", [req.body.Data.Name,[{Name: req.body.Data.Name, Time: Now}],Email,req.body.Data.Steam64ID], async function (error, results, fields) {
+                    if (error) {
+                        if (error = "ER_DUP_ENTRY") {
+                            return res.send("Already Registered")
+                        } else {
+                            console.error(error)
+                            return res.json({Error: error})
+                        }
+                    } else {
+                        return res.json({
+                            "ID": results.insertId
+                        }).end();
+                    }
+                });
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json({Error: "Error"})
+    }
+});
+
 module.exports = router;
