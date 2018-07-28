@@ -55,7 +55,7 @@ router.post('/Verify', async(req, res, next) => {
                 if (Check.SteamID == undefined) return res.json({Error: "SteamID Undefined"})
                 else if (Check.SteamID == "") return res.json({Error: "SteamID Empty"})
 
-                req.API.query("SELECT `id` FROM `accounts` WHERE BINARY `Steam64ID`=?;", [await QueryableEncrypt(Check.SteamID, Steam64IDKey)], async function (error, results, fields) {
+                req.API.query("SELECT `id` FROM `accounts` WHERE BINARY `Steam64ID`="+await QueryableEncrypt(Check.SteamID, Steam64IDKey)+";", async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
@@ -107,7 +107,7 @@ router.post('/Register', async(req, res, next) => {
                 if (Data.Steam64ID == undefined) return res.json({Error: "Steam64ID Undefined"})
                 if (Data.Steam64ID == "" | isNaN(Data.Steam64ID)) return res.json({Error: "Steam64ID Invalid"})
 
-                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`) VALUES(?,?,?,?,?,?);", [await QueryableEncrypt(Data.Name, NameKey),JSON.stringify([{Name: Data.Name, Time: Now}]),await QueryableEncrypt(Email, EmailKey),await QueryableEncrypt(Data.Steam64ID, Steam64IDKey),await QueryableEncrypt(req.body.IP, IPKey),JSON.stringify([{IP: req.body.IP, Time: Now}])], async function (error, results, fields) {
+                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`) VALUES("+await QueryableEncrypt(Data.Name, NameKey)+",?,"+await QueryableEncrypt(Email, EmailKey)+","+await QueryableEncrypt(Data.Steam64ID, Steam64IDKey)+","+await QueryableEncrypt(req.body.IP, IPKey)+",?);", [JSON.stringify([{Name: Data.Name, Time: Now}]),JSON.stringify([{IP: req.body.IP, Time: Now}])], async function (error, results, fields) {
                     if (error) {
                         if (error = "ER_DUP_ENTRY") {
                             return res.send("Already Registered")
