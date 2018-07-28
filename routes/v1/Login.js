@@ -97,7 +97,7 @@ router.post('/Register', async(req, res, next) => {
                 if (Data.Steam64ID == undefined) return res.json({Error: "Steam64ID Undefined"})
                 if (Data.Steam64ID == "" | isNaN(Data.Steam64ID)) return res.json({Error: "Steam64ID Invalid"})
 
-                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`) VALUES(?,?,?,?,?,?);", [Data.Name,[{Name: Data.Name, Time: Now}],Email,Data.Steam64ID,req.body.IP,[{IP: req.body.IP, Time: Now}]], async function (error, results, fields) {
+                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`) VALUES(?,?,?,?,?,?);", [Data.Name,JSON.stringify([{Name: Data.Name, Time: Now}]),Email,Data.Steam64ID,req.body.IP,JSON.stringify([{IP: req.body.IP, Time: Now}])], async function (error, results, fields) {
                     if (error) {
                         if (error = "ER_DUP_ENTRY") {
                             return res.send("Already Registered")
