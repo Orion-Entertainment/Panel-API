@@ -3,7 +3,10 @@ const router = express.Router();
 const moment = require('moment');
 
 /* Set Variables */
-const APITokenKey = 'M6uPseis3w8peRrKMdKhNKuoIk5X27Tn';
+const IPKey = '23c75c2073e06aefc59278be2cc59cd9';
+const NameKey = 'f4b4f10543810f6c6983576fe291c11f';
+const EmailKey = '9f5e31765acb477bcb260ac1706d7719';
+const Steam64IDKey = 'f8ed9462be58f755a98646cbad9c48d5';
 
 /* Added NPM Packages */
 const crypto = require('crypto');
@@ -22,6 +25,13 @@ async function DecryptData(key, data) {
     decrypted += decipher.final('utf8'); 
     return decrypted; 
 }
+
+function QueryableEncrypt(data, key) {
+    return "AES_ENCRYPT('"+data+"', '"+key+"')";
+}
+function QueryableDecrypt(column, key) {
+    return "CONVERT(AES_DECRYPT(`"+column+"`, '"+key+"') using utf8) AS '"+column+"'";
+};
 
 /* Routers */
 router.post('/Verify', async(req, res, next) => {
@@ -97,7 +107,7 @@ router.post('/Register', async(req, res, next) => {
                 if (Data.Steam64ID == undefined) return res.json({Error: "Steam64ID Undefined"})
                 if (Data.Steam64ID == "" | isNaN(Data.Steam64ID)) return res.json({Error: "Steam64ID Invalid"})
 
-                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`) VALUES(?,?,?,?,?,?);", [Data.Name,JSON.stringify([{Name: Data.Name, Time: Now}]),Email,Data.Steam64ID,req.body.IP,JSON.stringify([{IP: req.body.IP, Time: Now}])], async function (error, results, fields) {
+                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`) VALUES(?,?,?,?,?,?);", [await QueryableEncrypt(Data.Name, NameKey),JSON.stringify([{Name: Data.Name, Time: Now}]),await QueryableEncrypt(Email, EmailKey),await QueryableEncrypt(Data.Steam64ID, Steam64IDKey),await QueryableEncrypt(req.body.IP, IPKey),JSON.stringify([{IP: req.body.IP, Time: Now}])], async function (error, results, fields) {
                     if (error) {
                         if (error = "ER_DUP_ENTRY") {
                             return res.send("Already Registered")
