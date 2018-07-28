@@ -41,9 +41,9 @@ router.post('/Verify', async(req, res, next) => {
                 if (req.body["Steam64ID"] == undefined) return res.json({Error: "Steam64ID Undefined"})
                 else if (req.body["Steam64ID"] == "") return res.json({Error: "Steam64ID Empty"})
 
-                req.API.query("SELECT `id` FROM `account` WHERE BINARY `Steam64ID`=?;", [req.body["Steam64ID"]], async function (error, results, fields) {
+                req.API.query("SELECT `id` FROM `accounts` WHERE BINARY `Steam64ID`=?;", [req.body["Steam64ID"]], async function (error, results, fields) {
                     if (error) 
-                        console.log(error)
+                        console.error(error)
                         return res.json({Error: error})
                     
                     if (results[0] == undefined) {
