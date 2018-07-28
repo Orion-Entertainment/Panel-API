@@ -29,9 +29,12 @@ router.post('/Verify', async(req, res, next) => {
         const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
         if (CheckLogin == false) return res.send("Invalid Login"); 
         const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
-        console.log(TokenData)
+
         if (TokenData.Panel == undefined) return res.json({Error: "Access Denied"})
-        else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
+        const TData = JSON.parse(TokenData);
+        console.log(TData)
+        console.log(TData.Panel)
+        if (TData.Panel !== true) return res.json({Error: "Access Denied"})
         else if (req.body["Option"] == undefined) return res.json({Error: "Option Undefined"})
         else if (req.body["Option"] == "") return res.json({Error: "Option Empty"})
 
