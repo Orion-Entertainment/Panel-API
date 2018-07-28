@@ -31,7 +31,7 @@ router.post('/Verify', async(req, res, next) => {
         const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
 
         if (TokenData == undefined) return res.json({Error: "Access Denied"})
-        if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
         else if (req.body["Option"] == undefined) return res.json({Error: "Option Undefined"})
         else if (req.body["Option"] == "") return res.json({Error: "Option Empty"})
@@ -42,7 +42,9 @@ router.post('/Verify', async(req, res, next) => {
                 else if (req.body["Steam64ID"] == "") return res.json({Error: "Steam64ID Empty"})
 
                 req.API.query("SELECT `id` FROM `account` WHERE BINARY `Steam64ID`=?;", [req.body["Steam64ID"]], async function (error, results, fields) {
-                    if (error) return res.json({Error: error})
+                    if (error) 
+                        console.log(error)
+                        return res.json({Error: error})
                     
                     if (results[0] == undefined) {
                         return res.json({
@@ -58,7 +60,7 @@ router.post('/Verify', async(req, res, next) => {
         }
     } catch (error) {
         console.log(error)
-        return res.send("API Error");
+        return res.json({Error: "Error"})
     }
 });
 
