@@ -83,21 +83,21 @@ router.post('/Register', async(req, res, next) => {
         else if (req.body.Option == "") return res.json({Error: "Option Empty"})
         else if (req.body.IP == undefined) return res.json({Error: "IP Undefined"})
         else if (req.body.IP == "") return res.json({Error: "IP Empty"})
-        else if (req.body.Data == undefined) return res.json({Error: "Data Undefined"})
+        else if (Data == undefined) return res.json({Error: "Data Undefined"})
         const Data = JSON.parse(req.body.Data);
         if (Data.Name == undefined) return res.json({Error: "Name Undefined"})
         else if (Data.Name == "") return res.json({Error: "Name Empty"})
         else if (Data.Email == undefined) return res.json({Error: "Email Undefined"})
-        else if (Data.Email == false | req.body.Data.Email == "") Email = null;
+        else if (Data.Email == false | Data.Email == "") Email = null;
 
         const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
 
         switch (req.body.Option) {
             case "Steam":
-                if (req.body.Data.Steam64ID == undefined) return res.json({Error: "Steam64ID Undefined"})
-                if (req.body.Data.Steam64ID == "" | !isNaN(req.body.Data.Steam64ID)) return res.json({Error: "Steam64ID Invalid"})
+                if (Data.Steam64ID == undefined) return res.json({Error: "Steam64ID Undefined"})
+                if (Data.Steam64ID == "" | !isNaN(Data.Steam64ID)) return res.json({Error: "Steam64ID Invalid"})
 
-                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`) VALUES(?,?,?,?,?,?);", [req.body.Data.Name,[{Name: req.body.Data.Name, Time: Now}],Email,req.body.Data.Steam64ID,req.body.IP,[{IP: req.body.IP, Time: Now}]], async function (error, results, fields) {
+                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`) VALUES(?,?,?,?,?,?);", [Data.Name,[{Name: Data.Name, Time: Now}],Email,Data.Steam64ID,req.body.IP,[{IP: req.body.IP, Time: Now}]], async function (error, results, fields) {
                     if (error) {
                         if (error = "ER_DUP_ENTRY") {
                             return res.send("Already Registered")
