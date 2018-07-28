@@ -51,13 +51,17 @@ router.post('/Verify', async(req, res, next) => {
         if (Check == undefined) return res.json({Error: "Option Undefined"})
         else if (Check.Option == undefined) return res.json({Error: "Option Undefined"})
         else if (Check.Option == "") return res.json({Error: "Option Empty"})
+        else if (req.body.IP == undefined) return res.json({Error: "IP Undefined"})
+        else if (req.body.IP == "") return res.json({Error: "IP Empty"})
+
+        const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
 
         switch (Check.Option) {
             case "Steam":
                 if (Check.SteamID == undefined) return res.json({Error: "SteamID Undefined"})
                 else if (Check.SteamID == "") return res.json({Error: "SteamID Empty"})
 
-                req.API.query("SELECT `id` FROM `accounts` WHERE BINARY `Steam64ID`="+await QueryableEncrypt(Check.SteamID, Steam64IDKey)+";", async function (error, results, fields) {
+                req.API.query("SELECT `id`,"+await QueryableDecrypt("LastIP", IPKey)+",`IPs`,`Key` FROM `accounts` WHERE BINARY `Steam64ID`="+await QueryableEncrypt(Check.SteamID, Steam64IDKey)+";", async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
@@ -68,10 +72,53 @@ router.post('/Verify', async(req, res, next) => {
                             "Check": false
                         }).end();
                     } else {
-                        return res.json({
+                        const Result = results[0];
+
+                        res.json({
                             "Check": true,
-                            "ID": results[0].id
+                            "ID": Result.id
                         }).end();
+
+                        //Update IP if new one
+                        if (Result["Last IP"] !== req.body.IP) {
+                            let IPs = [];
+                            if (Result["IPs"] !== null) {
+                                IPs = JSON.parse(await DecryptData(Result["Key"], Result["IPs"]));
+                            } else {
+                                IPs = [];
+                            }
+                
+                            if (IPs.length > 0) {
+                                for (let i = 0; i < IPs.length; i++) {
+                                    if (IPs[i].IP == IP) {
+                                        IPs.splice(i,1);
+                                        IPs.push({
+                                            IP: IP,
+                                            Time: Now
+                                        });
+                                    } else if (i + 1 == IPs.length) {
+                                        IPs.push({
+                                            IP: IP,
+                                            Time: Now
+                                        });
+                                    }
+                                }
+                            } else {
+                                IPs.push({
+                                    IP: IP,
+                                    Time: Now
+                                });
+                            }
+                
+                            if (IPs.length > 20) { //Max to save = 20
+                                IPs.splice(0,1);
+                            }
+                            const IPsENC = await EncryptData(Result["Key"], JSON.stringify(IPs));
+                            await API.query("UPDATE `accounts` set `Last IP`=?,`IPs`=? WHERE BINARY `id`=?;", [IP,IPsENC,Result.id]);
+                        }
+
+
+                        return;
                     }
                 });
         }
