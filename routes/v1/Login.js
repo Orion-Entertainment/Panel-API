@@ -118,7 +118,7 @@ router.post('/Register', async(req, res, next) => {
 
                 req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`,`Key`) VALUES("+await QueryableEncrypt(Data.Name, NameKey)+",?,"+await QueryableEncrypt(Email, EmailKey)+","+await QueryableEncrypt(Data.Steam64ID, Steam64IDKey)+","+await QueryableEncrypt(req.body.IP, IPKey)+",?,?);", [NamesENC,IPsENC,KeyENC], async function (error, results, fields) {
                     if (error) {
-                        if (error = "ER_DUP_ENTRY") {
+                        if (error == "ER_DUP_ENTRY") {
                             return res.send("Already Registered")
                         } else {
                             console.error(error)
