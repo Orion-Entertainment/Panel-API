@@ -88,7 +88,7 @@ router.post('/Register', async(req, res, next) => {
         if (Data.Name == undefined) return res.json({Error: "Name Undefined"})
         else if (Data.Name == "") return res.json({Error: "Name Empty"})
         else if (Data.Email == undefined) return res.json({Error: "Email Undefined"})
-        else if (Data.Email == false | Data.Email == "") Email = null;
+        else if (Data.Email == false | Data.Email == "") Email = null; else Email = Data.Email;
 
         const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
 
