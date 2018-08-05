@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
-const randomstring = require("randomstring");
 
 /* Set Variables */
 const IPKey = '23c75c2073e06aefc59278be2cc59cd9';
