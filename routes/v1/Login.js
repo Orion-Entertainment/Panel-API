@@ -73,6 +73,7 @@ router.post('/Verify', async(req, res, next) => {
                         }).end();
                     } else {
                         const Result = results[0];
+                        const Key = await DecryptData(KeyEncrypt, Result["Key"]);
 
                         res.json({
                             "Check": true,
@@ -83,7 +84,7 @@ router.post('/Verify', async(req, res, next) => {
                         if (Result["Last IP"] !== req.body.IP) {
                             let IPs = [];
                             if (Result["IPs"] !== null) {
-                                IPs = JSON.parse(await DecryptData(Result["Key"], Result["IPs"]));
+                                IPs = JSON.parse(await DecryptData(Key, Result["IPs"]));
                             } else {
                                 IPs = [];
                             }
@@ -113,7 +114,7 @@ router.post('/Verify', async(req, res, next) => {
                             if (IPs.length > 20) { //Max to save = 20
                                 IPs.splice(0,1);
                             }
-                            const IPsENC = await EncryptData(Result["Key"], JSON.stringify(IPs));
+                            const IPsENC = await EncryptData(Key, JSON.stringify(IPs));
                             await API.query("UPDATE `accounts` set `Last IP`=?,`IPs`=? WHERE BINARY `id`=?;", [IP,IPsENC,Result.id]);
                         }
 
