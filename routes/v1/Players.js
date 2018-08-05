@@ -40,8 +40,9 @@ router.post('/Search', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
         if (req.body.SearchVal == undefined)  return res.json({Error: "SearchVal Undefined"})
+        const Search = req.body.SearchVal;
         if (req.body.SearchVal == "")  return res.json({Error: "SearchVal Empty"})
-        req.API.query("SELECT `id` FROM `arma_players` WHERE `Last Name` LIKE '%?%' OR `GUID` LIKE '%?%' OR `Steam64ID` LIKE '%?%';",[req.body.SearchVal,req.body.SearchVal,req.body.SearchVal], async function (error, results, fields) {
+        req.API.query("SELECT `id` FROM `arma_players` WHERE `Last Name` LIKE '%"+Search+"%' OR `GUID` LIKE '%"+Search+"%' OR `Steam64ID` LIKE '%"+Search+"%';", async function (error, results, fields) {
             if (error) {
                 console.error(error)
                 return res.json({Error: error})
@@ -49,7 +50,7 @@ router.post('/Search', async(req, res, next) => {
             
             if (results[0] == undefined) {
                 //do a more lengthy search
-                req.API.query("SELECT `id` FROM `arma_players` WHERE `Names` LIKE '%?%';",[req.body.SearchVal], async function (error, results, fields) {
+                req.API.query("SELECT `id` FROM `arma_players` WHERE `Names` LIKE '%"+Search+"%';", async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
