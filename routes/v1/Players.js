@@ -42,7 +42,7 @@ router.post('/Search', async(req, res, next) => {
         if (req.body.SearchVal == undefined) return res.json({Error: "SearchVal Undefined"})
         const Search = req.body.SearchVal;
         if (req.body.SearchVal == "") return res.json({Error: "SearchVal Empty"})
-        req.API.query("SELECT `Last Name`,`id` FROM `arma_players` WHERE `Last Name` LIKE '%"+Search+"%' OR `GUID` LIKE '%"+Search+"%' OR `Steam64ID` LIKE '%"+Search+"%' ORDER BY `id` DESC LIMIT 25;", async function (error, results, fields) {
+        req.API.query("SELECT `id`,`Last Name`,`Steam64ID` FROM `arma_players` WHERE `Last Name` LIKE '%"+Search+"%' OR `GUID` LIKE '%"+Search+"%' OR `Steam64ID` LIKE '%"+Search+"%' ORDER BY `id` DESC LIMIT 25;", async function (error, results, fields) {
             if (error) {
                 console.error(error)
                 return res.json({Error: error})
