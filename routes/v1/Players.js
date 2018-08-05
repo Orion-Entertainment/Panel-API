@@ -61,18 +61,16 @@ router.post('/Search', async(req, res, next) => {
                             "Search": false
                         }).end();
                     } else {
-                        const Result = results[0];
                         return res.json({
                             "Search": true,
-                            "ID": Result["id"]
+                            "Results": results
                         }).end();
                     }
                 });
             } else {
-                const Result = results[0];
                 return res.json({
                     "Search": true,
-                    "ID": Result["id"]
+                    "Results": results
                 }).end();
             }
         });
