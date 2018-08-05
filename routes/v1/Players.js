@@ -50,7 +50,7 @@ router.post('/Search', async(req, res, next) => {
             
             if (results[0] == undefined) {
                 //do a more lengthy search
-                req.API.query("SELECT `Last Name`,`id` FROM `arma_players` WHERE `Names` LIKE '%"+Search+"%' ORDER BY `id` DESC LIMIT 25;", async function (error, results, fields) {
+                req.API.query("SELECT `id`,`Last Name`,`Last Seen` FROM `arma_players` WHERE `Names` LIKE '%"+Search+"%' ORDER BY `id` DESC LIMIT 25;", async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
