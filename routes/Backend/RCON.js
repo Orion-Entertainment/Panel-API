@@ -163,7 +163,7 @@ async function connectRCon (BEConfig, ServerName) {
 }
 
 async function addPlayer(ServerName, Name, GUID) {
-    API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,Name,GUID], function (error, results, fields) {
+    API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`GUID`) VALUES(?,?,?);", [ServerName,Name,GUID], async function (error, results, fields) {
         if (error) throw error;
         else {
             await API.query("UPDATE `arma_players` SET `Last Seen`=? WHERE `GUID`=?;", [await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),GUID]);
