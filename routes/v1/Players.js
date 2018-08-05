@@ -39,9 +39,9 @@ router.post('/Search', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
-        if (req.body.SearchVal == undefined)  return res.json({Error: "SearchVal Undefined"})
+        if (req.body.SearchVal == undefined) return res.json({Error: "SearchVal Undefined"})
         const Search = req.body.SearchVal;
-        if (req.body.SearchVal == "")  return res.json({Error: "SearchVal Empty"})
+        if (req.body.SearchVal == "") return res.json({Error: "SearchVal Empty"})
         req.API.query("SELECT `id` FROM `arma_players` WHERE `Last Name` LIKE '%"+Search+"%' OR `GUID` LIKE '%"+Search+"%' OR `Steam64ID` LIKE '%"+Search+"%' ORDER BY `id` DESC LIMIT 25;", async function (error, results, fields) {
             if (error) {
                 console.error(error)
@@ -58,18 +58,16 @@ router.post('/Search', async(req, res, next) => {
                     
                     if (results[0] == undefined) {
                         return res.json({
-                            "Search": false
+                            "Results": false
                         }).end();
                     } else {
                         return res.json({
-                            "Search": true,
                             "Results": results
                         }).end();
                     }
                 });
             } else {
                 return res.json({
-                    "Search": true,
                     "Results": results
                 }).end();
             }
