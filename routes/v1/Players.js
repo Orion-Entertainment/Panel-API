@@ -103,8 +103,17 @@ router.post('/Info', async(req, res, next) => {
                     "Info": false
                 }).end();
             } else {
+                const Result = results[0];
                 return res.json({
-                    "Info": results
+                    "Info": {
+                        "id": Result["id"],
+                        "Last Name": Result["Last Name"],
+                        "Names": JSON.parse(Result["Names"]),
+                        "Steam64ID": Result["Steam64ID"],
+                        "GUID": Result["GUID"],
+                        "First Seen": await moment(Result["Last Seen"]).format('YYYY/MM/DD HH:mm:ss'),
+                        "Last Seen": await moment(Result["Last Seen"]).format('YYYY/MM/DD HH:mm:ss')
+                    }
                 }).end();
             }
         });
