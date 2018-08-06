@@ -119,16 +119,20 @@ router.post('/Info', async(req, res, next) => {
         } else {
             if (req.body.Option == "") return res.json({Error: "Option Invalid"})
 
+            const getInfo = await req.API.query("SELECT `GUID`,`Steam64ID` FROM `arma_players` WHERE BINARY `id`=?", [PlayerID]);
+            if (getInfo[0] == undefined) return res.json({Error: "Failed Getting Player Info"});
+            const GUID = getInfo[0].GUID;
+            const Steam64ID = getInfo[0].Steam64ID;
+
             switch (req.body.Option) {
                 case "Get":
                     if (req.body.Option2 == undefined) return res.json({Error: "Option2 Undefined"})
                     else if (req.body.Option2 == "") return res.json({Error: "Option2 Invalid"})
+                
 
                     switch (req.body.Option2) {
                         case "Names":
-                            getGUID = await req.API.query("SELECT `GUID` FROM `arma_players` WHERE BINARY `id`=?", [PlayerID]);
-                            if (getGUID[0] == undefined) return res.json({Error: "Failed Getting GUID"})
-                            req.API.query("SELECT `Names` FROM `arma_players` WHERE BINARY `GUID`=? LIMIT 1;", [getGUID[0].GUID], async function (error, results, fields) {
+                            req.API.query("SELECT `Names` FROM `arma_players` WHERE BINARY `GUID`=? LIMIT 1;", [GUID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
@@ -146,9 +150,7 @@ router.post('/Info', async(req, res, next) => {
 
                         case "Bans":
                             if (req.body.Option2 == undefined) Expired = " AND `Expired`='false'"; else Expired = "";
-                            getGUID = await req.API.query("SELECT `GUID` FROM `arma_players` WHERE BINARY `id`=?", [PlayerID]);
-                            if (getGUID[0] == undefined) return res.json({Error: "Failed Getting GUID"})
-                            req.API.query("SELECT `id`,`Server`,`Reason`,`Created`,`Expires` FROM `arma_bans` WHERE BINARY `GUID`=?"+Expired+" ORDER BY `id` DESC LIMIT 20;", [getGUID[0].GUID], async function (error, results, fields) {
+                            req.API.query("SELECT `id`,`Server`,`Reason`,`Created`,`Expires` FROM `arma_bans` WHERE BINARY `GUID`=?"+Expired+" ORDER BY `id` DESC LIMIT 20;", [GUID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
@@ -176,6 +178,37 @@ router.post('/Info', async(req, res, next) => {
                                         if (i + 1 == results.length) {
                                             return res.json({
                                                 "Bans": Return
+                                            }).end();
+                                        }
+                                    };
+                                }
+                            });
+                            break;
+
+                        case "Kicks":
+                            req.API.query("SELECT `Server`,`By`,`Name`,`Reason`,`Time` FROM `arma_kick` WHERE BINARY `GUID`=? LIMIT 20;", [GUID], async function (error, results, fields) {
+                                if (error) {
+                                    console.error(error)
+                                    return res.json({Error: error})
+                                } else if (results[0] == undefined) {
+                                    return res.json({
+                                        "Kicks": false
+                                    }).end();
+                                } else {
+                                    let Return = [];
+                                    for (let i = 0; i < results.length; i++) {
+                                        const Info = results[i];
+                                            
+                                        Return.push({
+                                            Server: Info["Server"],
+                                            Name: Info["Name"],
+                                            Reason: Info["Reason"],
+                                            Created: await moment(Info["Time"]).format('YYYY/MM/DD HH:mm:ss')
+                                        })
+
+                                        if (i + 1 == results.length) {
+                                            return res.json({
+                                                "Kicks": Return
                                             }).end();
                                         }
                                     };
