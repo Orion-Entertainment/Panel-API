@@ -41,7 +41,7 @@ router.post('/Search', async(req, res, next) => {
 
         if (req.body.SearchVal == undefined) return res.json({Error: "SearchVal Undefined"})
         const Search = req.body.SearchVal;
-        if (req.body.SearchVal == "") return res.json({Error: "SearchVal Empty"})
+        if (Search == "") return res.json({Error: "SearchVal Empty"})
         req.API.query("SELECT `id`,`Last Name`,`Steam64ID` FROM `arma_players` WHERE `Last Name` LIKE '%"+Search+"%' OR `GUID` LIKE '%"+Search+"%' OR `Steam64ID` LIKE '%"+Search+"%' ORDER BY `id` DESC LIMIT 25;", async function (error, results, fields) {
             if (error) {
                 console.error(error)
@@ -69,6 +69,42 @@ router.post('/Search', async(req, res, next) => {
             } else {
                 return res.json({
                     "Results": results
+                }).end();
+            }
+        });
+    } catch (error) {
+        console.log(error)
+        return res.json({Error: "Error"})
+    }
+});
+
+router.post('/Info', async(req, res, next) => {
+    try {
+        /* Check Login */
+        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
+        if (CheckLogin == false) return res.send("Invalid Login"); 
+        const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
+
+        if (TokenData == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
+
+        if (req.body.PlayerID == undefined) return res.json({Error: "PlayerID Undefined"})
+        const PlayerID = req.body.PlayerID;
+        if (PlayerID == "" | typeof PlayerID != "number") return res.json({Error: "PlayerID Invalid"})
+        req.API.query("SELECT `id`,`Last Name`,`Names`,`Steam64ID`,`GUID`,`First Seen`,`Last Seen` FROM `arma_players` WHERE `id`=?;", [PlayerID], async function (error, results, fields) {
+            if (error) {
+                console.error(error)
+                return res.json({Error: error})
+            }
+            
+            if (results[0] == undefined) {
+                return res.json({
+                    "Info": false
+                }).end();
+            } else {
+                return res.json({
+                    "Info": results
                 }).end();
             }
         });
