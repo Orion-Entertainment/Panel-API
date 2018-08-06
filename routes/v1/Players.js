@@ -118,11 +118,11 @@ router.post('/TopCharts', async(req, res, next) => {
                         return res.json({Error: error})
                     } else if (results[0] == undefined) {
                         return res.json({
-                            "EXP": false
+                            "Money": false
                         }).end();
                     } else {
                         return res.json({
-                            "EXP": results
+                            "Money": results
                         }).end();
                     }
                 });
