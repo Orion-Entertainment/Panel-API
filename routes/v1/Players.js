@@ -127,7 +127,7 @@ router.post('/Info', async(req, res, next) => {
 
                     switch (req.body.Option2) {
                         case "Bans":
-                            const getGUID = await API.query("SELECT `GUID` FROM `arma_players` WHERE BINARY `id`=?", [PlayerID]);
+                            const getGUID = await req.API.query("SELECT `GUID` FROM `arma_players` WHERE BINARY `id`=?", [PlayerID]);
                             if (getGUID[0] == undefined) return res.json({Error: "Failed Getting GUID"})
                             req.API.query("SELECT `id`,`Server`,`Reason`,`Created`,`Expires` FROM `arma_bans` WHERE BINARY `GUID`=? ORDER BY `id` DESC LIMIT 20;", [getGUID[0].GUID], async function (error, results, fields) {
                                 if (error) {
