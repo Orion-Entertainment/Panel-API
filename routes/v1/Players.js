@@ -3,6 +3,7 @@ const router = express.Router();
 const moment = require('moment');
 
 /* Set Variables */
+const ServerDBs = require('../../core/app').ServerDBs;
 
 /* Added NPM Packages */
 
@@ -250,6 +251,37 @@ router.post('/Info', async(req, res, next) => {
                                             }).end();
                                         }
                                     };
+                                }
+                            });
+                            break;
+
+                        /* Servers */
+                        case "MaldenLife":
+                            if (Steam64ID == null) {
+                                return res.json({
+                                    "MaldenLife": false
+                                }).end();
+                            }
+                            ServerDBs.maldenlife2.query("SELECT SUM(`bankacc`,`cash`) AS 'Money',`coplevel`,`mediclevel`,`donorlevel`,`exp_level`,`exp_total`,`exp_perkPoints` FROM `players` WHERE BINARY `pid`=? LIMIT 1;", [Steam64ID], async function (error, results, fields) {
+                                if (error) {
+                                    console.error(error)
+                                    return res.json({Error: error})
+                                } else if (results[0] == undefined) {
+                                    return res.json({
+                                        "MaldenLife": false
+                                    }).end();
+                                } else {
+                                    return res.json({
+                                        "MaldenLife": {
+                                            Money: Info["Money"],
+                                            exp_level: Info["exp_level"],
+                                            exp_total: Info["exp_total"],
+                                            exp_perkPoints: Info["exp_perkPoints"],
+                                            coplevel: Info["coplevel"],
+                                            mediclevel: Info["mediclevel"],
+                                            donorlevel: Info["donorlevel"]
+                                        }
+                                    }).end();
                                 }
                             });
                             break;
