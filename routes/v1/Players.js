@@ -222,7 +222,7 @@ router.post('/Info', async(req, res, next) => {
                                     "Kills": false
                                 }).end();
                             }
-                            req.API.query("SELECT `Server`,`KilledName`,`KilledPID`,`KilledGroup`,`Weapon`,`Time` FROM `arma_kills` WHERE BINARY `GUID`=? ORDER BY `id` DESC LIMIT 20;", [GUID], async function (error, results, fields) {
+                            req.API.query("SELECT `Server`,`KilledName`,`Killed`,`KilledGroup`,`Weapon`,`Time` FROM `arma_kills` WHERE BINARY `GUID`=? ORDER BY `id` DESC LIMIT 20;", [GUID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
@@ -239,7 +239,7 @@ router.post('/Info', async(req, res, next) => {
                                             Server: Info["Server"],
                                             Name: Info["KilledName"],
                                             KilledGroup: Info["KilledGroup"],
-                                            KilledPID: Info["KilledPID"],
+                                            Killed: Info["Killed"],
                                             Weapon: Info["Weapon"],
                                             Time: await moment(Info["Time"]).format('YYYY/MM/DD HH:mm:ss')
                                         })
