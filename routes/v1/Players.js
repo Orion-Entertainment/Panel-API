@@ -4,7 +4,7 @@ const moment = require('moment');
 
 /* Set Variables */
 const ServerDBs = require('../../core/app').ServerDBs;
-const MaldenLife = ServerDBs.maldenlife;
+const MaldenLife = ServerDBs.maldenlife2;
 
 /* Added NPM Packages */
 
