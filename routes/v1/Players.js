@@ -143,6 +143,7 @@ router.post('/Info', async(req, res, next) => {
                                     }
                                 });
                             }
+                            break;
 
                         default: 
                             return res.json({Error: "Invalid Option2"})
