@@ -138,7 +138,26 @@ router.post('/Info', async(req, res, next) => {
                                         "Bans": false
                                     }).end();
                                 } else {
-                                    return res.send(results).end();
+                                    let Return = [];
+                                    for (let i = 0; i < results.length; i++) {
+                                        const Info = results[i];
+                                        if (Info["Server"] == null) Server = "All"
+                                            else Server = Info["Server"];
+                                        if (Info["Expires"] == null) Expires = "Never"
+                                            else Expires = await moment(Info["Expires"]).format('YYYY/MM/DD HH:mm:ss');
+                                            
+                                        Return.push({
+                                            id: Info["id"],
+                                            Server: Server,
+                                            Reason: Info["Reason"],
+                                            Created: await moment(Info["Created"]).format('YYYY/MM/DD HH:mm:ss'),
+                                            Expires: Expires
+                                        })
+
+                                        if (i + 1 == results.length) {
+                                            return res.send(Return).end();
+                                        }
+                                    };
                                 }
                             });
                             break;
