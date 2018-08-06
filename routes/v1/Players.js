@@ -128,7 +128,7 @@ router.post('/Info', async(req, res, next) => {
                         case "Names":
                             getGUID = await req.API.query("SELECT `GUID` FROM `arma_players` WHERE BINARY `id`=?", [PlayerID]);
                             if (getGUID[0] == undefined) return res.json({Error: "Failed Getting GUID"})
-                            req.API.query("SELECT `Names` FROM `arma_players` WHERE BINARY `GUID`=? DESC LIMIT 1;", [getGUID[0].GUID], async function (error, results, fields) {
+                            req.API.query("SELECT `Names` FROM `arma_players` WHERE BINARY `GUID`=? LIMIT 1;", [getGUID[0].GUID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
