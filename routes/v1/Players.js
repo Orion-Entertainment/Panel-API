@@ -111,7 +111,7 @@ router.post('/Info', async(req, res, next) => {
                         "Names": JSON.parse(Result["Names"]),
                         "Steam64ID": Result["Steam64ID"],
                         "GUID": Result["GUID"],
-                        "First Seen": await moment(Result["Last Seen"]).format('YYYY/MM/DD HH:mm:ss'),
+                        "First Seen": await moment(Result["First Seen"]).format('YYYY/MM/DD HH:mm:ss'),
                         "Last Seen": await moment(Result["Last Seen"]).format('YYYY/MM/DD HH:mm:ss')
                     }
                 }).end();
