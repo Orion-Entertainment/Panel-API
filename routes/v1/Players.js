@@ -155,7 +155,9 @@ router.post('/Info', async(req, res, next) => {
                                         })
 
                                         if (i + 1 == results.length) {
-                                            return res.send(Return).end();
+                                            return res.json({
+                                                "Bans": Return
+                                            }).end();
                                         }
                                     };
                                 }
