@@ -113,6 +113,7 @@ app.use((req, res, next) => {
     };
 
     req.API = API;
+    req.ServerDBs = ServerDBs;
     next();
 });
 

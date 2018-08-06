@@ -3,9 +3,7 @@ const router = express.Router();
 const moment = require('moment');
 
 /* Set Variables */
-const ServerDBs = require('../../core/app').ServerDBs;
-//const MaldenLife = ServerDBs.maldenlife2;
-console.log(ServerDBs)
+console.log(req.ServerDBs)
 
 /* Added NPM Packages */
 
