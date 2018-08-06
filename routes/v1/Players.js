@@ -217,12 +217,13 @@ router.post('/Info', async(req, res, next) => {
                             break;
 
                         case "Kills":
+                            if (req.body.Option3 == undefined) Kills = "`Killer`='"+Steam64ID+"'"; else Kills = "`Killer`='"+Steam64ID+"' OR `Killed`='"+Steam64ID+"'";
                             if (Steam64ID == null) {
                                 return res.json({
                                     "Kills": false
                                 }).end();
                             }
-                            req.API.query("SELECT `Server`,`KilledName`,`Killed`,`KilledGroup`,`Weapon`,`Time` FROM `arma_kills` WHERE BINARY `Killer`=? ORDER BY `id` DESC LIMIT 20;", [Steam64ID], async function (error, results, fields) {
+                            req.API.query("SELECT `Server`,`KilledName`,`Killed`,`KilledGroup`,`Weapon`,`Time` FROM `arma_kills` WHERE BINARY "+Kills+" ORDER BY `id` DESC LIMIT 20;", async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
