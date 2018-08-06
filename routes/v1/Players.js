@@ -93,6 +93,21 @@ router.post('/KillFeed', async(req, res, next) => {
         if (TokenData == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
+
+        SQL.query("SELECT `Server`,`Killer`,`KillerName`,`KillerGroup`,`KilledName`,`Killed`,`KilledGroup`,`Weapon`,`Distance`,`Time` FROM `arma_kills` ORDER BY `id` DESC LIMIT 50;", async function (error, results, fields) {
+            if (error) {
+                console.error(error)
+                return res.json({Error: error})
+            } else if (results[0] == undefined) {
+                return res.json({
+                    "Kills": false
+                }).end();
+            } else {
+                return res.json({
+                    "Kills": results
+                }).end();
+            }
+        });
     } catch (error) {
         console.log(error)
         return res.json({Error: "Error"})
