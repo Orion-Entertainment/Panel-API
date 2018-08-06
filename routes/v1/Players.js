@@ -270,15 +270,16 @@ router.post('/Info', async(req, res, next) => {
                                         "MaldenLife": false
                                     }).end();
                                 } else {
+                                    const Result = results[0];
                                     return res.json({
                                         "MaldenLife": {
-                                            Money: Info["Money"],
-                                            exp_level: Info["exp_level"],
-                                            exp_total: Info["exp_total"],
-                                            exp_perkPoints: Info["exp_perkPoints"],
-                                            coplevel: Info["coplevel"],
-                                            mediclevel: Info["mediclevel"],
-                                            donorlevel: Info["donorlevel"]
+                                            Money: Result["Money"],
+                                            exp_level: Result["exp_level"],
+                                            exp_total: Result["exp_total"],
+                                            exp_perkPoints: Result["exp_perkPoints"],
+                                            coplevel: Result["coplevel"],
+                                            mediclevel: Result["mediclevel"],
+                                            donorlevel: Result["donorlevel"]
                                         }
                                     }).end();
                                 }
