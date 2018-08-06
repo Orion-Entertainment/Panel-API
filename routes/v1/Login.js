@@ -151,7 +151,7 @@ router.post('/Register', async(req, res, next) => {
         else if (Data.Email == false | Data.Email == "") Email = null; else Email = Data.Email;
 
         const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
-        const Key = await randomstring.generate(32);
+        const Key = await randomString.generate(32);
         const KeyENC = await EncryptData(KeyEncrypt, Key);
         const Names = JSON.stringify([{Name: Data.Name, Time: Now}]);
         const NamesENC = await EncryptData(Key, Names);
