@@ -11,7 +11,7 @@ const KeyEncrypt = '384cd8e902f924498a8349c93b75f39c';
 
 /* Added NPM Packages */
 const crypto = require('crypto');
-const randomString = require('random-string');
+const randomString = require("randomstring");
 
 /* Functions */
 async function EncryptData(key, data) {
