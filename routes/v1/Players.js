@@ -273,10 +273,10 @@ router.post('/Info', async(req, res, next) => {
                                     const Result = results[0];
                                     return res.json({
                                         "MaldenLife": [{
-                                            Money: Result["Money"],
-                                            exp_level: Result["exp_level"],
-                                            exp_total: Result["exp_total"],
-                                            exp_perkPoints: Result["exp_perkPoints"],
+                                            Money: Result["Money"].toLocaleString(),
+                                            exp_level: Result["exp_level"].toLocaleString(),
+                                            exp_total: Result["exp_total"].toLocaleString(),
+                                            exp_perkPoints: Result["exp_perkPoints"].toLocaleString(),
                                             coplevel: Result["coplevel"],
                                             mediclevel: Result["mediclevel"],
                                             donorlevel: Result["donorlevel"]
