@@ -27,6 +27,12 @@ function QueryableDecrypt(column, key) {
     return "CONVERT(AES_DECRYPT(`"+column+"`, '"+key+"') using utf8) AS '"+column+"'";
 };
 
+function formatNumber(number) {
+    if (number == undefined) return null;
+    else if (number == null) return null;
+    else return number.toLocaleString();
+}
+
 /* Routers */
 router.post('/Search', async(req, res, next) => {
     try {
@@ -274,10 +280,10 @@ router.post('/Info', async(req, res, next) => {
                                     const Result = results[0];
                                     return res.json({
                                         "MaldenLife": [{
-                                            Money: Result["Money"].toLocaleString(),
-                                            exp_level: Result["exp_level"].toLocaleString(),
-                                            exp_total: Result["exp_total"].toLocaleString(),
-                                            exp_perkPoints: Result["exp_perkPoints"].toLocaleString(),
+                                            Money: await formatNumber(Result["Money"]),
+                                            exp_level: await formatNumber(Result["exp_level"]),
+                                            exp_total: await formatNumber(Result["exp_total"]),
+                                            exp_perkPoints: await formatNumber(Result["exp_perkPoints"]),
                                             coplevel: Result["coplevel"],
                                             mediclevel: Result["mediclevel"],
                                             donorlevel: Result["donorlevel"]
