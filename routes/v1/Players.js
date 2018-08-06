@@ -203,7 +203,7 @@ router.post('/Info', async(req, res, next) => {
                                             Server: Info["Server"],
                                             Name: Info["Name"],
                                             Reason: Info["Reason"],
-                                            Created: await moment(Info["Time"]).format('YYYY/MM/DD HH:mm:ss')
+                                            Time: await moment(Info["Time"]).format('YYYY/MM/DD HH:mm:ss')
                                         })
 
                                         if (i + 1 == results.length) {
