@@ -272,7 +272,7 @@ router.post('/Info', async(req, res, next) => {
                                 } else {
                                     const Result = results[0];
                                     return res.json({
-                                        "MaldenLife": {
+                                        "MaldenLife": [{
                                             Money: Result["Money"],
                                             exp_level: Result["exp_level"],
                                             exp_total: Result["exp_total"],
@@ -280,7 +280,7 @@ router.post('/Info', async(req, res, next) => {
                                             coplevel: Result["coplevel"],
                                             mediclevel: Result["mediclevel"],
                                             donorlevel: Result["donorlevel"]
-                                        }
+                                        }]
                                     }).end();
                                 }
                             });
