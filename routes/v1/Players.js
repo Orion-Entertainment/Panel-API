@@ -28,8 +28,7 @@ function QueryableDecrypt(column, key) {
 };
 
 function formatNumber(number) {
-    if (number == undefined) return null;
-    else if (number == null) return null;
+    if (number == null) return null;
     else return number.toLocaleString();
 }
 
