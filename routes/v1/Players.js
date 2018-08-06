@@ -149,7 +149,7 @@ router.post('/Info', async(req, res, next) => {
                             break;
 
                         case "Bans":
-                            if (req.body.Option2 == undefined) Expired = " AND `Expired`='false'"; else Expired = "";
+                            if (req.body.Option3 == undefined) Expired = " AND `Expired`='false'"; else Expired = "";
                             req.API.query("SELECT `id`,`Server`,`Reason`,`Created`,`Expires` FROM `arma_bans` WHERE BINARY `GUID`=?"+Expired+" ORDER BY `id` DESC LIMIT 20;", [GUID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
@@ -186,7 +186,7 @@ router.post('/Info', async(req, res, next) => {
                             break;
 
                         case "Kicks":
-                            req.API.query("SELECT `Server`,`By`,`Name`,`Reason`,`Time` FROM `arma_kick` WHERE BINARY `GUID`=? LIMIT 20;", [GUID], async function (error, results, fields) {
+                            req.API.query("SELECT `Server`,`By`,`Name`,`Reason`,`Time` FROM `arma_kick` WHERE BINARY `GUID`=? ORDER BY `id` DESC LIMIT 20;", [GUID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
