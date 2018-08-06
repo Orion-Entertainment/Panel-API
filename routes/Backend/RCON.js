@@ -183,7 +183,7 @@ async function getPlayerGUID(ServerName, Name) {
 }
 
 async function checkForBan(ServerName, GUID) {
-    const query = await API.query("SELECT `Server`,`Reason` FROM `arma_bans` WHERE BINARY `GUID`=? AND `Expired`='false';", [GUID]);
+    const query = await API.query("SELECT `Server`,`Reason` FROM `arma_bans` WHERE BINARY `GUID`=? AND `Expired`='False';", [GUID]);
     if (query[0] !== undefined) {
         if (query[0] !== null) {
             if (query[0].Server == ServerName | query[0].Server == null) {
