@@ -82,7 +82,6 @@ router.post('/Verify', async(req, res, next) => {
                         //Update IP if new one
                         const IP = req.body.IP;
                         if (Result["LastIP"] !== IP) {
-                            console.log(Result["LastIP"],IP)
                             let IPs = [];
                             if (Result["IPs"] !== null) {
                                 IPs = JSON.parse(await DecryptData(Key, Result["IPs"]));
