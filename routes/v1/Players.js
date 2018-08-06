@@ -141,9 +141,9 @@ router.post('/Info', async(req, res, next) => {
                                     let Return = [];
                                     for (let i = 0; i < results.length; i++) {
                                         const Info = results[i];
-                                        if (Info["Server"] == null) Server = "All"
+                                        if (Info["Server"] == null) Server = "All";
                                             else Server = Info["Server"];
-                                        if (Info["Expires"] == null) Expires = "Never"
+                                        if (Info["Expires"] == null) Expires = "Never";
                                             else Expires = await moment(Info["Expires"]).format('YYYY/MM/DD HH:mm:ss');
                                             
                                         Return.push({
