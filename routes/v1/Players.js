@@ -91,7 +91,7 @@ router.post('/Info', async(req, res, next) => {
 
         if (req.body.PlayerID == undefined) return res.json({Error: "PlayerID Undefined"})
         const PlayerID = req.body.PlayerID;
-        if (PlayerID == "" | typeof PlayerID != "number") return res.json({Error: "PlayerID Invalid"})
+        if (PlayerID == "" | isNaN(PlayerID)) return res.json({Error: "PlayerID Invalid"})
         req.API.query("SELECT `id`,`Last Name`,`Names`,`Steam64ID`,`GUID`,`First Seen`,`Last Seen` FROM `arma_players` WHERE `id`=?;", [PlayerID], async function (error, results, fields) {
             if (error) {
                 console.error(error)
