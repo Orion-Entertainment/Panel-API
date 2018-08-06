@@ -145,6 +145,40 @@ router.post('/TopCharts', async(req, res, next) => {
                 });
                 break;
 
+            case "GangFunds":
+                SQL.query("SELECT `name`,`bank` FROM `gangs` ORDER BY `bank` DESC LIMIT 25;", async function (error, results, fields) {
+                    if (error) {
+                        console.error(error)
+                        return res.json({Error: error})
+                    } else if (results[0] == undefined) {
+                        return res.json({
+                            "GangFunds": false
+                        }).end();
+                    } else {
+                        return res.json({
+                            "GangFunds": results
+                        }).end();
+                    }
+                });
+                break;
+
+            case "Bounty":
+                SQL.query("SELECT `wantedName`,`wantedBounty` FROM `wanted` ORDER BY `wantedBounty` DESC LIMIT 25;", async function (error, results, fields) {
+                    if (error) {
+                        console.error(error)
+                        return res.json({Error: error})
+                    } else if (results[0] == undefined) {
+                        return res.json({
+                            "Bounty": false
+                        }).end();
+                    } else {
+                        return res.json({
+                            "Bounty": results
+                        }).end();
+                    }
+                });
+                break;
+
             default: 
                 return res.json({Error: "Invalid Category"})
         }
