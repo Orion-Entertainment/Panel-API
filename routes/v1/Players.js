@@ -94,7 +94,7 @@ router.post('/Info', async(req, res, next) => {
 
         if (req.body.Option == undefined) {
             if (PlayerID == "" | isNaN(PlayerID)) return res.json({Error: "PlayerID Invalid"})
-            req.API.query("SELECT `id`,`Last Name`,`Names`,`Steam64ID`,`GUID`,`First Seen`,`Last Seen` FROM `arma_players` WHERE `id`=?;", [PlayerID], async function (error, results, fields) {
+            req.API.query("SELECT `id`,`Last Name`,`Steam64ID`,`GUID`,`First Seen`,`Last Seen` FROM `arma_players` WHERE `id`=?;", [PlayerID], async function (error, results, fields) {
                 if (error) {
                     console.error(error)
                     return res.json({Error: error})
@@ -108,7 +108,6 @@ router.post('/Info', async(req, res, next) => {
                         "Info": {
                             "id": Result["id"],
                             "LastName": Result["Last Name"],
-                            "Names": JSON.parse(Result["Names"]),
                             "Steam64ID": Result["Steam64ID"],
                             "GUID": Result["GUID"],
                             "FirstSeen": await moment(Result["First Seen"]).format('YYYY/MM/DD HH:mm:ss'),
@@ -126,6 +125,25 @@ router.post('/Info', async(req, res, next) => {
                     else if (req.body.Option2 == "") return res.json({Error: "Option2 Invalid"})
 
                     switch (req.body.Option2) {
+                        case "Names":
+                            const getGUID = await req.API.query("SELECT `GUID` FROM `arma_players` WHERE BINARY `id`=?", [PlayerID]);
+                            if (getGUID[0] == undefined) return res.json({Error: "Failed Getting GUID"})
+                            req.API.query("SELECT `Names` FROM `arma_players` WHERE BINARY `GUID`=? DESC LIMIT 1;", [getGUID[0].GUID], async function (error, results, fields) {
+                                if (error) {
+                                    console.error(error)
+                                    return res.json({Error: error})
+                                } else if (results[0] == undefined) {
+                                    return res.json({
+                                        "Names": false
+                                    }).end();
+                                } else {
+                                    return res.json({
+                                        "Names": JSON.parse(results[0].Names)
+                                    }).end();
+                                }
+                            });
+                            break;
+
                         case "Bans":
                             if (req.body.Option2 == undefined) Expired = " AND `Expired`='false'"; else Expired = "";
                             const getGUID = await req.API.query("SELECT `GUID` FROM `arma_players` WHERE BINARY `id`=?", [PlayerID]);
