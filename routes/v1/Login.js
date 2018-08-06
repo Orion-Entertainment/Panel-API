@@ -60,7 +60,7 @@ router.post('/Verify', async(req, res, next) => {
                 if (Check.SteamID == undefined) return res.json({Error: "SteamID Undefined"})
                 else if (Check.SteamID == "") return res.json({Error: "SteamID Empty"})
 
-                req.API.query("SELECT `id`,"+await QueryableDecrypt("LastIP", IPKey)+",`IPs`,`Key` FROM `accounts` WHERE BINARY `Steam64ID`="+await QueryableEncrypt(Check.SteamID, Steam64IDKey)+";", async function (error, results, fields) {
+                req.API.query("SELECT `id`,"+await QueryableDecrypt("LastIP", IPKey)+",`IPs`,CONVERT(`Key` using utf8) AS 'Key' FROM `accounts` WHERE BINARY `Steam64ID`="+await QueryableEncrypt(Check.SteamID, Steam64IDKey)+";", async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
