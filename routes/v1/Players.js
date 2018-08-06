@@ -112,7 +112,7 @@ router.post('/TopCharts', async(req, res, next) => {
         //server
         switch (Category) {
             case "Money":
-                SQL.query("SELECT `name`,`pid`,`Money` FROM ( SELECT SUM(`cash`+`bankacc`) as `Money`, `name` as `name` FROM `players` GROUP BY `name` ) as table1 ORDER BY `Money` DESC LIMIT 25;", async function (error, results, fields) {
+                SQL.query("SELECT `name`,`pid`,`Money` FROM ( SELECT SUM(`cash`+`bankacc`) as `Money`, `name`, `pid` FROM `players` GROUP BY `name` ) as table1 ORDER BY `Money` DESC LIMIT 25;", async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
