@@ -216,6 +216,44 @@ router.post('/Info', async(req, res, next) => {
                             });
                             break;
 
+                        case "Kills":
+                            if (Steam64ID == null) {
+                                return res.json({
+                                    "Kills": false
+                                }).end();
+                            }
+                            req.API.query("SELECT `Server`,`KilledName`,`KilledPID`,`KilledGroup`,`Weapon`,`Time` FROM `arma_kills` WHERE BINARY `GUID`=? ORDER BY `id` DESC LIMIT 20;", [GUID], async function (error, results, fields) {
+                                if (error) {
+                                    console.error(error)
+                                    return res.json({Error: error})
+                                } else if (results[0] == undefined) {
+                                    return res.json({
+                                        "Kills": false
+                                    }).end();
+                                } else {
+                                    let Return = [];
+                                    for (let i = 0; i < results.length; i++) {
+                                        const Info = results[i];
+                                            
+                                        Return.push({
+                                            Server: Info["Server"],
+                                            Name: Info["KilledName"],
+                                            KilledGroup: Info["KilledGroup"],
+                                            KilledPID: Info["KilledPID"],
+                                            Weapon: Info["Weapon"],
+                                            Time: await moment(Info["Time"]).format('YYYY/MM/DD HH:mm:ss')
+                                        })
+
+                                        if (i + 1 == results.length) {
+                                            return res.json({
+                                                "Kills": Return
+                                            }).end();
+                                        }
+                                    };
+                                }
+                            });
+                            break;
+
                         default: 
                             return res.json({Error: "Invalid Option2"})
                     }
