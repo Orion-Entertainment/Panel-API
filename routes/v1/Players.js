@@ -261,7 +261,7 @@ router.post('/Info', async(req, res, next) => {
                                     "MaldenLife": false
                                 }).end();
                             }
-                            req.ServerDBs.maldenlife2.query("SELECT SUM(`bankacc`,`cash`) AS 'Money',`coplevel`,`mediclevel`,`donorlevel`,`exp_level`,`exp_total`,`exp_perkPoints` FROM `players` WHERE BINARY `pid`=? LIMIT 1;", [Steam64ID], async function (error, results, fields) {
+                            req.ServerDBs.maldenlife2.query("SELECT SUM(`bankacc`+`cash`) AS 'Money',`coplevel`,`mediclevel`,`donorlevel`,`exp_level`,`exp_total`,`exp_perkPoints` FROM `players` WHERE BINARY `pid`=? LIMIT 1;", [Steam64ID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
