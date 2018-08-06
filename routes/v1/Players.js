@@ -277,6 +277,7 @@ router.post('/Info', async(req, res, next) => {
                                     }).end();
                                 } else {
                                     const Result = results[0];
+                                    console.log(Result)
                                     return res.json({
                                         "MaldenLife": [{
                                             Money: await formatNumber(Result["Money"]),
