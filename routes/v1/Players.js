@@ -83,6 +83,60 @@ router.post('/Search', async(req, res, next) => {
     }
 });
 
+router.post('/TopCharts', async(req, res, next) => {
+    try {
+        /* Check Login */
+        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
+        if (CheckLogin == false) return res.send("Invalid Login"); 
+        const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
+
+        if (TokenData == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
+
+        else if (req.body.Server == undefined) return res.json({Error: "Server Undefined"})
+        else if (req.body.Category == undefined) return res.json({Error: "Category Undefined"})
+        const Category = req.body.Category;
+        const Server = req.body.Server;
+
+        let SQL;
+        switch (Server) {
+            case "MaldenLife":
+                SQL = req.ServerDBs.maldenlife2;
+                break;
+            
+            default: 
+                return res.json({Error: "Invalid Server"})
+        }
+
+        //server
+        switch (Category) {
+            case "EXP":
+                SQL.query("SELECT `name`,`exp_level`,`exp_total`,`exp_perkPoints` FROM `players` ORDER BY `exp_level` DESC, `exp_total` DESC, `exp_perkPoints` DESC LIMIT 25;", async function (error, results, fields) {
+                    if (error) {
+                        console.error(error)
+                        return res.json({Error: error})
+                    } else if (results[0] == undefined) {
+                        return res.json({
+                            "EXP": false
+                        }).end();
+                    } else {
+                        return res.json({
+                            "EXP": results
+                        }).end();
+                    }
+                });
+                break;
+
+            default: 
+                return res.json({Error: "Invalid Category"})
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json({Error: "Error"})
+    }
+});
+
 router.post('/Info', async(req, res, next) => {
     try {
         /* Check Login */
@@ -157,7 +211,7 @@ router.post('/Info', async(req, res, next) => {
                             if (req.body.Option3 !== undefined) {
                                 if (req.body.Option3 !== "") Expired = ""; else Expired = " AND `Expired`='false'";
                             } else Expired = " AND `Expired`='false'";
-                            
+
                             req.API.query("SELECT `id`,`Server`,`Reason`,`Created`,`Expires` FROM `arma_bans` WHERE BINARY `GUID`=?"+Expired+" ORDER BY `id` DESC LIMIT 20;", [GUID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
