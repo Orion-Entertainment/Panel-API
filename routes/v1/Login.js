@@ -60,7 +60,7 @@ router.post('/Verify', async(req, res, next) => {
                 if (Check.SteamID == undefined) return res.json({Error: "SteamID Undefined"})
                 else if (Check.SteamID == "") return res.json({Error: "SteamID Empty"})
 
-                req.API.query("SELECT `id`,"+await QueryableDecrypt("Last IP", IPKey)+",`IPs`,CONVERT(`Key` using utf8) AS 'Key' FROM `accounts` WHERE BINARY `Steam64ID`="+await QueryableEncrypt(Check.SteamID, Steam64IDKey)+";", async function (error, results, fields) {
+                req.API.query("SELECT `id`,"+await QueryableDecrypt("LastIP", IPKey)+",`IPs`,CONVERT(`Key` using utf8) AS 'Key' FROM `accounts` WHERE BINARY `Steam64ID`="+await QueryableEncrypt(Check.SteamID, Steam64IDKey)+";", async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
@@ -81,8 +81,8 @@ router.post('/Verify', async(req, res, next) => {
 
                         //Update IP if new one
                         const IP = req.body.IP;
-                        if (Result["Last IP"] !== IP) {
-                            console.log(Result["Last IP"],IP)
+                        if (Result["LastIP"] !== IP) {
+                            console.log(Result["LastIP"],IP)
                             let IPs = [];
                             if (Result["IPs"] !== null) {
                                 IPs = JSON.parse(await DecryptData(Key, Result["IPs"]));
@@ -116,7 +116,7 @@ router.post('/Verify', async(req, res, next) => {
                                 IPs.splice(0,1);
                             }
                             const IPsENC = await EncryptData(Key, JSON.stringify(IPs));
-                            await req.API.query("UPDATE `accounts` set `Last IP`=?,`IPs`=? WHERE BINARY `id`=?;", [IP,IPsENC,Result.id]);
+                            await req.API.query("UPDATE `accounts` set `LastIP`=?,`IPs`=? WHERE BINARY `id`=?;", [IP,IPsENC,Result.id]);
                         }
 
 
