@@ -288,11 +288,7 @@ router.post('/Info', async(req, res, next) => {
                                             Time: await moment(Info["Time"]).format('YYYY/MM/DD HH:mm:ss')
                                         })
 
-                                        if (i + 1 == results.length) {
-                                            return res.json({
-                                                "Kicks": Return
-                                            }).end();
-                                        }
+                                        if (i + 1 == results.length) return returnResults(res, Option2, Return);
                                     };
                                 }
                             });
@@ -322,11 +318,7 @@ router.post('/Info', async(req, res, next) => {
                                             Time: await moment(Info["Time"]).format('YYYY/MM/DD HH:mm:ss')
                                         })
 
-                                        if (i + 1 == results.length) {
-                                            return res.json({
-                                                "Kills": Return
-                                            }).end();
-                                        }
+                                        if (i + 1 == results.length) return returnResults(res, Option2, Return);
                                     };
                                 }
                             });
@@ -359,24 +351,11 @@ router.post('/Info', async(req, res, next) => {
                         /* Private Info */
                         case "Vehicles":
                             if (Steam64ID == null) return returnFalse(res, Option2); else if (req.body.Private == undefined) return returnFalse(res, Option2); else if (req.body.Private !== true) return returnFalse(res, Option2);
-                            req.ServerDBs.maldenlife2.query("SELECT SUM(`bankacc`+`cash`) AS 'Money',`coplevel`,`mediclevel`,`donorlevel`,`exp_level`,`exp_total`,`exp_perkPoints` FROM `players` WHERE BINARY `pid`=?;", [Steam64ID], async function (error, results, fields) {
+                            req.ServerDBs.maldenlife2.query("SELECT `side`,`classname`,`type`,`plate`,`inventory`,`gear`,`insert_time`,`insure` FROM `vehicles` WHERE BINARY `pid`=? AND `alive`='1' ORDER BY `insert_time` DESC LIMIT 25;", [Steam64ID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(res, Option2); else {
-                                    const Result = results[0];
-                                    return res.json({
-                                        "Vehicles": [{
-                                            Money: await formatNumber(Result["Money"]),
-                                            exp_level: await formatNumber(Result["exp_level"]),
-                                            exp_total: await formatNumber(Result["exp_total"]),
-                                            exp_perkPoints: await formatNumber(Result["exp_perkPoints"]),
-                                            coplevel: Result["coplevel"],
-                                            mediclevel: Result["mediclevel"],
-                                            donorlevel: Result["donorlevel"]
-                                        }]
-                                    }).end();
-                                }
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else return returnResults(res, Option2, Return);
                             });
                             break;
 
