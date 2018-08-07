@@ -32,6 +32,19 @@ function formatNumber(number) {
     else return number.toLocaleString();
 }
 
+function returnFalse(Name) {
+    return res.json({
+        [Name]: false
+    }).end();
+}
+
+function returnResults(Name, Results) {
+    return res.json({
+        [Name]: Results
+    }).end();
+}
+
+
 /* Routers */
 router.post('/Search', async(req, res, next) => {
     try {
@@ -61,21 +74,9 @@ router.post('/Search', async(req, res, next) => {
                         return res.json({Error: error})
                     }
                     
-                    if (results[0] == undefined) {
-                        return res.json({
-                            "Results": false
-                        }).end();
-                    } else {
-                        return res.json({
-                            "Results": results
-                        }).end();
-                    }
+                    if (results[0] == undefined) return returnFalse("Results"); else return returnResults("Results", results);
                 });
-            } else {
-                return res.json({
-                    "Results": results
-                }).end();
-            }
+            } else return returnResults("Results", results);
         });
     } catch (error) {
         console.log(error)
@@ -98,15 +99,7 @@ router.post('/KillFeed', async(req, res, next) => {
             if (error) {
                 console.error(error)
                 return res.json({Error: error})
-            } else if (results[0] == undefined) {
-                return res.json({
-                    "Kills": false
-                }).end();
-            } else {
-                return res.json({
-                    "Kills": results
-                }).end();
-            }
+            } else if (results[0] == undefined) return returnFalse("Kills"); else return returnResults("Kills", results);
         });
     } catch (error) {
         console.log(error)
@@ -147,15 +140,7 @@ router.post('/TopCharts', async(req, res, next) => {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
-                    } else if (results[0] == undefined) {
-                        return res.json({
-                            "Money": false
-                        }).end();
-                    } else {
-                        return res.json({
-                            "Money": results
-                        }).end();
-                    }
+                    } else if (results[0] == undefined) return returnFalse(Category); else return returnResults(Category, results);
                 });
                 break;
 
@@ -164,15 +149,7 @@ router.post('/TopCharts', async(req, res, next) => {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
-                    } else if (results[0] == undefined) {
-                        return res.json({
-                            "EXP": false
-                        }).end();
-                    } else {
-                        return res.json({
-                            "EXP": results
-                        }).end();
-                    }
+                    } else if (results[0] == undefined) return returnFalse(Category); else return returnResults(Category, results);
                 });
                 break;
 
@@ -181,15 +158,7 @@ router.post('/TopCharts', async(req, res, next) => {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
-                    } else if (results[0] == undefined) {
-                        return res.json({
-                            "GangFunds": false
-                        }).end();
-                    } else {
-                        return res.json({
-                            "GangFunds": results
-                        }).end();
-                    }
+                    } else if (results[0] == undefined) return returnFalse(Category); else return returnResults(Category, results);
                 });
                 break;
 
@@ -198,15 +167,7 @@ router.post('/TopCharts', async(req, res, next) => {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
-                    } else if (results[0] == undefined) {
-                        return res.json({
-                            "Bounty": false
-                        }).end();
-                    } else {
-                        return res.json({
-                            "Bounty": results
-                        }).end();
-                    }
+                    } else if (results[0] == undefined) return returnFalse(Category); else return returnResults(Category, results);
                 });
                 break;
 
@@ -239,11 +200,7 @@ router.post('/Info', async(req, res, next) => {
                 if (error) {
                     console.error(error)
                     return res.json({Error: error})
-                } else if (results[0] == undefined) {
-                    return res.json({
-                        "Info": false
-                    }).end();
-                } else {
+                } else if (results[0] == undefined) return returnFalse("Info"); else {
                     const Result = results[0];
                     return res.json({
                         "Info": {
@@ -258,34 +215,27 @@ router.post('/Info', async(req, res, next) => {
                 }
             });
         } else {
-            if (req.body.Option == "") return res.json({Error: "Option Invalid"})
+            const Option1 = req.body.Option;
+            if (Option1 == "") return res.json({Error: "Option Invalid"})
 
             const getInfo = await req.API.query("SELECT `GUID`,`Steam64ID` FROM `arma_players` WHERE BINARY `id`=?", [PlayerID]);
             if (getInfo[0] == undefined) return res.json({Error: "Failed Getting Player Info"});
             const GUID = getInfo[0].GUID;
             const Steam64ID = getInfo[0].Steam64ID;
 
-            switch (req.body.Option) {
+            switch (Option1) {
                 case "Get":
                     if (req.body.Option2 == undefined) return res.json({Error: "Option2 Undefined"})
                     else if (req.body.Option2 == "") return res.json({Error: "Option2 Invalid"})
-                
+                    const Option2 = req.body.Option2;
 
-                    switch (req.body.Option2) {
+                    switch (Option2) {
                         case "Names":
                             req.API.query("SELECT `Names` FROM `arma_players` WHERE BINARY `GUID`=? LIMIT 1;", [GUID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) {
-                                    return res.json({
-                                        "Names": false
-                                    }).end();
-                                } else {
-                                    return res.json({
-                                        "Names": JSON.parse(results[0].Names)
-                                    }).end();
-                                }
+                                } else if (results[0] == undefined) return returnFalse(Option2); else return returnResults(Option2, JSON.parse(results[0].Names));
                             });
                             break;
 
@@ -298,11 +248,7 @@ router.post('/Info', async(req, res, next) => {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) {
-                                    return res.json({
-                                        "Bans": false
-                                    }).end();
-                                } else {
+                                } else if (results[0] == undefined) return returnFalse(Option2); else {
                                     let Return = [];
                                     for (let i = 0; i < results.length; i++) {
                                         const Info = results[i];
@@ -319,11 +265,7 @@ router.post('/Info', async(req, res, next) => {
                                             Expires: Expires
                                         })
 
-                                        if (i + 1 == results.length) {
-                                            return res.json({
-                                                "Bans": Return
-                                            }).end();
-                                        }
+                                        if (i + 1 == results.length) return returnResults(Option2, Return);
                                     };
                                 }
                             });
@@ -334,11 +276,7 @@ router.post('/Info', async(req, res, next) => {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) {
-                                    return res.json({
-                                        "Kicks": false
-                                    }).end();
-                                } else {
+                                } else if (results[0] == undefined) return returnFalse(Option2); else {
                                     let Return = [];
                                     for (let i = 0; i < results.length; i++) {
                                         const Info = results[i];
@@ -365,20 +303,12 @@ router.post('/Info', async(req, res, next) => {
                                 if (req.body.Option3 !== "") Kills = "`Killer`='"+Steam64ID+"' OR `Killed`='"+Steam64ID+"'"; else Kills = "`Killer`='"+Steam64ID+"'";
                             } else Kills = "`Killer`='"+Steam64ID+"'";
                             
-                            if (Steam64ID == null) {
-                                return res.json({
-                                    "Kills": false
-                                }).end();
-                            }
+                            if (Steam64ID == null) return returnFalse(Option2);
                             req.API.query("SELECT `Server`,`KilledName`,`Killed`,`KilledGroup`,`Weapon`,`Time` FROM `arma_kills` WHERE BINARY "+Kills+" ORDER BY `id` DESC LIMIT 20;", async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) {
-                                    return res.json({
-                                        "Kills": false
-                                    }).end();
-                                } else {
+                                } else if (results[0] == undefined) return returnFalse(Option2); else {
                                     let Return = [];
                                     for (let i = 0; i < results.length; i++) {
                                         const Info = results[i];
@@ -404,27 +334,39 @@ router.post('/Info', async(req, res, next) => {
 
                         /* Servers */
                         case "MaldenLife":
-                            if (Steam64ID == null) {
-                                return res.json({
-                                    "MaldenLife": false
-                                }).end();
-                            }
+                            if (Steam64ID == null) return returnFalse(Option2);
                             req.ServerDBs.maldenlife2.query("SELECT SUM(`bankacc`+`cash`) AS 'Money',`coplevel`,`mediclevel`,`donorlevel`,`exp_level`,`exp_total`,`exp_perkPoints` FROM `players` WHERE BINARY `pid`=?;", [Steam64ID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) {
-                                    return res.json({
-                                        "MaldenLife": false
-                                    }).end();
-                                } else if (results[0].Money == null) {
-                                    return res.json({
-                                        "MaldenLife": false
-                                    }).end();
-                                } else {
+                                } else if (results[0] == undefined) return returnFalse(Option2); else if (results[0].Money == null) return returnFalse(Option2); else {
                                     const Result = results[0];
                                     return res.json({
                                         "MaldenLife": [{
+                                            Money: await formatNumber(Result["Money"]),
+                                            exp_level: await formatNumber(Result["exp_level"]),
+                                            exp_total: await formatNumber(Result["exp_total"]),
+                                            exp_perkPoints: await formatNumber(Result["exp_perkPoints"]),
+                                            coplevel: Result["coplevel"],
+                                            mediclevel: Result["mediclevel"],
+                                            donorlevel: Result["donorlevel"]
+                                        }]
+                                    }).end();
+                                }
+                            });
+                            break;
+                        
+                        /* Private Info */
+                        case "Vehicles":
+                            if (Steam64ID == null) return returnFalse(Option2); else if (req.body.Private == undefined) return returnFalse(Option2); else if (req.body.Private !== true) return returnFalse(Option2);
+                            req.ServerDBs.maldenlife2.query("SELECT SUM(`bankacc`+`cash`) AS 'Money',`coplevel`,`mediclevel`,`donorlevel`,`exp_level`,`exp_total`,`exp_perkPoints` FROM `players` WHERE BINARY `pid`=?;", [Steam64ID], async function (error, results, fields) {
+                                if (error) {
+                                    console.error(error)
+                                    return res.json({Error: error})
+                                } else if (results[0] == undefined) return returnFalse(Option2); else {
+                                    const Result = results[0];
+                                    return res.json({
+                                        "Vehicles": [{
                                             Money: await formatNumber(Result["Money"]),
                                             exp_level: await formatNumber(Result["exp_level"]),
                                             exp_total: await formatNumber(Result["exp_total"]),
