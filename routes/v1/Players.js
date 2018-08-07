@@ -32,13 +32,13 @@ function formatNumber(number) {
     else return number.toLocaleString();
 }
 
-function returnFalse(Name) {
+function returnFalse(res, Name) {
     return res.json({
         [Name]: false
     }).end();
 }
 
-function returnResults(Name, Results) {
+function returnResults(res, Name, Results) {
     return res.json({
         [Name]: Results
     }).end();
@@ -74,9 +74,9 @@ router.post('/Search', async(req, res, next) => {
                         return res.json({Error: error})
                     }
                     
-                    if (results[0] == undefined) return returnFalse("Results"); else return returnResults("Results", results);
+                    if (results[0] == undefined) return returnFalse(res, "Results"); else return returnResults(res, "Results", results);
                 });
-            } else return returnResults("Results", results);
+            } else return returnResults(res, "Results", results);
         });
     } catch (error) {
         console.log(error)
@@ -99,7 +99,7 @@ router.post('/KillFeed', async(req, res, next) => {
             if (error) {
                 console.error(error)
                 return res.json({Error: error})
-            } else if (results[0] == undefined) return returnFalse("Kills"); else return returnResults("Kills", results);
+            } else if (results[0] == undefined) return returnFalse(res, "Kills"); else return returnResults(res, "Kills", results);
         });
     } catch (error) {
         console.log(error)
@@ -140,7 +140,7 @@ router.post('/TopCharts', async(req, res, next) => {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
-                    } else if (results[0] == undefined) return returnFalse(Category); else return returnResults(Category, results);
+                    } else if (results[0] == undefined) return returnFalse(res, Category); else return returnResults(res, Category, results);
                 });
                 break;
 
@@ -149,7 +149,7 @@ router.post('/TopCharts', async(req, res, next) => {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
-                    } else if (results[0] == undefined) return returnFalse(Category); else return returnResults(Category, results);
+                    } else if (results[0] == undefined) return returnFalse(res, Category); else return returnResults(res, Category, results);
                 });
                 break;
 
@@ -158,7 +158,7 @@ router.post('/TopCharts', async(req, res, next) => {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
-                    } else if (results[0] == undefined) return returnFalse(Category); else return returnResults(Category, results);
+                    } else if (results[0] == undefined) return returnFalse(res, Category); else return returnResults(res, Category, results);
                 });
                 break;
 
@@ -167,7 +167,7 @@ router.post('/TopCharts', async(req, res, next) => {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
-                    } else if (results[0] == undefined) return returnFalse(Category); else return returnResults(Category, results);
+                    } else if (results[0] == undefined) return returnFalse(res, Category); else return returnResults(res, Category, results);
                 });
                 break;
 
@@ -200,7 +200,7 @@ router.post('/Info', async(req, res, next) => {
                 if (error) {
                     console.error(error)
                     return res.json({Error: error})
-                } else if (results[0] == undefined) return returnFalse("Info"); else {
+                } else if (results[0] == undefined) return returnFalse(res, "Info"); else {
                     const Result = results[0];
                     return res.json({
                         "Info": {
@@ -235,7 +235,7 @@ router.post('/Info', async(req, res, next) => {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(Option2); else return returnResults(Option2, JSON.parse(results[0].Names));
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else return returnResults(res, Option2, JSON.parse(results[0].Names));
                             });
                             break;
 
@@ -248,7 +248,7 @@ router.post('/Info', async(req, res, next) => {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(Option2); else {
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else {
                                     let Return = [];
                                     for (let i = 0; i < results.length; i++) {
                                         const Info = results[i];
@@ -265,7 +265,7 @@ router.post('/Info', async(req, res, next) => {
                                             Expires: Expires
                                         })
 
-                                        if (i + 1 == results.length) return returnResults(Option2, Return);
+                                        if (i + 1 == results.length) return returnResults(res, Option2, Return);
                                     };
                                 }
                             });
@@ -276,7 +276,7 @@ router.post('/Info', async(req, res, next) => {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(Option2); else {
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else {
                                     let Return = [];
                                     for (let i = 0; i < results.length; i++) {
                                         const Info = results[i];
@@ -303,12 +303,12 @@ router.post('/Info', async(req, res, next) => {
                                 if (req.body.Option3 !== "") Kills = "`Killer`='"+Steam64ID+"' OR `Killed`='"+Steam64ID+"'"; else Kills = "`Killer`='"+Steam64ID+"'";
                             } else Kills = "`Killer`='"+Steam64ID+"'";
                             
-                            if (Steam64ID == null) return returnFalse(Option2);
+                            if (Steam64ID == null) return returnFalse(res, Option2);
                             req.API.query("SELECT `Server`,`KilledName`,`Killed`,`KilledGroup`,`Weapon`,`Time` FROM `arma_kills` WHERE BINARY "+Kills+" ORDER BY `id` DESC LIMIT 20;", async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(Option2); else {
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else {
                                     let Return = [];
                                     for (let i = 0; i < results.length; i++) {
                                         const Info = results[i];
@@ -334,12 +334,12 @@ router.post('/Info', async(req, res, next) => {
 
                         /* Servers */
                         case "MaldenLife":
-                            if (Steam64ID == null) return returnFalse(Option2);
+                            if (Steam64ID == null) return returnFalse(res, Option2);
                             req.ServerDBs.maldenlife2.query("SELECT SUM(`bankacc`+`cash`) AS 'Money',`coplevel`,`mediclevel`,`donorlevel`,`exp_level`,`exp_total`,`exp_perkPoints` FROM `players` WHERE BINARY `pid`=?;", [Steam64ID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(Option2); else if (results[0].Money == null) return returnFalse(Option2); else {
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else if (results[0].Money == null) return returnFalse(res, Option2); else {
                                     const Result = results[0];
                                     return res.json({
                                         "MaldenLife": [{
@@ -358,12 +358,12 @@ router.post('/Info', async(req, res, next) => {
                         
                         /* Private Info */
                         case "Vehicles":
-                            if (Steam64ID == null) return returnFalse(Option2); else if (req.body.Private == undefined) return returnFalse(Option2); else if (req.body.Private !== true) return returnFalse(Option2);
+                            if (Steam64ID == null) return returnFalse(res, Option2); else if (req.body.Private == undefined) return returnFalse(res, Option2); else if (req.body.Private !== true) return returnFalse(res, Option2);
                             req.ServerDBs.maldenlife2.query("SELECT SUM(`bankacc`+`cash`) AS 'Money',`coplevel`,`mediclevel`,`donorlevel`,`exp_level`,`exp_total`,`exp_perkPoints` FROM `players` WHERE BINARY `pid`=?;", [Steam64ID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(Option2); else {
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else {
                                     const Result = results[0];
                                     return res.json({
                                         "Vehicles": [{
