@@ -350,7 +350,7 @@ router.post('/Info', async(req, res, next) => {
                         
                         /* Private Info */
                         case "Vehicles":
-                            if (Steam64ID == null) return returnFalse(res, Option2); else if (req.body.Private == undefined) return returnFalse(res, Option2); else if (req.body.Private !== true) return returnFalse(res, Option2);
+                            if (Steam64ID == null) return returnFalse(res, Option2); else if (req.body.Private == undefined) return res.json({Error: "Invalid Permissions"}); else if (req.body.Private !== true) return res.json({Error: "Invalid Permissions"});
                             req.ServerDBs.maldenlife2.query("SELECT `side`,`classname`,`type`,`plate`,`inventory`,`gear`,`insert_time`,`insure` FROM `vehicles` WHERE BINARY `pid`=? AND `alive`='1' ORDER BY `insert_time` DESC LIMIT 25;", [Steam64ID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
