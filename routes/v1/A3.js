@@ -79,17 +79,11 @@ router.post('/Addon', async(req, res, next) => {
                             return res.send("Success");
 
                         case "Withdraw":
-                            const PID = Data[1];
-                            const Amount = Data[2];
-
-                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Amount`) VALUES(?,?,?,?);", [ServerName,"Withdraw",PID,Amount]);
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Amount`) VALUES(?,?,?,?);", [ServerName,"Withdraw",Data[1],Data[2]]);
                             return res.send("Success");
 
                         case "Deposit":
-                            const PID = Data[1];
-                            const Amount = Data[2];
-
-                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Amount`) VALUES(?,?,?,?);", [ServerName,"Deposit",PID,Amount]);
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Amount`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],Data[2]]);
                             return res.send("Success");
 
                         default:
