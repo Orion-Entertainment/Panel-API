@@ -87,7 +87,8 @@ router.post('/Addon', async(req, res, next) => {
                             return res.send("Success");
 
                         case "Transfer":
-                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`toPID`,`Amount`) VALUES(?,?,?,?,?);", [ServerName,"Transfer",Data[1],Data[2],Data[3]]);
+                            if (Data[2] == "") toPID = "Hacked Money"; else toPID = Data[2];
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`toPID`,`Amount`) VALUES(?,?,?,?,?);", [ServerName,"Transfer",Data[1],toPID,Data[3]]);
                             return res.send("Success");
 
                         default:
