@@ -78,10 +78,22 @@ router.post('/Addon', async(req, res, next) => {
                             req.API.query("INSERT INTO `arma_kills` (`Server`,`KillerName`,`Killer`,`KillerGroup`,`KilledName`,`Killed`,`KilledGroup`,`Weapon`,`Distance`) VALUES(?,?,?,?,?,?,?,?,?);", [ServerName,KillerName,KillerPID,KillerGroup,KilledName,KilledPID,KilledGroup,Weapon,Distance]);
                             return res.send("Success");
 
+                        case "Withdraw":
+                            const PID = Data[1];
+                            const Amount = Data[2];
+
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Amount`) VALUES(?,?,?,?);", [ServerName,"Withdraw",PID,Amount]);
+                            return res.send("Success");
+
+                        case "Deposit":
+                            const PID = Data[1];
+                            const Amount = Data[2];
+
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Amount`) VALUES(?,?,?,?);", [ServerName,"Deposit",PID,Amount]);
+                            return res.send("Success");
+
                         default:
-                            console.log("Invalid Log Action: "+Action)
-                            console.log(Option)
-                            console.log(Data)
+                            console.log("Invalid Log Action: ",Action,Option,Data)
                             return res.send("Invalid Log Action: "+Action);
                     }
                 

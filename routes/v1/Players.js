@@ -224,6 +224,7 @@ router.post('/Info', async(req, res, next) => {
                     const Option2 = req.body.Option2;
 
                     switch (Option2) {
+                        /* Public Information */
                         case "Names":
                             req.API.query("SELECT `Names` FROM `arma_players` WHERE BINARY `GUID`=? LIMIT 1;", [GUID], async function (error, results, fields) {
                                 if (error) {
@@ -232,7 +233,6 @@ router.post('/Info', async(req, res, next) => {
                                 } else if (results[0] == undefined) return returnFalse(res, Option2); else return returnResults(res, Option2, JSON.parse(results[0].Names));
                             });
                             break;
-
                         case "Bans":
                             if (req.body.Option3 !== undefined) {
                                 if (req.body.Option3 !== "") Expired = ""; else Expired = " AND `Expired`='false'";
@@ -264,7 +264,6 @@ router.post('/Info', async(req, res, next) => {
                                 }
                             });
                             break;
-
                         case "Kicks":
                             req.API.query("SELECT `Server`,`By`,`Name`,`Reason`,`Time` FROM `arma_kick` WHERE BINARY `GUID`=? ORDER BY `id` DESC LIMIT 20;", [GUID], async function (error, results, fields) {
                                 if (error) {
@@ -287,7 +286,6 @@ router.post('/Info', async(req, res, next) => {
                                 }
                             });
                             break;
-
                         case "Kills":
                             if (req.body.Option3 !== undefined) {
                                 if (req.body.Option3 !== "") Kills = "`Killer`='"+Steam64ID+"' OR `Killed`='"+Steam64ID+"'"; else Kills = "`Killer`='"+Steam64ID+"'";
@@ -318,7 +316,7 @@ router.post('/Info', async(req, res, next) => {
                             });
                             break;
 
-                        /* Servers */
+                        //Servers
                         case "MaldenLife":
                             if (Steam64ID == null) return returnFalse(res, Option2);
                             req.ServerDBs.maldenlife2.query("SELECT SUM(`bankacc`+`cash`) AS 'Money',`coplevel`,`mediclevel`,`donorlevel`,`exp_level`,`exp_total`,`exp_perkPoints` FROM `players` WHERE BINARY `pid`=?;", [Steam64ID], async function (error, results, fields) {
@@ -341,8 +339,8 @@ router.post('/Info', async(req, res, next) => {
                                 }
                             });
                             break;
-                        
-                        /* Private Info */
+
+                        /* Private Information */
                         case "Vehicles":
                             if (Steam64ID == null) return returnFalse(res, Option2); else if (req.body.Private == undefined) return res.json({Error: "Invalid Permissions"}); else if (req.body.Private !== true && req.body.Private !== Steam64ID) return res.json({Error: "Invalid Permissions"});
                             req.ServerDBs.maldenlife2.query("SELECT `side`,`classname`,`type`,`plate`,`inventory`,`gear`,`insert_time`,`insure` FROM `vehicles` WHERE BINARY `pid`=? AND `alive`='1' ORDER BY `id` DESC LIMIT 25;", [Steam64ID], async function (error, results, fields) {
