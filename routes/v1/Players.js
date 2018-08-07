@@ -192,6 +192,7 @@ router.post('/Info', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
         else if (req.body.PlayerID == undefined) return res.json({Error: "PlayerID Undefined"})
+        else if (req.body.Private == undefined) return res.json({Error: "Private Undefined"})
         const PlayerID = req.body.PlayerID;
 
         if (req.body.Option == undefined) {
@@ -202,6 +203,7 @@ router.post('/Info', async(req, res, next) => {
                     return res.json({Error: error})
                 } else if (results[0] == undefined) return returnFalse(res, "Info"); else {
                     const Result = results[0];
+                    if (req.body.Private == Result["Steam64ID"]) Private = true; else Private = false;
                     return res.json({
                         "Info": {
                             "id": Result["id"],
@@ -209,7 +211,9 @@ router.post('/Info', async(req, res, next) => {
                             "Steam64ID": Result["Steam64ID"],
                             "GUID": Result["GUID"],
                             "FirstSeen": await moment(Result["First Seen"]).format('YYYY/MM/DD HH:mm:ss'),
-                            "LastSeen": await moment(Result["Last Seen"]).format('YYYY/MM/DD HH:mm:ss')
+                            "LastSeen": await moment(Result["Last Seen"]).format('YYYY/MM/DD HH:mm:ss'),
+
+                            "Private": Private
                         }
                     }).end();
                 }
@@ -350,7 +354,7 @@ router.post('/Info', async(req, res, next) => {
                         
                         /* Private Info */
                         case "Vehicles":
-                            if (Steam64ID == null) return returnFalse(res, Option2); else if (req.body.Private == undefined) return res.json({Error: "Invalid Permissions"}); else if (req.body.Private !== true) return res.json({Error: "Invalid Permissions"});
+                            if (Steam64ID == null) return returnFalse(res, Option2); else if (req.body.Private == undefined) return res.json({Error: "Invalid Permissions"}); else if (req.body.Private !== Steam64ID) return res.json({Error: "Invalid Permissions"});
                             req.ServerDBs.maldenlife2.query("SELECT `side`,`classname`,`type`,`plate`,`inventory`,`gear`,`insert_time`,`insure` FROM `vehicles` WHERE BINARY `pid`=? AND `alive`='1' ORDER BY `insert_time` DESC LIMIT 25;", [Steam64ID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
