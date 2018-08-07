@@ -86,6 +86,10 @@ router.post('/Addon', async(req, res, next) => {
                             req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Amount`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],Data[2]]);
                             return res.send("Success");
 
+                        case "Transfer":
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`toPID`,`Amount`) VALUES(?,?,?,?,?);", [ServerName,"Transfer",Data[1],Data[2],Data[3]]);
+                            return res.send("Success");
+
                         default:
                             console.log("Invalid Log Action: ",Action,Option,Data)
                             return res.send("Invalid Log Action: "+Action);
@@ -96,31 +100,6 @@ router.post('/Addon', async(req, res, next) => {
             }
         };
     } catch (error) {
-        return res.send("API Error");
-    }
-});
-
-router.post('/Killfeed', async(req, res, next) => {
-    try {
-        /* Check Login */
-        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
-        if (CheckLogin == false) return res.send("Invalid Login"); 
-
-
-        if (req.body["option"] == undefined | req.body["data"] == undefined) {
-            return res.send("Invalid Login");
-        }
-
-        if (req.body.server == undefined) {
-            const getRecentKills = req.API.query("SELECT * FROM `arma_kills` ORDER BY `Time` DESC LIMIT 20");
-            if (getRecentKills[0] == undefined) {
-                return false;
-            } else {
-                /* Will comeback to this tomorrow once there is more kills logged */
-            }
-        }
-    } catch (error) {
-        console.log(error)
         return res.send("API Error");
     }
 });
