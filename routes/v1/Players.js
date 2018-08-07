@@ -58,38 +58,16 @@ router.post('/Search', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
         if (req.body.SearchVal == undefined) return res.json({Error: "SearchVal Undefined"})
-        if (req.body.Extensive == undefined) return res.json({Error: "Extensive Undefined"})
         const Search = '%'+req.body.SearchVal+'%';
         if (Search == "") return res.json({Error: "SearchVal Empty"})
-        if (req.body.Extensive == false) {
-            req.API.query("SELECT `id`,`Last Name`,`Steam64ID` FROM `arma_players` WHERE `Last Name` LIKE ? OR `GUID` LIKE ? OR `Steam64ID` LIKE ? ORDER BY `id` DESC LIMIT 25;", [Search,Search,Search], async function (error, results, fields) {
-                if (error) {
-                    console.error(error)
-                    return res.json({Error: error})
-                }
-                
-                if (results[0] == undefined) {
-                    //do a more lengthy search
-                    req.API.query("SELECT `id`,`Last Name`,`Steam64ID` FROM `arma_players` WHERE `Names` LIKE ? ORDER BY `id` DESC LIMIT 25;", [Search], async function (error, results, fields) {
-                        if (error) {
-                            console.error(error)
-                            return res.json({Error: error})
-                        }
-                        
-                        if (results[0] == undefined) return returnFalse(res, "Results"); else return returnResults(res, "Results", results);
-                    });
-                } else return returnResults(res, "Results", results);
-            });
-        } else {
-            req.API.query("SELECT `id`,`Last Name`,`Steam64ID` FROM `arma_players` WHERE `Last Name` LIKE ? OR `GUID` LIKE ? OR `Steam64ID` LIKE ? OR `Names` LIKE ?  ORDER BY `id` DESC LIMIT 25;", [Search,Search,Search,Search], async function (error, results, fields) {
-                if (error) {
-                    console.error(error)
-                    return res.json({Error: error})
-                }
-                
-                if (results[0] == undefined) return returnFalse(res, "Results"); else return returnResults(res, "Results", results);
-            });
-        }
+        req.API.query("SELECT `id`,`Last Name`,`Steam64ID` FROM `arma_players` WHERE `Last Name` LIKE ? OR `GUID` LIKE ? OR `Steam64ID` LIKE ? OR `Names` LIKE ?  ORDER BY `id` DESC LIMIT 25;", [Search,Search,Search,Search], async function (error, results, fields) {
+            if (error) {
+                console.error(error)
+                return res.json({Error: error})
+            }
+            
+            if (results[0] == undefined) return returnFalse(res, "Results"); else return returnResults(res, "Results", results);
+        });
     } catch (error) {
         console.log(error)
         return res.json({Error: "Error"})
