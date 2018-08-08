@@ -33,11 +33,13 @@ RemoveOldHouses(); //One time for testing
 async function RemoveOldHouses() {
     try {
         if (Config.Arma3.RemoveOldHouses) {
+            console.log('start')
             const SQL = ServerDBs.maldenlife2;
 
             const getTotalHouses = await SQL.query("SELECT COUNT(`id`) AS 'TotalHouses' FROM `houses` WHERE `owned`='1' AND (`insert_time` < NOW() - INTERVAL 1 MONTH);");
             if (getTotalHouses[0] == undefined) return;
             const TotalHouses = getTotalHouses[0].TotalHouses;
+            console.log(TotalHouses)
 
             if (TotalHouses < 1) return;
             else if (TotalHouses <= 100) setOffset = 0;
@@ -45,6 +47,7 @@ async function RemoveOldHouses() {
 
             if (setOffset < 1) loopTotal = 1;
             else loopTotal = Math.round(TotalHouses / setOffset);
+            console.log(loopTotal)
             
             let Offset = 0;
             for (let i = 0; i < (loopTotal - 1); i++) {
