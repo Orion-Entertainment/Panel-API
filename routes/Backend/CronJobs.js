@@ -7,7 +7,7 @@ const TimeZone = 'America/New_York';
 const selectLimit = 'America/New_York';
 const Config = {
     "Arma3": {
-        "RemoveOldHouses": false
+        "RemoveOldHouses": true
     }
 };
 
