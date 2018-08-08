@@ -23,6 +23,7 @@ if (cluster.isMaster) {
   
     require('./routes/Backend/RCON');
     require('./routes/Backend/Database');
+    require('./routes/Backend/CronJobs');
 } else {
     
     const port = normalizePort(process.env.PORT || Port);
