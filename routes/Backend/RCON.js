@@ -3,6 +3,12 @@ const GETServers = require('../../core/app').Servers;
 const API = require('../../core/app').API;
 const moment = require('moment');
 
+const ServerMSGs = [
+    "Help keep the server running by supporting us at https://orionlife.enjin.com/shop",
+    "Check out our website: Orion-Entertainment.net",
+    "Our Teamspeak IP: ts.Orion-Entertainment.net"
+];
+
 let Servers = [];
 
 for (let i = 0; i < GETServers.length; i++) {
@@ -60,6 +66,7 @@ async function connectRCon (BEConfig, ServerName) {
             });
         } else if (/RCon admin #\d+ \((\d+.\d+.\d+.\d+:\d+)\) logged in/g.test(message)) {
             getData = /RCon admin #\d+ \((\d+.\d+.\d+.\d+:\d+)\) logged in/g.exec(message);
+            if (ServerMSGs.includes(getData[1])) return;
 
             //Save to DB
             API.query("INSERT INTO `arma_chat` (`Server`,`Channel`,`MSG`) VALUES(?,?,?);", [ServerName,"RCONConnect",getData[1]], function (error, results, fields) {
