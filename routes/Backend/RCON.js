@@ -161,7 +161,7 @@ async function connectRCon (BEConfig, ServerName) {
 
                 if (/.+ Restriction #\d+/.test(getData[3])) {
                     //Add ban for hacking
-                    API.query("INSERT INTO `arma_bans` (`GUID`,`Notes`,`Reason`) VALUES(?,?,?);", [getData[2],getData[3],"+Flabby - Perm - Hacking"], function (error, results, fields) {
+                    API.query("INSERT INTO `arma_bans` (`GUID`,`BannedBy`,`Notes`,`Reason`) VALUES(?,?,?,?);", [getData[2],1,getData[3],"+Flabby - Perm - Hacking"], function (error, results, fields) {
                         if (error) throw error;
                     });
                 }
