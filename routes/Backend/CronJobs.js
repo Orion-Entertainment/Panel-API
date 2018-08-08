@@ -23,8 +23,19 @@ new CronJob('0 0 * * 0', function() {
     TimeZone
 );
 
+//Hourly - Every hour
+new CronJob('0 * * * *', function() {
+    API.query("UPDATE `arma_bans` set `Expired`='True' WHERE `Expired`='False' AND (`Expires` IS NOT NULL) AND 0 > TIMESTAMPDIFF(SECOND,NOW(),`Expires`);");
+    
+    }, function () {
+        return; /* This function is executed when the job stops */
+    },
+    true,
+    TimeZone
+);
 
 
+//
 
 /* Functions */
 async function RemoveOldHouses() {
