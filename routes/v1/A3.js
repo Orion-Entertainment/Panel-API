@@ -81,19 +81,19 @@ router.post('/Addon', async(req, res, next) => {
                             return res.send("Success");
 
                         case "Withdraw":
-                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Amount`) VALUES(?,?,?,?);", [ServerName,"Withdraw",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Withdraw",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
                             return res.send("Success");
 
                         case "Deposit":
-                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Amount`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
                             return res.send("Success");
 
                         case "Pickup":
-                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Amount`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
                             return res.send("Success");
 
                         case "Hand":
-                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Amount`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
                             return res.send("Success");
 
                         case "Transfer":
@@ -104,7 +104,7 @@ router.post('/Addon', async(req, res, next) => {
                             } else {
                                 toPID = Data[2];
                             }
-                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`toPID`,`Amount`) VALUES(?,?,?,?,?);", [ServerName,"Transfer",Data[1],toPID,parseFloat(Data[3].replace(/,/g,''))]);
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`toPID`,`Price`) VALUES(?,?,?,?,?);", [ServerName,"Transfer",Data[1],toPID,parseFloat(Data[3].replace(/,/g,''))]);
                             return res.send("Success");
 
                         default:
