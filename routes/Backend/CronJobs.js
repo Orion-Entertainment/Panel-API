@@ -50,7 +50,7 @@ async function RemoveOldHouses() {
             console.log(loopTotal)
             
             let Offset = setOffset;
-            for (let i = 0; i < loopTotal; i++) {
+            for (let i = 0; i < (loopTotal + 1); i++) {
                 const getHouses = await SQL.query("SELECT `id`,`pid` FROM `houses` WHERE (`insert_time` < NOW() - INTERVAL 1 MONTH) ORDER BY `id` DESC LIMIT "+selectLimit+" OFFSET "+Offset);
                 if (getHouses[0] == undefined) return;
 
