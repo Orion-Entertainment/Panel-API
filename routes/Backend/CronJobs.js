@@ -41,6 +41,7 @@ async function RemoveOldHouses() {
             const TotalHouses = getTotalHouses[0].TotalHouses;
             console.log(TotalHouses)
 
+            let setOffset;
             if (TotalHouses < 1) return;
             else if (TotalHouses <= 100) setOffset = 0;
             else setOffset = selectLimit;
@@ -50,7 +51,7 @@ async function RemoveOldHouses() {
             console.log(loopTotal)
             
             let Offset = 0;
-            for (let i = 0; i < (loopTotal - 1); i++) {
+            for (let i = 0; i < loopTotal; i++) {
                 const getHouses = await SQL.query("SELECT `id`,`pid` FROM `houses` WHERE `owned`='1' AND (`insert_time` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset);
                 console.log("SELECT `id`,`pid` FROM `houses` WHERE `owned`='1' AND (`insert_time` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset)
                 if (getHouses[0] !== undefined) {
@@ -66,7 +67,7 @@ async function RemoveOldHouses() {
                         }
 
                         if (h + 1 == getHouses.length) {
-                            Offset + setOffset;
+                            Offset = Offset + setOffset;
                         }
                     }
                 }
