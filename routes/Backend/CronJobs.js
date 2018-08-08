@@ -39,6 +39,7 @@ async function RemoveOldHouses() {
             const getTotalHouses = await SQL.query("SELECT COUNT(`id`) AS 'TotalHouses' FROM `houses` WHERE `owned`='1' AND (`insert_time` < NOW() - INTERVAL 1 MONTH);");
             if (getTotalHouses[0] == undefined) return;
             const TotalHouses = getTotalHouses[0].TotalHouses;
+            console.log(TotalHouses)
 
             if (TotalHouses < 1) return;
             else if (TotalHouses <= 100) setOffset = 0;
