@@ -7,12 +7,12 @@ const TimeZone = 'America/New_York';
 const selectLimit = 100;
 const Config = {
     "Arma3": {
-        "RemoveOldHouses": true
+        "RemoveOldHouses": false
     }
 };
 
-
-/* Weekly - Every sunday at midnight */
+/* Crons */
+//Weekly - Every sunday at midnight
 new CronJob('0 0 * * 0', function() {
     RemoveOldHouses();
     
@@ -25,21 +25,16 @@ new CronJob('0 0 * * 0', function() {
 
 
 
-RemoveOldHouses(); //One time for testing
-
-
 
 /* Functions */
 async function RemoveOldHouses() {
     try {
         if (Config.Arma3.RemoveOldHouses) {
-            console.log('start')
             const SQL = ServerDBs.maldenlife2;
 
             const getTotalHouses = await SQL.query("SELECT COUNT(`id`) AS 'TotalHouses' FROM `houses` WHERE `owned`='1' AND (`insert_time` < NOW() - INTERVAL 1 MONTH);");
             if (getTotalHouses[0] == undefined) return;
             const TotalHouses = getTotalHouses[0].TotalHouses;
-            console.log(TotalHouses)
 
             let setOffset;
             if (TotalHouses < 1) return;
@@ -48,22 +43,19 @@ async function RemoveOldHouses() {
 
             if (setOffset < 1) loopTotal = 1;
             else loopTotal = Math.round(TotalHouses / setOffset);
-            console.log(loopTotal)
             
             let Offset = 0;
             for (let i = 0; i < loopTotal; i++) {
                 const getHouses = await SQL.query("SELECT `id`,`pid` FROM `houses` WHERE `owned`='1' AND (`insert_time` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset);
-                console.log("SELECT `id`,`pid` FROM `houses` WHERE `owned`='1' AND (`insert_time` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset)
+
                 if (getHouses[0] !== undefined) {
-                    console.log(i,getHouses.length)
                     for (let h = 0; h < getHouses.length; h++) {
                         HouseID = getHouses[h].id;
                         PID = getHouses[h].pid;
 
                         const checkPlayer = await API.query("SELECT `id` FROM `arma_players` WHERE BINARY `Steam64id`=? AND (`Last Seen` < NOW() - INTERVAL 1 MONTH)",[PID]);
                         if (checkPlayer[0] !== undefined) {
-                            console.log(PID, HouseID)
-                            //await SQL.query("DELETE FROM `houses` WHERE `id`=?;",[HouseID]);
+                            await SQL.query("DELETE FROM `houses` WHERE `id`=?;",[HouseID]);
                         }
 
                         if (h + 1 == getHouses.length) {
