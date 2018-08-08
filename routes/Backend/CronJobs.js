@@ -45,7 +45,7 @@ async function RemoveOldHouses() {
             else setOffset = selectLimit;
 
             if (setOffset < 1) loopTotal = 1;
-            else loopTotal = Math.ceil(TotalHouses / setOffset);
+            else loopTotal = Math.round(TotalHouses / setOffset);
             console.log(loopTotal)
             
             let Offset = setOffset;
