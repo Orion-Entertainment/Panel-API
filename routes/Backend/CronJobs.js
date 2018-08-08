@@ -7,6 +7,7 @@ const TimeZone = 'America/New_York';
 const selectLimit = 100;
 const Config = {
     "Arma3": {
+        "ExpireBans": true,
         "RemoveOldHouses": false
     }
 };
@@ -25,7 +26,7 @@ new CronJob('0 0 * * 0', function() {
 
 //Hourly - Every hour
 new CronJob('0 * * * *', function() {
-    API.query("UPDATE `arma_bans` set `Expired`='True' WHERE `Expired`='False' AND (`Expires` IS NOT NULL) AND 0 > TIMESTAMPDIFF(SECOND,NOW(),`Expires`);");
+    if (Config.Arma3.ExpireBans) API.query("UPDATE `arma_bans` set `Expired`='True' WHERE `Expired`='False' AND (`Expires` IS NOT NULL) AND 0 > TIMESTAMPDIFF(SECOND,NOW(),`Expires`);");
     
     }, function () {
         return; /* This function is executed when the job stops */
