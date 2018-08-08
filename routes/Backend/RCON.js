@@ -6,7 +6,17 @@ const moment = require('moment');
 const ServerMSGs = [
     "Help keep the server running by supporting us at https://orionlife.enjin.com/shop",
     "Check out our website: Orion-Entertainment.net",
-    "Our Teamspeak IP: ts.Orion-Entertainment.net"
+    "Our Teamspeak IP: ts.Orion-Entertainment.net",
+
+    "Server Restart in 1 Minute!",
+    "Server Restart in 2 Minutes!",
+    "Server Restart in 3 Minutes!",
+    "Server Restart in 4 Minutes!",
+    "Server Restart in 5 Minutes!",
+    "Server Restart in 10 Minutes!",
+    "Server Restart in 30 Minutes!",
+    "Server Restart in 1 Hour!",
+    "Server Restart in 2 Hours!"
 ];
 
 let Servers = [];
