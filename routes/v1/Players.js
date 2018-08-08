@@ -382,7 +382,7 @@ router.post('/Info', async(req, res, next) => {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(res, Option2); else return returnResults(res, Option2, results[0].IPs);
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else return returnResults(res, Option2, JSON.parse(results[0].IPs));
                             });
                             break;
 
