@@ -183,7 +183,9 @@ router.post('/Info', async(req, res, next) => {
 
         else if (req.body.PlayerID == undefined) return res.json({Error: "PlayerID Undefined"})
         else if (req.body.Private == undefined) return res.json({Error: "Private Undefined"})
+        else if (req.body.Staff == undefined) return res.json({Error: "Staff Undefined"})
         const PlayerID = req.body.PlayerID;
+        const sPerimssions = req.body.Staff;
 
         if (req.body.Option == undefined) {
             if (PlayerID == "" | isNaN(PlayerID)) return res.json({Error: "PlayerID Invalid"})
@@ -362,6 +364,17 @@ router.post('/Info', async(req, res, next) => {
                         case "HouseItems":
                             if (Steam64ID == null) return returnFalse(res, Option2); else if (req.body.Private == undefined) return res.json({Error: "Invalid Permissions"}); else if (req.body.Private !== true && req.body.Private !== Steam64ID) return res.json({Error: "Invalid Permissions"});
                             req.ServerDBs.maldenlife2.query("SELECT `classname`,`pos`,`inventory`,`gear`,`insert_time` FROM `containers` WHERE BINARY `pid`=? AND `owned`='1' ORDER BY `id` DESC LIMIT 25;", [Steam64ID], async function (error, results, fields) {
+                                if (error) {
+                                    console.error(error)
+                                    return res.json({Error: error})
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else return returnResults(res, Option2, results);
+                            });
+                            break;
+
+                        /* Staff Information */
+                        case "IPs":
+                            if (Steam64ID == null) return returnFalse(res, Option2); else if (sPermissions !== true && sPermissions.Players !== undefined) return res.json({Error: "Invalid Permissions"}); else if (sPermissions.Players.viewIPs !== true) return res.json({Error: "Invalid Permissions"});
+                            req.API.query("SELECT `IPs` FROM `arma_players` WHERE BINARY `Steam64ID`=?;", [Steam64ID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
