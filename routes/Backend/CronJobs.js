@@ -37,7 +37,7 @@ async function RemoveOldHouses() {
             const SQL = ServerDBs.maldenlife2;
 
             const getTotalHouses = await SQL.query("SELECT COUNT(`id`) AS 'TotalHouses' FROM `houses` WHERE `owned`='1' AND (`insert_time` < NOW() - INTERVAL 1 MONTH);");
-            console.log(SQL,getTotalHouses)
+            console.log(getTotalHouses)
             if (getTotalHouses[0] == undefined) return;
             const TotalHouses = getTotalHouses[0].TotalHouses.length;
 
