@@ -61,7 +61,7 @@ async function RemoveOldHouses() {
 
                         const checkPlayer = await API.query("SELECT `id` FROM `arma_players` WHERE BINARY `Steam64id`=? AND (`Last Seen` < NOW() - INTERVAL 1 MONTH)",[PID]);
                         if (checkPlayer[0] !== undefined) {
-                            console.log(PID,HousesID)
+                            console.log(PID, HouseID)
                             //await SQL.query("DELETE FROM `houses` WHERE `id`=?;",[HousesID]);
                         }
 
