@@ -58,6 +58,7 @@ async function connectRCon (BEConfig, ServerName) {
     BE.on('message', async function(message) {
         if (/RCon admin #\d: \(Global\)/g.test(message)) {
             getData = /RCon admin #\d: \(Global\) (.+)/g.exec(message);
+            if (ServerMSGs.includes(getData[1])) return;
 
             //Save to DB
             API.query("INSERT INTO `arma_chat` (`Server`,`Channel`,`MSG`) VALUES(?,?,?);", [ServerName,"RCONAdmin",getData[1]], function (error, results, fields) {
@@ -66,7 +67,6 @@ async function connectRCon (BEConfig, ServerName) {
             });
         } else if (/RCon admin #\d+ \((\d+.\d+.\d+.\d+:\d+)\) logged in/g.test(message)) {
             getData = /RCon admin #\d+ \((\d+.\d+.\d+.\d+:\d+)\) logged in/g.exec(message);
-            if (ServerMSGs.includes(getData[1])) return;
 
             //Save to DB
             API.query("INSERT INTO `arma_chat` (`Server`,`Channel`,`MSG`) VALUES(?,?,?);", [ServerName,"RCONConnect",getData[1]], function (error, results, fields) {
