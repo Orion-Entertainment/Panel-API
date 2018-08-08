@@ -161,9 +161,7 @@ async function connectRCon (BEConfig, ServerName) {
 
                 if (/.+ Restriction #\d+/.test(getData[3])) {
                     //Add ban for hacking
-                    API.query("INSERT INTO `arma_bans` (`GUID`,`BannedBy`,`Notes`,`Reason`) VALUES(?,?,?,?);", [getData[2],1,getData[3],"+Flabby - Perm - Hacking"], function (error, results, fields) {
-                        if (error) throw error;
-                    });
+                    banPlayer(getData[2],1,getData[3],"+Flabby - Perm - Hacking")
                 }
 
                 //Save kick
@@ -228,6 +226,13 @@ async function kickPlayer(ServerName, GUID, Reason) {
             return true;
         } else if (i + 1 == Servers.length) return false;
     }
+}
+
+async function banPlayer(GUID, BannedBy, Notes, Reason) {
+    API.query("INSERT INTO `arma_bans` (`GUID`,`BannedBy`,`Notes`,`Reason`) VALUES(?,?,?,?);", [GUID,BannedBy,Notes,Reason], function (error, results, fields) {
+        if (error) throw error;
+    });
+    return true;
 }
 
 async function updatePlayer(Name, IP, GUID) {
@@ -435,3 +440,7 @@ async function Reconnect(BEConfig, ServerName) {
 }
 
 module.exports = Servers;
+module.exports.Rcon = {
+    "Kick": kickPlayer(ServerName, GUID, Reason),
+    "Ban": banPlayer(GUID, BannedBy, Notes, Reason)
+};
