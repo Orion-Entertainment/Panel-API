@@ -57,6 +57,8 @@ router.post('/Addon', async(req, res, next) => {
                     const Action = Data[0];
                     switch (Action) {
                         case "Killed":
+                            if (ServerName == null) return res.send("Success");
+                            
                             let KilledName = Data[1];
                             const KilledPID = Data[2];
                             let KilledGroup = Data[3];
