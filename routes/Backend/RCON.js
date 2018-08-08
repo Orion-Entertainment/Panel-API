@@ -203,7 +203,7 @@ async function checkForBan(ServerName, GUID) {
     const query = await API.query("SELECT `id`,`Server`,`Reason`,`Created`,`Expires` FROM `arma_bans` WHERE BINARY `GUID`=? AND `Expired`='False';", [GUID]);
     if (query[0] == undefined) return false;
     else if (query[0] == null) return false;
-    else if (query[0].Server !== ServerName | query[0].Server !== null) return false;
+    else if (query[0].Server !== ServerName && query[0].Server !== null) return false;
     else if (query[0].Expires !== null) {
         const Created = moment(query[0].Created);
         const Expires = moment(query[0].Expires);
