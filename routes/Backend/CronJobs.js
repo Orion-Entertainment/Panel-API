@@ -4,7 +4,7 @@ const ServerDBs = require('../../core/app').ServerDBs;
 
 /* Config */
 const TimeZone = 'America/New_York';
-const selectLimit = 'America/New_York';
+const selectLimit = 100;
 const Config = {
     "Arma3": {
         "RemoveOldHouses": true
@@ -42,9 +42,9 @@ async function RemoveOldHouses() {
 
             if (TotalHouses < 1) return;
             else if (TotalHouses <= 100) setOffset = 0;
-            else setOffset = 100;
+            else setOffset = selectLimit;
 
-            if (setOffset == 0) loopTotal = 1;
+            if (setOffset < 1) loopTotal = 1;
             else loopTotal = Math.ceil(TotalHouses / setOffset);
             console.log(loopTotal)
             
