@@ -205,7 +205,8 @@ router.post('/Info', async(req, res, next) => {
                             "FirstSeen": await moment(Result["First Seen"]).format('YYYY/MM/DD HH:mm:ss'),
                             "LastSeen": await moment(Result["Last Seen"]).format('YYYY/MM/DD HH:mm:ss'),
 
-                            "Private": Private
+                            "Private": Private,
+                            "Staff": sPermissions
                         }
                     }).end();
                 }
