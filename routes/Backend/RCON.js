@@ -200,24 +200,33 @@ async function getPlayerGUID(ServerName, Name) {
 }
 
 async function checkForBan(ServerName, GUID) {
-    const query = await API.query("SELECT `Server`,`Reason` FROM `arma_bans` WHERE BINARY `GUID`=? AND `Expired`='False';", [GUID]);
-    if (query[0] !== undefined) {
-        if (query[0] !== null) {
-            if (query[0].Server == ServerName | query[0].Server == null) {
-                for (let i = 0; i < Servers.length; i++) {
-                    if (ServerName == Servers[i].Name) {
-                        const BE = Servers[i].BE;
-                        const KickID = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
-                        if (KickID[0] == undefined) return true;
-                        if (KickID[0].ID == null) return true;
-                        const SendCommand = 'kick '+KickID[0].ID +' '+query[0].Reason;
-                        BE.sendCommand(SendCommand);
-                        return true;
-                    } else if (i + 1 == Servers.length) return false;
-                }
-            } else return false;
-        } else return false;
-    } else return false;
+    const query = await API.query("SELECT `id`,`Server`,`Reason`,`Created`,`Expires` FROM `arma_bans` WHERE BINARY `GUID`=? AND `Expired`='False';", [GUID]);
+    if (query[0] == undefined) return false;
+    else if (query[0] == null) return false;
+    else if (query[0].Server !== ServerName | query[0].Server !== null) return false;
+    else if (query[0].Expires !== null) {
+        const Created = moment(query[0].Created);
+        const Expires = moment(query[0].Expires);
+        const diff = Created.diff(Expires);
+        if (diff < 0) {
+            await API.query("UPDATE `bans` set `Expired`='true' WHERE `id`=?;", [query[0].id]);
+            return false;
+        } else return kickPlayer(ServerName, GUID, query[0].Reason);
+    } else return kickPlayer(ServerName, GUID, query[0].Reason);
+}
+
+async function kickPlayer(ServerName, GUID, Reason) {
+    for (let i = 0; i < Servers.length; i++) {
+        if (ServerName == Servers[i].Name) {
+            const BE = Servers[i].BE;
+            const KickID = await API.query("SELECT `ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID]);
+            if (KickID[0] == undefined) return true;
+            if (KickID[0].ID == null) return true;
+            const SendCommand = 'kick '+KickID[0].ID +' '+Reason;
+            BE.sendCommand(SendCommand);
+            return true;
+        } else if (i + 1 == Servers.length) return false;
+    }
 }
 
 async function updatePlayer(Name, IP, GUID) {
