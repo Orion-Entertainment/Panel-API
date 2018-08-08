@@ -288,8 +288,8 @@ router.post('/Info', async(req, res, next) => {
                             break;
                         case "Kills":
                             if (req.body.Option3 !== undefined) {
-                                if (req.body.Option3 !== "") Kills = "`Killer`='"+Steam64ID+"' OR `Killed`='"+Steam64ID+"'"; else Kills = "`Killer`='"+Steam64ID+"'";
-                            } else Kills = "`Killer`='"+Steam64ID+"'";
+                                if (req.body.Option3 !== "") Kills = "`Killer`='"+Steam64ID+"' OR `Killed`='"+Steam64ID+"'"; else Kills = "`Killer`='"+Steam64ID+"' AND `Killed`!='"+Steam64ID+"'";
+                            } else Kills = "`Killer`='"+Steam64ID+"' AND `Killed`!='"+Steam64ID+"'";
                             
                             if (Steam64ID == null) return returnFalse(res, Option2);
                             req.API.query("SELECT `Server`,`KilledName`,`Killed`,`KilledGroup`,`Weapon`,`Time` FROM `arma_kills` WHERE BINARY "+Kills+" ORDER BY `id` DESC LIMIT 20;", async function (error, results, fields) {
