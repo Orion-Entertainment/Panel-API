@@ -185,7 +185,7 @@ router.post('/Info', async(req, res, next) => {
         else if (req.body.Private == undefined) return res.json({Error: "Private Undefined"})
         else if (req.body.Staff == undefined) return res.json({Error: "Staff Undefined"})
         const PlayerID = req.body.PlayerID;
-        const sPerimssions = req.body.Staff;
+        const sPermissions = req.body.Staff;
 
         if (req.body.Option == undefined) {
             if (PlayerID == "" | isNaN(PlayerID)) return res.json({Error: "PlayerID Invalid"})
