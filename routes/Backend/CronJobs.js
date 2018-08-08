@@ -37,9 +37,8 @@ async function RemoveOldHouses() {
             const SQL = ServerDBs.maldenlife2;
 
             const getTotalHouses = await SQL.query("SELECT COUNT(`id`) AS 'TotalHouses' FROM `houses` WHERE `owned`='1' AND (`insert_time` < NOW() - INTERVAL 1 MONTH);");
-            console.log(getTotalHouses)
             if (getTotalHouses[0] == undefined) return;
-            const TotalHouses = getTotalHouses[0].TotalHouses.length;
+            const TotalHouses = getTotalHouses[0].TotalHouses;
 
             if (TotalHouses < 1) return;
             else if (TotalHouses <= 100) setOffset = 0;
@@ -47,8 +46,6 @@ async function RemoveOldHouses() {
 
             if (setOffset < 1) loopTotal = 1;
             else loopTotal = Math.round(TotalHouses / setOffset);
-            console.log(TotalHouses,setOffset)
-            console.log(TotalHouses / setOffset)
             console.log(loopTotal)
             
             let Offset = setOffset;
