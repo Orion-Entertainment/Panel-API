@@ -373,7 +373,11 @@ router.post('/Info', async(req, res, next) => {
 
                         /* Staff Information */
                         case "IPs":
-                            if (Steam64ID == null) return returnFalse(res, Option2); else if (sPermissions !== true && sPermissions.Players !== undefined) return res.json({Error: "Invalid Permissions"}); else if (sPermissions.Players.viewIPs !== true) return res.json({Error: "Invalid Permissions"});
+                            if (Steam64ID == null) return returnFalse(res, Option2);
+                            else if (sPermissions !== true && sPermissions.Players !== undefined) {
+                                if (sPermissions.Players.viewIPs !== true) return res.json({Error: "Invalid Permissions"});
+                            }
+
                             req.API.query("SELECT `IPs` FROM `arma_players` WHERE BINARY `Steam64ID`=?;", [Steam64ID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
