@@ -207,7 +207,7 @@ async function checkForBan(ServerName, GUID) {
     else if (query[0].Expires !== null) {
         const Created = await moment(query[0].Created);
         const Expires = await moment(query[0].Expires);
-        const diff = Created.diff(Expires);
+        const diff = await Created.diff(Expires);
         if (diff < 0) {
             await API.query("UPDATE `arma_bans` set `Expired`='true' WHERE `id`=?;", [query[0].id]);
             return false;
