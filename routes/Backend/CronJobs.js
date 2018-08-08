@@ -50,25 +50,29 @@ async function RemoveOldHouses() {
             console.log(loopTotal)
             
             let Offset = 0;
-            for (let i = 0; i < (loopTotal + 1); i++) {
+            for (let i = 0; i < loopTotal; i++) {
                 const getHouses = await SQL.query("SELECT `id`,`pid` FROM `houses` WHERE `owned`='1' AND (`insert_time` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset);
                 console.log("SELECT `id`,`pid` FROM `houses` WHERE `owned`='1' AND (`insert_time` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset)
-                if (getHouses[0] == undefined) return console.log(i,':oof 1');
+                if (getHouses[0] !== undefined) {
+                    console.log(i,getHouses.length)
+                    for (let h = 0; h < getHouses.length; h++) {
+                        HouseID = getHouses[h].id;
+                        PID = getHouses[h].pid;
 
-                console.log(i,getHouses.length)
-                for (let h = 0; h < getHouses.length; h++) {
-                    HouseID = getHouses[h].id;
-                    PID = getHouses[h].pid;
+                        const checkPlayer = await API.query("SELECT `id` FROM `arma_players` WHERE BINARY `Steam64id`=? AND (`Last Seen` < NOW() - INTERVAL 1 MONTH)",[PID]);
+                        if (checkPlayer[0] !== undefined) {
+                            console.log(pid,HousesID)
+                            //await SQL.query("DELETE FROM `houses` WHERE `id`=?;",[HousesID]);
+                        }
 
-                    const checkPlayer = await API.query("SELECT `id` FROM `arma_players` WHERE BINARY `Steam64id`=? AND (`Last Seen` < NOW() - INTERVAL 1 MONTH)",[PID]);
-                    if (checkPlayer[0] == undefined) return console.log(h,':oof 2'); else {
-                        console.log(pid,HousesID)
-                        //await SQL.query("DELETE FROM `houses` WHERE `id`=?;",[HousesID]);
+                        if (h + 1 == getHouses.length) {
+                            Offset + setOffset;
+                        }
                     }
+                }
 
-                    if (h + 1 == getHouses.length) {
-                        Offset + setOffset; return console.log(h,':oof 3');
-                    }
+                if (i + 1 == loopTotal) {
+                    return console.log('end');
                 }
             }
 
