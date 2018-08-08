@@ -441,6 +441,10 @@ async function Reconnect(BEConfig, ServerName) {
 
 module.exports = Servers;
 module.exports.Rcon = {
-    "Kick": kickPlayer(ServerName, GUID, Reason),
-    "Ban": banPlayer(GUID, BannedBy, Notes, Reason)
+    "Kick": function(ServerName, GUID, Reason) {
+        return kickPlayer(ServerName, GUID, Reason);
+    },
+    "Ban": function(GUID, BannedBy, Notes, Reason) {
+        return banPlayer(GUID, BannedBy, Notes, Reason);
+    }
 };
