@@ -161,12 +161,14 @@ router.post('/Register', async(req, res, next) => {
         const IPs = JSON.stringify([{IP: req.body.IP, Time: Now}]);
         const IPsENC = await EncryptData(Key, IPs);
 
+        if (Email == null) setEmail = null; else setEmail = await QueryableEncrypt(Email, EmailKey);
+
         switch (req.body.Option) {
             case "Steam":
                 if (Data.Steam64ID == undefined) return res.json({Error: "Steam64ID Undefined"})
                 if (Data.Steam64ID == "" | isNaN(Data.Steam64ID)) return res.json({Error: "Steam64ID Invalid"})
 
-                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`,`Key`) VALUES("+await QueryableEncrypt(Data.Name, NameKey)+",?,"+await QueryableEncrypt(Email, EmailKey)+","+await QueryableEncrypt(Data.Steam64ID, Steam64IDKey)+","+await QueryableEncrypt(req.body.IP, IPKey)+",?,?);", [NamesENC,IPsENC,KeyENC], async function (error, results, fields) {
+                req.API.query("INSERT INTO `accounts` (`Name`,`Names`,`Email`,`Steam64ID`,`LastIP`,`IPs`,`Key`) VALUES("+await QueryableEncrypt(Data.Name, NameKey)+",?,"+setEmail+","+await QueryableEncrypt(Data.Steam64ID, Steam64IDKey)+","+await QueryableEncrypt(req.body.IP, IPKey)+",?,?);", [NamesENC,IPsENC,KeyENC], async function (error, results, fields) {
                     if (error) {
                         if (error == "ER_DUP_ENTRY") {
                             return res.send("Already Registered")
