@@ -14,7 +14,9 @@ const ServerMSGs = [
     "Server Restart in 4 Minutes!",
     "Server Restart in 5 Minutes!",
     "Server Restart in 10 Minutes!",
+    "Server Restart in 15 Minutes!",
     "Server Restart in 30 Minutes!",
+    "Server Restart in 45 Minutes!",
     "Server Restart in 1 Hour!",
     "Server Restart in 2 Hours!"
 ];
