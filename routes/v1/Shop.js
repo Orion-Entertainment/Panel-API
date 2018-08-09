@@ -59,26 +59,14 @@ router.post('/', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
-        const Categories = [{
-            "ID": 1,
-            "Name": "Arma 3",
-            "IMG": "/images/Shop/Category/Arma3.png"
-        },{
-            "ID": 2,
-            "Name": "Teamspeak",
-            "IMG": "/images/Shop/Category/Teamspeak.png"
-        }];
-
-        return res.send(Categories);
-
-        /*req.API.query("SELECT `id`,`Last Name`,`Steam64ID` FROM `arma_players` WHERE `Last Name` LIKE ? OR `GUID` LIKE ? OR `Steam64ID` LIKE ? OR `Names` LIKE ?  ORDER BY `id` DESC LIMIT 25;", [Search,Search,Search,Search], async function (error, results, fields) {
+        req.API.query("SELECT `Name`,`IMG` FROM `shop_categories` WHERE `Active`='True  ORDER BY `id` DESC;", async function (error, results, fields) {
             if (error) {
                 console.error(error)
                 return res.json({Error: error})
             }
             
-            if (results[0] == undefined) return returnFalse(res, "Results"); else return returnResults(res, "Results", results);
-        });*/
+            if (results[0] == undefined) return res.json({Categories: false}); else return res.json({Categories: results});
+        });
     } catch (error) {
         console.log(error)
         return res.json({Error: "Error"})
