@@ -87,7 +87,7 @@ router.post('/Category', async(req, res, next) => {
         if (req.body.Category == undefined) return res.json({Error: "Category Undefined"})
         else if (req.body.Category == "") return res.json({Error: "Category Empty"})
 
-        const CheckCategory = await API.query("SELECT `id` FROM `shop_categories` WHERE BINARY `Name`=? AND `Active`='True';", [req.body.Category]);
+        const CheckCategory = await req.API.query("SELECT `id` FROM `shop_categories` WHERE BINARY `Name`=? AND `Active`='True';", [req.body.Category]);
         if (CheckCategory[0] == undefined) return res.json({Error: "Category Not Found"})
 
         req.API.query("SELECT `id`,`Name`,`IMG`,`Price`,`ShortDescription` FROM `shop_items` WHERE `Active`='True' AND BINARY `Category`=? ORDER BY `id` ASC;", [req.body.Category], async function (error, results, fields) {
