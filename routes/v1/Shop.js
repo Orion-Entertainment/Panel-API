@@ -73,4 +73,32 @@ router.post('/', async(req, res, next) => {
     }
 });
 
+router.post('/Category', async(req, res, next) => {
+    try {
+        /* Check Login */
+        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
+        if (CheckLogin == false) return res.send("Invalid Login"); 
+        const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
+
+        if (TokenData == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
+
+        if (req.body.Category == undefined) return res.json({Error: "Category Undefined"})
+        else if (req.body.Category == "") return res.json({Error: "Category Empty"})
+
+        req.API.query("SELECT `id`,`Name`,`IMG`,`Price`,`ShortDescription` FROM `shop_items` WHERE `Active`='True' AND BINARY `Category`=? ORDER BY `id` ASC;", [req.body.Category], async function (error, results, fields) {
+            if (error) {
+                console.error(error)
+                return res.json({Error: error})
+            }
+            
+            if (results[0] == undefined) return res.json({Category: false}); else return res.json({Category: results});
+        });
+    } catch (error) {
+        console.log(error)
+        return res.json({Error: "Error"})
+    }
+});
+
 module.exports = router;
