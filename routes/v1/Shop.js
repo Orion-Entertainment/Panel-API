@@ -96,7 +96,24 @@ router.post('/Category', async(req, res, next) => {
                 return res.json({Error: error})
             }
             
-            if (results[0] == undefined) return res.json({Category: false}); else return res.json({Category: results});
+            if (results[0] == undefined) return res.json({Category: false}); else {
+                let Return = [];
+
+                for (let i = 0; i < results.length; i++) {
+                    Return.push({
+                        "id": results[i].id,
+                        "Name": results[i].Name,
+                        "IMG": results[i].IMG,
+                        "Price": results[i].Price,
+                        "Option": results[i].Option,
+                        "Description": JSON.parse(results[i].Description)
+                    })
+
+                    if (i + 1 == results.length) {
+                        return res.json({Category: Return});
+                    }
+                }
+            }
         });
     } catch (error) {
         console.log(error)
