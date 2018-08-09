@@ -399,21 +399,21 @@ async function checkPlayers(time) {
                                 const ID = getInfo[1];
 
                                 if (Name !== null && IP !== null && GUID !== null && Ping !== null && ID !== null) {
-                                    API.query("SELECT `IP`,`GUID`,`Ping`,`ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID], async function (error, results, fields) {
+                                    API.query("SELECT "+await QueryableDecrypt("IP", IPKey)+",`GUID`,`Ping`,`ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID], async function (error, results, fields) {
                                         if (error) throw error;
                                         else if (results[0] == undefined) {
-                                            API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`IP`,`GUID`,`ID`,`Ping`) VALUES(?,?,?,?,?,?);", [ServerName,Name,IP,GUID,ID,Ping], function (error, results, fields) {
+                                            API.query("INSERT INTO `arma_liveplayers` (`Server`,`Name`,`IP`,`GUID`,`ID`,`Ping`) VALUES(?,?,"+await QueryableEncrypt(IP, IPKey)+",?,?,?);", [ServerName,Name,GUID,ID,Ping], function (error, results, fields) {
                                                 if (error) throw error;
                                                 return;
                                             });
                                         } else {
                                             if (results[0].IP == null | results[0].IP == "") {
-                                                API.query("UPDATE `arma_liveplayers` set `IP`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `GUID`=?;", [IP,Ping,ServerName,Name,GUID], function (error, results, fields) {
+                                                API.query("UPDATE `arma_liveplayers` set `IP`="+await QueryableEncrypt(IP, IPKey)+",`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `GUID`=?;", [Ping,ServerName,Name,GUID], function (error, results, fields) {
                                                     if (error) throw error;
                                                     return;
                                                 });
                                             } else if (results[0].GUID == null | results[0].GUID == "") {
-                                                API.query("UPDATE `arma_liveplayers` set `GUID`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `IP`=?;", [GUID,Ping,ServerName,Name,IP], function (error, results, fields) {
+                                                API.query("UPDATE `arma_liveplayers` set `GUID`=?,`Ping`=? WHERE BINARY `Server`=? AND BINARY `Name`=? AND BINARY `IP`="+await QueryableEncrypt(IP, IPKey)+";", [GUID,Ping,ServerName,Name], function (error, results, fields) {
                                                     if (error) throw error;
                                                     return;
                                                 });
