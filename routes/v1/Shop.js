@@ -62,11 +62,11 @@ router.post('/', async(req, res, next) => {
         const Categories = [{
             "ID": 1,
             "Name": "Arma 3",
-            "IMG": "/Shop/Category/Arma3.png"
+            "IMG": "/images/Shop/Category/Arma3.png"
         },{
             "ID": 2,
             "Name": "Teamspeak",
-            "IMG": "/Shop/Category/Teamspeak.png"
+            "IMG": "/images/Shop/Category/Teamspeak.png"
         }];
 
         return res.send(Categories);
