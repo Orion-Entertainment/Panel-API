@@ -4,6 +4,7 @@ const BattleNode = require('battle-node');
 const GETServers = require('../../core/app').Servers;
 const API = require('../../core/app').API;
 const moment = require('moment');
+const crypto = require('crypto');
 
 /* Variables */
 const ConnectIPKey = "c5c41c1b95501f36564a288879f2beef";

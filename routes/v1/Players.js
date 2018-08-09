@@ -5,6 +5,7 @@ const moment = require('moment');
 /* Set Variables */
 
 /* Added NPM Packages */
+const crypto = require('crypto');
 
 /* Functions */
 async function EncryptData(key, data) {
