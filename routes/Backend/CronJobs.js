@@ -130,8 +130,7 @@ async function oneTime() {
                     const ENCLastIP = await QueryableEncrypt(LastIPKey,LastIP);
                     const ENCIPs = await EncryptData(IPsKey,IPs);
 
-                    console.log(ID,ENCLastIP,ENCIPs)
-                    //await API.query("UPDATE `arma_players` set `Last IPNEW`=?,`IPsNEW`=? WHERE `id`=?;",[ENCLastIP,ENCIPs,ID]);
+                    await API.query("UPDATE `arma_players` set `Last IPNEW`="+ENCLastIP+",`IPsNEW`=? WHERE `id`=?;",[ENCIPs,ID]);
 
                     if (h + 1 == getPlayers.length) {
                         Offset = Offset + setOffset;
