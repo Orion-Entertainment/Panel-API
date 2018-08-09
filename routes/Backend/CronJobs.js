@@ -87,9 +87,9 @@ async function RemoveOldHouses() {
 
 /* One Time */
 const crypto = require('crypto');
-const ConnectIPKey = "c5c41c1b95501f36564a288879f2beef";
 const LastIPKey = "c8e1e14744282ddc0a0dd2fab8d9f60f";
 const IPsKey = "7831b0e33a16c72716ef2e2f5f7d2803";
+const IPKey = "c5c41c1b95501f36564a288879f2beef";
 
 async function EncryptData(key, data) {
     const cipher = crypto.createCipher('aes-256-cbc', key);
@@ -113,7 +113,7 @@ function QueryableDecrypt(column, key) {
 
 async function oneTime() {
     try {
-        const getTotalPlayers = await API.query("SELECT COUNT(`id`) AS 'TotalPlayers' FROM `arma_players` WHERE `IPs` LIKE '%[{%' AND `Last IPNEW` is null;");
+        const getTotalPlayers = await API.query("SELECT COUNT(`id`) AS 'TotalPlayers' FROM `arma_connect` WHERE `IP` is not null AND `IPNew` is null;");
         if (getTotalPlayers[0] == undefined) return;
         const TotalPlayers = getTotalPlayers[0].TotalPlayers;
 
@@ -127,20 +127,18 @@ async function oneTime() {
         
         let Offset = 0;
         for (let i = 0; i < loopTotal; i++) {
-            const getPlayers = await API.query("SELECT `id`,`Last IP`,`IPs` FROM `arma_players` WHERE `IPs` LIKE '%[{%' AND `Last IPNEW` is null LIMIT "+selectLimit+" OFFSET "+Offset);
+            const getPlayers = await API.query("SELECT `id` FROM `arma_connect` WHERE `IP` is not null AND `IPNew` is null LIMIT "+selectLimit+" OFFSET "+Offset);
 
             if (getPlayers[0] !== undefined) {
                 console.log(i, getPlayers.length)
                 for (let h = 0; h < getPlayers.length; h++) {
                     const get = getPlayers[h];
-                    LastIP = get["Last IP"];
-                    IPs = get.IPs;
-                    ID = get.id;
+                    ID = get["id"];
+                    IP = get["IP"];
 
-                    const ENCLastIP = await QueryableEncrypt(LastIPKey,LastIP);
-                    const ENCIPs = await EncryptData(IPsKey,IPs);
+                    const ENCIP = await QueryableEncrypt(IPKey,IP);
 
-                    await API.query("UPDATE `arma_players` set `Last IPNEW`="+ENCLastIP+",`IPsNEW`=? WHERE `id`=?;",[ENCIPs,ID]);
+                    await API.query("UPDATE `arma_connect` set `IPNEW`="+ENCIP+" WHERE `id`=?;",[ID]);
 
                     if (h + 1 == getPlayers.length) {
                         Offset = Offset + setOffset;
@@ -157,4 +155,4 @@ async function oneTime() {
         return;
     }
 }
-//oneTime();
+oneTime();
