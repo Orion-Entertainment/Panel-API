@@ -97,9 +97,19 @@ async function EncryptData(key, data) {
     encrypted += cipher.final('hex');
     return encrypted;
 }
+async function DecryptData(key, data) {
+    const decipher = crypto.createDecipher('aes-256-cbc', key);
+    let decrypted = decipher.update(data,'hex','utf8') 
+    decrypted += decipher.final('utf8'); 
+    return decrypted; 
+}
+
 function QueryableEncrypt(data, key) {
     return "AES_ENCRYPT('"+data+"', '"+key+"')";
 }
+function QueryableDecrypt(column, key) {
+    return "CONVERT(AES_DECRYPT(`"+column+"`, '"+key+"') using utf8) AS '"+column+"'";
+};
 
 async function oneTime() {
     try {
@@ -147,4 +157,4 @@ async function oneTime() {
         return;
     }
 }
-oneTime();
+//oneTime();

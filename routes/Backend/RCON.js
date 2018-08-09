@@ -266,7 +266,7 @@ async function banPlayer(GUID, BannedBy, Notes, Reason) {
 }
 
 async function updatePlayer(Name, IP, GUID) {
-    const query = await API.query("SELECT `Last Name`,`Names`,`Last IP`,`IPs` FROM `arma_players` WHERE BINARY `GUID`=?;", [GUID]);
+    const query = await API.query("SELECT `Last Name`,`Names`,"+QueryableDecrypt("Last IP", LastIPKey)+",`IPs` FROM `arma_players` WHERE BINARY `GUID`=?;", [GUID]);
     const Now = await moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
     if (query[0] == undefined) {
         const Names = JSON.stringify([{
@@ -278,7 +278,10 @@ async function updatePlayer(Name, IP, GUID) {
             Time: Now
         }]);
 
-        API.query("INSERT INTO `arma_players` (`Last Name`,`Names`,`Last IP`,`IPs`,`GUID`,`First Seen`) VALUES(?,?,?,?,?,?);", [Name,Names,IP,IPs,GUID,Now], function (error, results, fields) {
+        const ENCLastIP = await QueryableEncrypt(LastIPKey,IP);
+        const ENCIPs = await EncryptData(IPsKey,JSON.stringify(IPs));
+
+        API.query("INSERT INTO `arma_players` (`Last Name`,`Names`,"+ENCLastIP+",`IPs`,`GUID`,`First Seen`) VALUES(?,?,?,?,?);", [Name,Names,ENCIPs,GUID,Now], function (error, results, fields) {
             if (error) {
                 if (error = "ER_DUP_ENTRY") {
                     return;
@@ -331,7 +334,7 @@ async function updatePlayer(Name, IP, GUID) {
         if (Player["Last IP"] !== IP) {
             let IPs = [];
             if (Player["IPs"] !== null) {
-                IPs = JSON.parse(Player["IPs"]);
+                IPs = JSON.parse(await DecryptData(IPsKey, Player["IPs"]));
             } else {
                 IPs = [];
             }
@@ -361,7 +364,9 @@ async function updatePlayer(Name, IP, GUID) {
             if (IPs.length > 20) { //Max to save = 20
                 IPs.splice(0,1);
             }
-            await API.query("UPDATE `arma_players` set `Last IP`=?,`IPs`=? WHERE BINARY `GUID`=?;", [IP,JSON.stringify(IPs),GUID]);
+            const ENCLastIP = await QueryableEncrypt(LastIPKey,IP);
+            const ENCIPs = await EncryptData(IPsKey,JSON.stringify(IPs));
+            await API.query("UPDATE `arma_players` set `Last IP`="+ENCLastIP+",`IPs`=? WHERE BINARY `GUID`=?;", [ENCIPs,GUID]);
         }
 
         return;
