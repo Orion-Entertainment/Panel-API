@@ -147,7 +147,7 @@ async function connectRCon (BEConfig, ServerName) {
                 getData = /Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.exec(message);
 
                 //Save to DB
-                API.query("INSERT INTO `arma_connect` (`Server`,`Option`,`Name`,`IP`) VALUES(?,?,?,?);", [ServerName,"Connect",getData[1],getData[2]], function (error, results, fields) {
+                API.query("INSERT INTO `arma_connect` (`Server`,`Option`,`Name`,`IP`) VALUES(?,?,?,"+await QueryableEncrypt(IPKey,getData[2])+");", [ServerName,"Connect",getData[1]], function (error, results, fields) {
                     if (error) throw error;
                     return;
                 });
