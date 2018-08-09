@@ -153,7 +153,7 @@ router.post('/TopCharts', async(req, res, next) => {
                 break;
 
             case "Bounty":
-                SQL.query("SELECT `wantedName`,`wantedBounty` FROM `wanted` ORDER BY `wantedBounty` DESC LIMIT 25;", async function (error, results, fields) {
+                SQL.query("SELECT `wantedID`,`wantedName`,`wantedBounty` FROM `wanted` ORDER BY `wantedBounty` DESC LIMIT 25;", async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
