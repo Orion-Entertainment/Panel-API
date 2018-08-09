@@ -86,7 +86,6 @@ async function RemoveOldHouses() {
 
 
 /* One Time */
-oneTime = true;
 const ConnectIPKey = "c5c41c1b95501f36564a288879f2beef";
 const LastIPKey = "c8e1e14744282ddc0a0dd2fab8d9f60f";
 const IPsKey = "7831b0e33a16c72716ef2e2f5f7d2803";
@@ -101,7 +100,6 @@ function QueryableEncrypt(data, key) {
     return "AES_ENCRYPT('"+data+"', '"+key+"')";
 }
 
-oneTime();
 async function oneTime() {
     try {
         const getTotalPlayers = await API.query("SELECT COUNT(`id`) AS 'TotalPlayers' FROM `arma_players` WHERE `IPs` LIKE '%[{\"IP\":\"%' AND `Last IPNEW` is null;");
@@ -149,3 +147,4 @@ async function oneTime() {
         return;
     }
 }
+oneTime();
