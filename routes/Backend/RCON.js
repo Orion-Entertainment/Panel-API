@@ -194,6 +194,9 @@ async function connectRCon (BEConfig, ServerName) {
                     banPlayer(getData[2],1,getData[3],"+Flabby - Perm - Hacking")
                 }
 
+                //Temp fix
+                if (getData[3] == "Bad Player Name") return console.log(message);
+
                 //Save kick
                 API.query("INSERT INTO `arma_kick` (`Server`,`By`,`Name`,`GUID`,`Reason`) VALUES(?,?,?,?,?);", [ServerName,"Battleye",getData[1],getData[2],getData[3]], function (error, results, fields) {
                     if (error) throw error;
