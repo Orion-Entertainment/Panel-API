@@ -124,7 +124,7 @@ async function oneTime() {
                 for (let h = 0; h < getPlayers.length; h++) {
                     const get = getPlayers[h];
                     LastIP = get["Last IP"];
-                    IPs = JSON.parse(get.IPs);
+                    IPs = get.IPs;
                     ID = get.id;
 
                     const ENCLastIP = await QueryableEncrypt(LastIPKey,LastIP);
