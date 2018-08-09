@@ -127,7 +127,7 @@ async function oneTime() {
         
         let Offset = 0;
         for (let i = 0; i < loopTotal; i++) {
-            const getPlayers = await API.query("SELECT `id` FROM `arma_connect` WHERE `IP` is not null AND `IPNew` is null LIMIT "+selectLimit+" OFFSET "+Offset);
+            const getPlayers = await API.query("SELECT `id`,`IP` FROM `arma_connect` WHERE `IP` is not null AND `IPNew` is null LIMIT "+selectLimit+" OFFSET "+Offset);
 
             if (getPlayers[0] !== undefined) {
                 console.log(i, getPlayers.length)
