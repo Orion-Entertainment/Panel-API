@@ -3,6 +3,7 @@ const router = express.Router();
 const moment = require('moment');
 
 /* Set Variables */
+const IPsKey = "7831b0e33a16c72716ef2e2f5f7d2803";
 
 /* Added NPM Packages */
 const crypto = require('crypto');
