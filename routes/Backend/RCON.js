@@ -1,7 +1,14 @@
+//return;
+
 const BattleNode = require('battle-node');
 const GETServers = require('../../core/app').Servers;
 const API = require('../../core/app').API;
 const moment = require('moment');
+
+/* Variables */
+const ConnectIPKey = "c5c41c1b95501f36564a288879f2beef";
+const LastIPKey = "c8e1e14744282ddc0a0dd2fab8d9f60f";
+const IPsKey = "7831b0e33a16c72716ef2e2f5f7d2803";
 
 const ServerMSGs = [
     "Help keep the server running by supporting us at https://orionlife.enjin.com/shop",
@@ -21,8 +28,28 @@ const ServerMSGs = [
     "Server Restart in 2 Hours!"
 ];
 
-let Servers = [];
+/* Functions */
+async function EncryptData(key, data) {
+    const cipher = crypto.createCipher('aes-256-cbc', key);
+    let encrypted = cipher.update(data,'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
+}
+async function DecryptData(key, data) {
+    const decipher = crypto.createDecipher('aes-256-cbc', key);
+    let decrypted = decipher.update(data,'hex','utf8') 
+    decrypted += decipher.final('utf8'); 
+    return decrypted; 
+}
 
+function QueryableEncrypt(data, key) {
+    return "AES_ENCRYPT('"+data+"', '"+key+"')";
+}
+function QueryableDecrypt(column, key) {
+    return "CONVERT(AES_DECRYPT(`"+column+"`, '"+key+"') using utf8) AS '"+column+"'";
+};
+
+let Servers = [];
 for (let i = 0; i < GETServers.length; i++) {
     connectRCon({
         ip: GETServers[i].IP,

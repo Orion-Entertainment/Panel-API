@@ -16,7 +16,7 @@ async function EncryptData(key, data) {
     return encrypted;
 }
 async function DecryptData(key, data) {
-    const decipher = crypto.createDecipher('aes-256-cbc', key) 
+    const decipher = crypto.createDecipher('aes-256-cbc', key);
     let decrypted = decipher.update(data,'hex','utf8') 
     decrypted += decipher.final('utf8'); 
     return decrypted; 
