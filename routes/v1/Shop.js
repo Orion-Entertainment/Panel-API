@@ -147,8 +147,8 @@ router.post('/Item', async(req, res, next) => {
                 return res.json({Error: error})
             }
             
-            if (results[0] == undefined) return res.json({Category: false}); else {
-                return res.json({Category: {
+            if (results[0] == undefined) return res.json({Item: false}); else {
+                return res.json({Item: {
                     "id": results[i].id,
                     "Name": results[i].Name,
                     "IMG": results[i].IMG,
