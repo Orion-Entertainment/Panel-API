@@ -149,13 +149,13 @@ router.post('/Item', async(req, res, next) => {
             
             if (results[0] == undefined) return res.json({Item: false}); else {
                 return res.json({Item: {
-                    "id": results[i].id,
-                    "Name": results[i].Name,
-                    "IMG": results[i].IMG,
-                    "Price": results[i].Price,
-                    "Option": results[i].Option,
-                    "Description": JSON.parse(results[i].Description),
-                    "Images": JSON.parse(results[i].Images)
+                    "id": results[0].id,
+                    "Name": results[0].Name,
+                    "IMG": results[0].IMG,
+                    "Price": results[0].Price,
+                    "Option": results[0].Option,
+                    "Description": JSON.parse(results[0].Description),
+                    "Images": JSON.parse(results[0].Images)
                 }});
             }
         });
