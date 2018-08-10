@@ -121,4 +121,48 @@ router.post('/Category', async(req, res, next) => {
     }
 });
 
+router.post('/Item', async(req, res, next) => {
+    try {
+        /* Check Login */
+        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
+        if (CheckLogin == false) return res.send("Invalid Login"); 
+        const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
+
+        if (TokenData == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
+
+        if (req.body.Category == undefined) return res.json({Error: "Category Undefined"})
+        else if (req.body.Category == "") return res.json({Error: "Category Empty"})
+        else if (req.body.Item == undefined) return res.json({Error: "Item Undefined"})
+        else if (req.body.Item == "") return res.json({Error: "Item Empty"})
+        else if (isNaN(req.body.Item)) return res.json({Error: "Item Invalid"})
+
+        const CheckCategory = await req.API.query("SELECT `id` FROM `shop_categories` WHERE BINARY `Name`=? AND `Active`='True';", [req.body.Category]);
+        if (CheckCategory[0] == undefined) return res.json({Error: "Category Not Found"})
+
+        req.API.query("SELECT `id`,`Name`,`IMG`,`Price`,`Option`,`Description`,`Images` FROM `shop_items` WHERE `Active`='True' AND BINARY `Category`=? AND `Name`=?;", [req.body.Category, req.body.Item], async function (error, results, fields) {
+            if (error) {
+                console.error(error)
+                return res.json({Error: error})
+            }
+            
+            if (results[0] == undefined) return res.json({Category: false}); else {
+                return res.json({Category: {
+                    "id": results[i].id,
+                    "Name": results[i].Name,
+                    "IMG": results[i].IMG,
+                    "Price": results[i].Price,
+                    "Option": results[i].Option,
+                    "Description": JSON.parse(results[i].Description),
+                    "Images": JSON.parse(results[i].Images)
+                }});
+            }
+        });
+    } catch (error) {
+        console.log(error)
+        return res.json({Error: "Error"})
+    }
+});
+
 module.exports = router;
