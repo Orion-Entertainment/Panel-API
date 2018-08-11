@@ -28,16 +28,12 @@ const limiter = new RateLimit ({
 app.use(limiter);
 
 /* Paypal */
-var paypal = require('paypal-rest-sdk');
-
-var clientId = 'AV-4DyvKAAaXllJA3zxB1yOtxGc9Sx-wXPHTDAq2U97ebpyH0n92uWTHwSPu3zNxpSqWxq25QfJF1eyZ';
-var secret = 'EAP-_kApLTQcXCjiKKIpmsELdrc4ZFt0xfruOPG_C0s82jPd71nCSaqAC6_lWFgJ2oD9F0kRYRwYbtRd';
-
-paypal.configure({
-  'mode': 'sandbox', //sandbox or live
-  'client_id': clientId,
-  'client_secret': secret
-});
+const Paypal = require('paypal-recurring'),
+    paypal = new Paypal({
+        username:  "flabby_api1.orionpanel.com",
+        password:  "2CZ572V8AW7RZ5R9",
+        signature: "AO8AZXM1PwgejSg7A5.a6ehCwVkDA1FQ-AMCas760jQCZ16BwQcdkFIw"
+    }, "production");
 
 /* Database Pools */
 const API = mysql.createPool({
@@ -153,3 +149,4 @@ module.exports = app;
 module.exports.API = API;
 module.exports.Servers = Servers;
 module.exports.ServerDBs = ServerDBs;
+module.exports.Paypal = paypal;

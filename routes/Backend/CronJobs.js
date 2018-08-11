@@ -1,8 +1,10 @@
 const CronJob = require('cron').CronJob;
 const API = require('../../core/app').API;
 const ServerDBs = require('../../core/app').ServerDBs;
+const paypal = require('../../core/app').Paypal;
 const Rcon = require('./RCON').Rcon;
 const moment = require('moment');
+
 
 /* Config */
 const TimeZone = 'America/New_York';
@@ -31,7 +33,8 @@ new CronJob('0 0 * * 0', function() {
 //Hourly - Every hour
 new CronJob('0 * * * *', function() {
     if (Config.Arma3.ExpireBans) API.query("UPDATE `arma_bans` set `Expired`='True' WHERE `Expired`='False' AND (`Expires` IS NOT NULL) AND 0 > TIMESTAMPDIFF(SECOND,NOW(),`Expires`);");
-    
+    //Arma3ShopOld();
+
     }, function () {
         return; /* This function is executed when the job stops */
     },
@@ -40,7 +43,8 @@ new CronJob('0 * * * *', function() {
 );
 //Minute - Every minute
 new CronJob('* * * * *', function() {
-    Arma3Shop();
+    Arma3ShopNew();
+    Arma3ShopOld();//change to hourly
 
     }, function () {
         return; /* This function is executed when the job stops */
@@ -50,7 +54,88 @@ new CronJob('* * * * *', function() {
 );
 
 /* Functions */
-async function Arma3Shop() {
+async function Arma3ShopOld() {
+    try {
+        if (Config.Shop.Arma3) {
+            const SQL = ServerDBs.maldenlife2;
+
+            const getTotalPurchases = await API.query("SELECT COUNT(`id`) AS 'Total' FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`!='Ended' AND (`Last Checked` < NOW() - INTERVAL 1 MONTH);");
+            if (getTotalPurchases[0] == undefined) return;
+            const TotalPurchases = getTotalPurchases[0].Total;
+
+            let setOffset;
+            if (TotalPurchases < 1) return;
+            else if (TotalPurchases <= 100) setOffset = 0;
+            else setOffset = selectLimit;
+
+            if (setOffset < 1) loopTotal = 1;
+            else loopTotal = Math.round(TotalPurchases / setOffset);
+            
+            let Offset = 0;
+            for (let i = 0; i < loopTotal; i++) {
+                const getPurchases = await API.query("SELECT `id`,`PID`,`WID`,`item` FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`!='Ended' AND (`Last Checked` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset);
+
+                if (getPurchases[0] !== undefined) {
+
+                    //check subscription status
+                    paypal.getSubscription(getPurchases[0].PID, function(err, data) {
+                        if (!err) {
+                            console.log(data)
+                        }
+                    });
+
+
+                    return;
+
+
+                    for (let p = 0; p < getPurchases.length; p++) {
+                        pID = getPurchases[p].id;
+                        wID = getPurchases[p].WID;
+                        Item = getPurchases[p].item;
+
+                        const getPlayer = await API.query("SELECT `Steam64ID`,`GUID` FROM `arma_players` WHERE BINARY `id`=?",[wID]);
+                        if (getPlayer[0] !== undefined) {
+                            const check = await Rcon.checkPlayer(getPlayer[0].GUID);
+                            if (!check) {
+                                switch (Item) {
+                                    case "VIP 1":
+                                        //await SQL.query("UPDATE `players` set `donorlevel`='1' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
+                                        break;
+                                    case "VIP 2":
+                                        //await SQL.query("UPDATE `players` set `donorlevel`='2' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
+                                        break;
+                                    case "VIP 3":
+                                        //await SQL.query("UPDATE `players` set `donorlevel`='3' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
+                                        break;
+        
+                                    default:
+                                        console.log('Arma3Shop FNC: Undefined Item | '+Item)
+                                }
+                            }
+                        }
+                        
+
+                        if (p + 1 == getPurchases.length) {
+                            Offset = Offset + setOffset;
+                        }
+                    }
+                }
+
+                if (i + 1 == loopTotal) {
+                    return;//return;
+                }
+            }
+
+        } else return;
+    } catch (error) {
+        console.log(error);
+        return;
+    }
+}
+async function Arma3ShopNew() {
     try {
         if (Config.Shop.Arma3) {
             const SQL = ServerDBs.maldenlife2;
@@ -109,7 +194,7 @@ async function Arma3Shop() {
                 }
 
                 if (i + 1 == loopTotal) {
-                    return  ;//return;
+                    return;//return;
                 }
             }
 

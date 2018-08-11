@@ -216,13 +216,7 @@ router.post('/Buy', async(req, res, next) => {
     }
 });
 
-
-var Paypal = require('paypal-recurring'),
-    paypal = new Paypal({
-        username:  "flabby_api1.orionpanel.com",
-        password:  "2CZ572V8AW7RZ5R9",
-        signature: "AO8AZXM1PwgejSg7A5.a6ehCwVkDA1FQ-AMCas760jQCZ16BwQcdkFIw"
-    }, "production");
+const paypal = require('../../core/app').Paypal;
 
 router.post('/BuyItem', async(req, res, next) => {
     try {
