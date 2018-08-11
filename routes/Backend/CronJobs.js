@@ -83,15 +83,15 @@ async function Arma3Shop() {
                             if (!check) {
                                 switch (Item) {
                                     case "VIP 1":
-                                        await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[1,getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        await SQL.query("UPDATE `players` set `donorlevel`='1' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
                                         await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
                                         break;
                                     case "VIP 2":
-                                        await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[2,getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        await SQL.query("UPDATE `players` set `donorlevel`='2' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
                                         await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
                                         break;
                                     case "VIP 3":
-                                        await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[3,getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        await SQL.query("UPDATE `players` set `donorlevel`='3' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
                                         await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
                                         break;
         
@@ -109,7 +109,7 @@ async function Arma3Shop() {
                 }
 
                 if (i + 1 == loopTotal) {
-                    return console.log('end');//return;
+                    return  ;//return;
                 }
             }
 
