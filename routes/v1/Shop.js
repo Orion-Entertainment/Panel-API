@@ -85,6 +85,7 @@ function returnResults(res, Name, Results) {
 
 function getBillingPlan(first, second) {
     const billingPlanAttrib = billingPlanAttribs[first];
+    console.log('skrt',billingPlanAttrib)
     paypal.billingPlan.create(billingPlanAttrib[second], function (error, billingPlan){
         if (error){
             console.log(error);
