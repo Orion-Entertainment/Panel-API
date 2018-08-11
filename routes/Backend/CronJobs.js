@@ -83,22 +83,16 @@ async function Arma3Shop() {
                             if (!check) {
                                 switch (Item) {
                                     case "VIP 1":
-                                        //await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[1,getPlayer[0].Steam64ID]); //Update on Maldenlife
-                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
-                                        console.log(1,getPlayer[0].Steam64ID)
-                                        console.log(await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID)
+                                        await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[1,getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
                                         break;
                                     case "VIP 2":
-                                        //await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[2,getPlayer[0].Steam64ID]); //Update on Maldenlife
-                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
-                                        console.log(2,getPlayer[0].Steam64ID)
-                                        console.log(await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID)
+                                        await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[2,getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
                                         break;
                                     case "VIP 3":
-                                        //await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[3,getPlayer[0].Steam64ID]); //Update on Maldenlife
-                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
-                                        console.log(3,getPlayer[0].Steam64ID)
-                                        console.log(await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID)
+                                        await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[3,getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
                                         break;
         
                                     default:
