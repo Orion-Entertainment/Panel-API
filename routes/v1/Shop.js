@@ -4,6 +4,7 @@ const moment = require('moment');
 
 /* Set Variables */
 const ShopPurchasesKEY = "be455ae96dacd91223b8e583c68261cb";
+const ShopTokenKey = "1ca5f487e8d6529d61cc6f4231faceaa";
 const ShopPIDKEY = "2979e32f8ed8a94ad85d505d1b193544";
 
 /* Added NPM Packages */
@@ -317,7 +318,7 @@ router.post('/Bought', async(req, res, next) => {
             PROFILESTARTDATE: await nextPayment
         }, async function(err, data) {
             if (!err) {
-                req.API.query("INSERT INTO `shop_purchases` (`PID`,`WID`,`ItemID`,`Category`,`Item`,`Price`,`Status`) VALUES("+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,?,'Active');", [req.body.WID,Buying["ItemID"],Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
+                req.API.query("INSERT INTO `shop_purchases` (`Token`,`PID`,`WID`,`ItemID`,`Category`,`Item`,`Price`,`Status`) VALUES("+await QueryableEncrypt(req.body.buytoken, ShopTokenKey)+","+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,?,'Active');", [req.body.WID,Buying["ItemID"],Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
