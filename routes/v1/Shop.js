@@ -23,8 +23,8 @@ var billingPlanAttribs = {
                 }
             }],
             "merchant_preferences": {
-                "cancel_url": "https://panel.orion-entertainment.net/cancel", ///////////////////////////////////////////////
-                "return_url": "https://panel.orion-entertainment.net/processagreement", ///////////////////////////////////////////////
+                "cancel_url": "https://panel.orion-entertainment.net/shop/cancel", ///////////////////////////////////////////////
+                "return_url": "https://panel.orion-entertainment.net/shop/bought",
                 "max_fail_attempts": "0",
                 "auto_bill_amount": "YES",
                 "initial_fail_amount_action": "CANCEL"
@@ -260,6 +260,96 @@ router.post('/Buy', async(req, res, next) => {
 
                     "Buy": await getBillingPlan(req.body.Category, req.body.Item)
                 }});
+            }
+        });
+    } catch (error) {
+        console.log(error)
+        return res.json({Error: "Error"})
+    }
+});
+
+router.post('/BuyItem', async(req, res, next) => {
+    try {
+        /* Check Login */
+        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
+        if (CheckLogin == false) return res.send("Invalid Login"); 
+        const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
+
+        if (TokenData == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
+
+        if (req.body.buyid == undefined) return res.json({Error: "buyid Undefined"})
+        else if (req.body.buyid == "") return res.json({Error: "buyid Empty"})
+        
+        var isoDate = new Date();
+        isoDate.setSeconds(isoDate.getSeconds() + 4);
+        isoDate.toISOString().slice(0, 19) + 'Z';
+
+        var billingAgreementAttributes = {
+            "name": "Standard Membership",
+            "description": "Food of the World Club Standard Membership",
+            "start_date": isoDate,
+            "plan": {
+                "id": req.body.buyid
+            },
+            "payer": {
+                "payment_method": "paypal"
+            }
+        };
+
+        // Use activated billing plan to create agreement
+        paypal.billingAgreement.create(billingAgreementAttributes, function (
+            error, billingAgreement){
+            if (error) {
+                console.error(error);
+                return res.json({Error: error})
+            } else {
+                //capture HATEOAS links
+                var links = {};
+                billingAgreement.links.forEach(function(linkObj){
+                    links[linkObj.rel] = {
+                        'href': linkObj.href,
+                        'method': linkObj.method
+                    };
+                })
+
+                //if redirect url present, redirect user
+                if (links.hasOwnProperty('approval_url')){
+                    return res.send(links['approval_url'].href);
+                } else {
+                    console.error('no redirect URI present');
+                }
+            }
+        });
+    } catch (error) {
+        console.log(error)
+        return res.json({Error: "Error"})
+    }
+});
+
+router.post('/Bought', async(req, res, next) => {
+    try {
+        /* Check Login */
+        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
+        if (CheckLogin == false) return res.send("Invalid Login"); 
+        const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
+
+        if (TokenData == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
+
+        if (req.body.buytoken == undefined) return res.json({Error: "buytoken Undefined"})
+        else if (req.body.buytoken == "") return res.json({Error: "buytoken Empty"})
+        
+        paypal.billingAgreement.execute(token, {}, function (error, 
+            billingAgreement) {
+            if (error) {
+                console.error(error);
+                return res.json({Error: error})
+            } else {
+                console.log(JSON.stringify(billingAgreement));
+                return res.send('Billing Agreement Created Successfully');
             }
         });
     } catch (error) {
