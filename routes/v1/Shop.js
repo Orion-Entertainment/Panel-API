@@ -9,7 +9,6 @@ const ShopPIDKEY = "2979e32f8ed8a94ad85d505d1b193544";
 
 /* Added NPM Packages */
 const crypto = require('crypto');
-var paypal = require('paypal-rest-sdk');
 const randomString = require('random-string');
 
 /* Functions */
