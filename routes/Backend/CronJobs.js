@@ -34,7 +34,6 @@ new CronJob('0 0 * * 0', function() {
 //Hourly - Every hour
 new CronJob('0 * * * *', function() {
     if (Config.Arma3.ExpireBans) API.query("UPDATE `arma_bans` set `Expired`='True' WHERE `Expired`='False' AND (`Expires` IS NOT NULL) AND 0 > TIMESTAMPDIFF(SECOND,NOW(),`Expires`);");
-    //Arma3ShopOld();
 
     }, function () {
         return; /* This function is executed when the job stops */
@@ -45,7 +44,7 @@ new CronJob('0 * * * *', function() {
 //Minute - Every minute
 new CronJob('* * * * *', function() {
     Arma3ShopNew();
-    Arma3ShopOld();//change to hourly
+    Arma3ShopOld();
 
     }, function () {
         return; /* This function is executed when the job stops */
@@ -81,7 +80,7 @@ async function Arma3ShopOld() {
                         pID = getPurchases[p].id;
                         wID = getPurchases[p].WID;
                         Item = getPurchases[p].item;
-                        paypal.getSubscription(pID, function(err, data) {
+                        paypal.getSubscription(pID, async function(err, data) {
                             if (!err) {
                                 if (data.status !== "Active") {
                                     const getPlayer = await API.query("SELECT `Steam64ID`,`GUID` FROM `arma_players` WHERE BINARY `id`=?",[wID]);
