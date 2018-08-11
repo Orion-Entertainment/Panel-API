@@ -294,6 +294,7 @@ router.post('/Bought', async(req, res, next) => {
 
         const Buying = req.body.Buying;
 
+        console.log('start')
         paypal.createSubscription(req.body.buytoken, req.body.payerid,{
             AMT:              Buying["Price"],
             DESC:             Buying["Description"],
@@ -302,7 +303,8 @@ router.post('/Bought', async(req, res, next) => {
             PROFILESTARTDATE: new Date()
         }, async function(err, data) {
             if (!err) {
-                req.API.query("INSERT INTO `shop_purchases` (`id`,`PID`,`WID`,`Category`,`Item`,`Price`,`Status`) VALUES("+Info[1]+","+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,'Active');", [req.body.WID,Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
+                console.log('done')
+                req.API.query("INSERT INTO `shop_purchases` (`PID`,`WID`,`Category`,`Item`,`Price`,`Status`) VALUES("+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,'Active');", [req.body.WID,Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
