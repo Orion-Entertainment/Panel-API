@@ -294,13 +294,27 @@ router.post('/Bought', async(req, res, next) => {
         else if (req.body.WID == "") return res.json({Error: "WID Empty"})
 
         let Buying = req.body.Buying;
-        if (Buying["Length"] == "month") Buying["Length"] = "Month";
+
+        let nextPayment = new Date();
+
+        switch (Buying["Length"]) {
+            case "Month":
+                nextPayment.setMonth(nextPayment.getMonth()+1)
+                break;
+            case "Year":
+                nextPayment.setMonth(nextPayment.getFullYear()+1)
+                break;
+        }
+
+        
 
         paypal.createSubscription(req.body.buytoken, req.body.payerid,{
+            INITAMT:          Buying["Price"],
             AMT:              Buying["Price"],
             DESC:             Buying["Description"],
             BILLINGPERIOD:    Buying["Length"],
-            BILLINGFREQUENCY: 1
+            BILLINGFREQUENCY: 1,
+            PROFILESTARTDATE: await nextPayment
         }, async function(err, data) {
             if (!err) {
                 req.API.query("INSERT INTO `shop_purchases` (`PID`,`WID`,`ItemID`,`Category`,`Item`,`Price`,`Status`) VALUES("+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,?,'Active');", [req.body.WID,Buying["ItemID"],Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
@@ -313,6 +327,7 @@ router.post('/Bought', async(req, res, next) => {
                         "id": results.insertId,
                         "Category": Buying["Category"],
                         "Item": Buying["Item"],
+                        "Length": Buying["Length"],
                         "Price": Buying["Price"]
                     });
                 });
