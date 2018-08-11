@@ -27,6 +27,18 @@ const limiter = new RateLimit ({
 });
 app.use(limiter);
 
+/* Paypal */
+var paypal = require('paypal-rest-sdk');
+
+var clientId = 'AV-4DyvKAAaXllJA3zxB1yOtxGc9Sx-wXPHTDAq2U97ebpyH0n92uWTHwSPu3zNxpSqWxq25QfJF1eyZ';
+var secret = 'EAP-_kApLTQcXCjiKKIpmsELdrc4ZFt0xfruOPG_C0s82jPd71nCSaqAC6_lWFgJ2oD9F0kRYRwYbtRd';
+
+paypal.configure({
+  'mode': 'sandbox', //sandbox or live
+  'client_id': clientId,
+  'client_secret': secret
+});
+
 /* Database Pools */
 const API = mysql.createPool({
     host: config.API.host,

@@ -5,8 +5,45 @@ const moment = require('moment');
 /* Set Variables */
 const IPsKey = "7831b0e33a16c72716ef2e2f5f7d2803";
 
+var billingPlanAttribs = {
+    "Arma3": {
+        "VIP 1": {
+            "name": "Orion-Entertainment VIP 1",
+            "description": "Item From Orion-Entertainment's Shop",
+            "type": "INFINITE",
+            "payment_definitions": [{
+                "name": "VIP 1",
+                "type": "REGULAR",
+                "frequency_interval": "1",
+                "frequency": "MONTH",
+                "cycles": "0",
+                "amount": {
+                    "currency": "USD",
+                    "value": "0.01"
+                }
+            }],
+            "merchant_preferences": {
+                "cancel_url": "https://panel.orion-entertainment.net/cancel", ///////////////////////////////////////////////
+                "return_url": "https://panel.orion-entertainment.net/processagreement", ///////////////////////////////////////////////
+                "max_fail_attempts": "0",
+                "auto_bill_amount": "YES",
+                "initial_fail_amount_action": "CANCEL"
+            }
+        }
+    }
+};
+
+var billingPlanUpdateAttributes = [{
+    "op": "replace",
+    "path": "/",
+    "value": {
+        "state": "ACTIVE"
+    }
+}];
+
 /* Added NPM Packages */
 const crypto = require('crypto');
+var paypal = require('paypal-rest-sdk');
 
 /* Functions */
 async function EncryptData(key, data) {
@@ -44,6 +81,28 @@ function returnResults(res, Name, Results) {
     return res.json({
         [Name]: Results
     }).end();
+}
+
+function getBillingPlan(first, second) {
+    const billingPlanAttrib = billingPlanAttribs[first];
+    paypal.billingPlan.create(billingPlanAttrib[second], function (error, billingPlan){
+        if (error){
+            console.log(error);
+            throw error;
+        } else {
+            // Activate the plan by changing status to Active
+            paypal.billingPlan.update(billingPlan.id, billingPlanUpdateAttributes, 
+                function(error, response){
+                if (error) {
+                    console.log(error);
+                    return false;
+                } else {
+                    console.log(billingPlan.id);
+                    return billingPlan.id;
+                }
+            });
+        }
+    });
 }
 
 
@@ -197,7 +256,9 @@ router.post('/Buy', async(req, res, next) => {
                     "Name": results[0].Name,
                     "IMG": results[0].IMG,
                     "Price": results[0].Price,
-                    "Option": results[0].Option
+                    "Option": results[0].Option,
+
+                    "Buy": await getBillingPlan(req.body.Category, req.body.Item)
                 }});
             }
         });
