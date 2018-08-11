@@ -299,8 +299,7 @@ router.post('/Bought', async(req, res, next) => {
             AMT:              Buying["Price"],
             DESC:             Buying["Description"],
             BILLINGPERIOD:    Buying["Length"],
-            BILLINGFREQUENCY: 1,
-            PROFILESTARTDATE: new Date()
+            BILLINGFREQUENCY: 1
         }, async function(err, data) {
             if (!err) {
                 console.log('done')
