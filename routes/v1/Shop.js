@@ -292,7 +292,8 @@ router.post('/Bought', async(req, res, next) => {
         else if (req.body.WID == undefined) return res.json({Error: "WID Undefined"})
         else if (req.body.WID == "") return res.json({Error: "WID Empty"})
 
-        const Buying = req.body.Buying;
+        let Buying = req.body.Buying;
+        if (Buying["Length"] == "month") Buying["Length"] = "Month";
 
         console.log('start',{
             AMT:              Buying["Price"],
