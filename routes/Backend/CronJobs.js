@@ -5,6 +5,7 @@ const paypal = require('../../core/app').Paypal;
 const Rcon = require('./RCON').Rcon;
 const moment = require('moment');
 
+const ShopPIDKEY = "2979e32f8ed8a94ad85d505d1b193544";
 
 /* Config */
 const TimeZone = 'America/New_York';
@@ -73,22 +74,18 @@ async function Arma3ShopOld() {
             
             let Offset = 0;
             for (let i = 0; i < loopTotal; i++) {
-                const getPurchases = await API.query("SELECT `id`,`PID`,`WID`,`item` FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`!='Ended' AND (`Last Checked` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset);
+                const getPurchases = await API.query("SELECT `id`,"+await QueryableDecrypt("PID", ShopPIDKEY)+",`WID`,`item` FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`!='Ended' AND (`Last Checked` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset);
 
                 if (getPurchases[0] !== undefined) {
                     console.log(i)
                     //check subscription status
                     paypal.getSubscription(getPurchases[0].PID, function(err, data) {
                         if (!err) {
-                            console.log(data)
+                            return console.log(getPurchases[0].PID, data)
                         }
                     });
 
-
-                    return console.log('end');
-
-
-                    for (let p = 0; p < getPurchases.length; p++) {
+                    /*for (let p = 0; p < getPurchases.length; p++) {
                         pID = getPurchases[p].id;
                         wID = getPurchases[p].WID;
                         Item = getPurchases[p].item;
@@ -121,7 +118,7 @@ async function Arma3ShopOld() {
                         if (p + 1 == getPurchases.length) {
                             Offset = Offset + setOffset;
                         }
-                    }
+                    }*/
                 }
 
                 if (i + 1 == loopTotal) {
