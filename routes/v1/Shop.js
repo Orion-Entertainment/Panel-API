@@ -103,8 +103,7 @@ function updateBillingPlan(billingPlanID) {
             console.log(error);
             return "Error";
         } else {
-            console.log(billingPlan.id);
-            return billingPlan.id;
+            console.log(billingPlanID);
         }
     });
 }
@@ -253,6 +252,8 @@ router.post('/Buy', async(req, res, next) => {
                 console.error(error)
                 return res.json({Error: error})
             }
+
+            const Buy = await makeBillingPlan(req.body.Category, results[0].Name);
             
             if (results[0] == undefined) return res.json({Item: false}); else {
                 return res.json({Item: {
@@ -262,7 +263,7 @@ router.post('/Buy', async(req, res, next) => {
                     "Price": results[0].Price,
                     "Option": results[0].Option,
 
-                    "Buy": await makeBillingPlan(req.body.Category, results[0].Name)
+                    "Buy": Buy
                 }});
             }
         });
