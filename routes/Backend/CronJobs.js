@@ -76,23 +76,36 @@ async function Arma3Shop() {
                         wID = getPurchases[p].WID;
                         Item = getPurchases[p].item;
 
-                        switch (Item) {
-                            case "VIP 1":
-                                const getPlayer = await API.query("SELECT `Steam64ID`,`GUID` FROM `arma_players` WHERE BINARY `id`=?",[wID]);
-                                if (getPlayer[0] !== undefined) {
-                                    const check = await Rcon.checkPlayer(getPlayer[0].GUID);
-                                    if (!check) {
+                        const getPlayer = await API.query("SELECT `Steam64ID`,`GUID` FROM `arma_players` WHERE BINARY `id`=?",[wID]);
+                        if (getPlayer[0] !== undefined) {
+                            const check = await Rcon.checkPlayer(getPlayer[0].GUID);
+                            if (!check) {
+                                switch (Item) {
+                                    case "VIP 1":
                                         //await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[1,getPlayer[0].Steam64ID]); //Update on Maldenlife
                                         //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
                                         console.log(1,getPlayer[0].Steam64ID)
                                         console.log(await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID)
-                                    }
+                                        break;
+                                    case "VIP 2":
+                                        //await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[2,getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
+                                        console.log(2,getPlayer[0].Steam64ID)
+                                        console.log(await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID)
+                                        break;
+                                    case "VIP 3":
+                                        //await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[3,getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
+                                        console.log(3,getPlayer[0].Steam64ID)
+                                        console.log(await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID)
+                                        break;
+        
+                                    default:
+                                        console.log('Arma3Shop FNC: Undefined Item | '+Item)
                                 }
-                                break;
-
-                            default:
-                                console.log('Arma3Shop FNC: Undefined Item | '+Item)
+                            }
                         }
+                        
 
                         if (p + 1 == getPurchases.length) {
                             Offset = Offset + setOffset;
