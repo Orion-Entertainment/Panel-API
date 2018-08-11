@@ -261,6 +261,7 @@ router.post('/BuyItem', async(req, res, next) => {
             // Redirect the user if everything went well with
             // a HTTP 302 according to PayPal's guidelines
             if (!err) {
+                console.log(url)
                 return res.json({
                     Data: Buy,
                     URL: url
