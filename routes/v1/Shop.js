@@ -303,7 +303,7 @@ router.post('/Bought', async(req, res, next) => {
             BILLINGFREQUENCY: 1
         }, async function(err, data) {
             if (!err) {
-                req.API.query("INSERT INTO `shop_purchases` (`PID`,`WID`,`ItemID`,Category`,`Item`,`Price`,`Status`) VALUES("+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,?,'Active');", [req.body.WID,Buying["ItemID"],Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
+                req.API.query("INSERT INTO `shop_purchases` (`PID`,`WID`,`ItemID`,`Category`,`Item`,`Price`,`Status`) VALUES("+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,?,'Active');", [req.body.WID,Buying["ItemID"],Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
