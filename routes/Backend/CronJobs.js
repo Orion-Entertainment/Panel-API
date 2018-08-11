@@ -76,7 +76,7 @@ async function Arma3ShopOld() {
                 const getPurchases = await API.query("SELECT `id`,`PID`,`WID`,`item` FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`!='Ended' AND (`Last Checked` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset);
 
                 if (getPurchases[0] !== undefined) {
-
+                    console.log(i)
                     //check subscription status
                     paypal.getSubscription(getPurchases[0].PID, function(err, data) {
                         if (!err) {
