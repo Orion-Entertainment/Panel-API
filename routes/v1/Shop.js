@@ -285,7 +285,7 @@ async function UniqueShopID() {
     if (checkString[0] !== undefined) return false; else return [RandomString,ENCString];
 }
 
-function waitFor(condition, callback) {
+async function waitFor(condition, callback) {
     const Check = await condition;
     if (Check == false) {
         setTimeout(waitFor.bind(null, condition, callback), 100);
