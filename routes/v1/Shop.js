@@ -218,9 +218,9 @@ var Paypal = require('paypal-recurring'),
 paypal = new Paypal({
     username:  "flabby_api1.orionpanel.com",
     password:  "2CZ572V8AW7RZ5R9",
-    signature: "AO8AZXM1PwgejSg7A5.a6ehCwVkDA1FQ-AMCas760jQCZ16BwQcdkFIw",
-    // environment: "production" // USE WITH CARE!
-});
+    signature: "AO8AZXM1PwgejSg7A5.a6ehCwVkDA1FQ-AMCas760jQCZ16BwQcdkFIw"
+}, "production" // USE WITH CARE!
+);
 
 const BuyItems = {
     "Arma3": {
