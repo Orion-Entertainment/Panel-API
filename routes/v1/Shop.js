@@ -234,8 +234,8 @@ router.post('/BuyItem', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
-        if (req.body.Category == undefined | req.body.Item == undefined) return res.json({Category: "Option Undefined"})
-        else if (req.body.Category == "" | req.body.Item == "") return res.json({Error: "Option Empty"})
+        if (req.body.Category == undefined | req.body.Item == undefined | req.body.ItemID == undefined) return res.json({Category: "Option Undefined"})
+        else if (req.body.Category == "" | req.body.Item == "" | req.body.ItemID =="") return res.json({Error: "Option Empty"})
 
         const getItem = await req.API.query("SELECT `Price`,`Option`,`ShortDescription` FROM `shop_items` WHERE `Category`=? AND `Name`=?;", [req.body.Category,req.body.Item]);
         if (getItem[0] == undefined) return res.json({Error: "Item not found"})
@@ -258,6 +258,7 @@ router.post('/BuyItem', async(req, res, next) => {
                     Data: {
                         Category: req.body.Category,
                         Item: req.body.Item,
+                        ItemID: req.body.ItemID,
                         Price: Price,
                         Description: Description,
                         Length: Length
@@ -295,12 +296,6 @@ router.post('/Bought', async(req, res, next) => {
         let Buying = req.body.Buying;
         if (Buying["Length"] == "month") Buying["Length"] = "Month";
 
-        console.log('start',{
-            AMT:              Buying["Price"],
-            DESC:             Buying["Description"],
-            BILLINGPERIOD:    Buying["Length"],
-            BILLINGFREQUENCY: 1
-        })
         paypal.createSubscription(req.body.buytoken, req.body.payerid,{
             AMT:              Buying["Price"],
             DESC:             Buying["Description"],
@@ -308,8 +303,7 @@ router.post('/Bought', async(req, res, next) => {
             BILLINGFREQUENCY: 1
         }, async function(err, data) {
             if (!err) {
-                console.log('done')
-                req.API.query("INSERT INTO `shop_purchases` (`PID`,`WID`,`Category`,`Item`,`Price`,`Status`) VALUES("+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,'Active');", [req.body.WID,Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
+                req.API.query("INSERT INTO `shop_purchases` (`PID`,`WID`,`ItemID`,Category`,`Item`,`Price`,`Status`) VALUES("+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,?,'Active');", [req.body.WID,Buying["ItemID"],Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
