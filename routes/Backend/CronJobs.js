@@ -79,46 +79,31 @@ async function Arma3ShopOld() {
                 if (getPurchases[0] !== undefined) {
                     console.log(i)
                     //check subscription status
-                    paypal.getSubscription(getPurchases[0].PID, function(err, data) {
-                        if (!err) {
-                            return console.log(getPurchases[0].PID, data)
-                        }
-                    });
+                    
 
-                    /*for (let p = 0; p < getPurchases.length; p++) {
+                    for (let p = 0; p < getPurchases.length; p++) {
                         pID = getPurchases[p].id;
                         wID = getPurchases[p].WID;
                         Item = getPurchases[p].item;
-
-                        const getPlayer = await API.query("SELECT `Steam64ID`,`GUID` FROM `arma_players` WHERE BINARY `id`=?",[wID]);
-                        if (getPlayer[0] !== undefined) {
-                            const check = await Rcon.checkPlayer(getPlayer[0].GUID);
-                            if (!check) {
-                                switch (Item) {
-                                    case "VIP 1":
-                                        //await SQL.query("UPDATE `players` set `donorlevel`='1' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
-                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
-                                        break;
-                                    case "VIP 2":
-                                        //await SQL.query("UPDATE `players` set `donorlevel`='2' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
-                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
-                                        break;
-                                    case "VIP 3":
-                                        //await SQL.query("UPDATE `players` set `donorlevel`='3' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
-                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
-                                        break;
-        
-                                    default:
-                                        console.log('Arma3Shop FNC: Undefined Item | '+Item)
+                        paypal.getSubscription(pID, function(err, data) {
+                            if (!err) {
+                                if (data.status !== "Active") {
+                                    const getPlayer = await API.query("SELECT `Steam64ID`,`GUID` FROM `arma_players` WHERE BINARY `id`=?",[wID]);
+                                    if (getPlayer[0] !== undefined) {
+                                        const check = await Rcon.checkPlayer(getPlayer[0].GUID);
+                                        if (!check) {
+                                            await SQL.query("UPDATE `players` set `donorlevel`='0' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                            await API.query("UPDATE `shop_purchases` set `Last Checked`=?,`Status`='Ended' WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        
+                        });
 
                         if (p + 1 == getPurchases.length) {
                             Offset = Offset + setOffset;
                         }
-                    }*/
+                    }
                 }
 
                 if (i + 1 == loopTotal) {
