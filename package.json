@@ -21,6 +21,7 @@
     "express-session": "^1.15.6",
     "fs": "0.0.1-security",
     "moment": "^2.22.2",
+    "paypal-recurring": "^1.1.0",
     "paypal-rest-sdk": "^1.8.1",
     "promise-mysql": "^3.2.0",
     "random-string": "^0.2.0",

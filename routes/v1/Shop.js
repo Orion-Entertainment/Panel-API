@@ -5,42 +5,6 @@ const moment = require('moment');
 /* Set Variables */
 const IPsKey = "7831b0e33a16c72716ef2e2f5f7d2803";
 
-var billingPlanAttribs = {
-    "Arma3": {
-        "VIP 1": {
-            "name": "Orion-Entertainment VIP 1",
-            "description": "Item From Orion-Entertainment's Shop",
-            "type": "INFINITE",
-            "payment_definitions": [{
-                "name": "VIP 1",
-                "type": "REGULAR",
-                "frequency_interval": "1",
-                "frequency": "MONTH",
-                "cycles": "0",
-                "amount": {
-                    "currency": "USD",
-                    "value": "0.01"
-                }
-            }],
-            "merchant_preferences": {
-                "cancel_url": "https://panel.orion-entertainment.net/shop/cancel", ///////////////////////////////////////////////
-                "return_url": "https://panel.orion-entertainment.net/shop/bought",
-                "max_fail_attempts": "0",
-                "auto_bill_amount": "YES",
-                "initial_fail_amount_action": "CANCEL"
-            }
-        }
-    }
-};
-
-var billingPlanUpdateAttributes = [{
-    "op": "replace",
-    "path": "/",
-    "value": {
-        "state": "ACTIVE"
-    }
-}];
-
 /* Added NPM Packages */
 const crypto = require('crypto');
 var paypal = require('paypal-rest-sdk');
@@ -83,29 +47,9 @@ function returnResults(res, Name, Results) {
     }).end();
 }
 
-async function makeBillingPlan(first, second) {
-    const billingPlanAttrib = billingPlanAttribs[first];
-    await paypal.billingPlan.create(billingPlanAttrib[second], function (error, billingPlan) {
-        if (error) {
-            console.log(error);
-            return "Error";
-        } else {
-            updateBillingPlan(billingPlan.id);
-            return billingPlan.id;
-        }
-    });
-}
-
 function updateBillingPlan(billingPlanID) {
     // Activate the plan by changing status to Active
-    paypal.billingPlan.update(billingPlanID, billingPlanUpdateAttributes, function(error, response) {
-        if (error) {
-            console.log(error);
-            return "Error";
-        } else {
-            console.log(billingPlanID);
-        }
-    });
+    
 }
 
 
@@ -253,17 +197,13 @@ router.post('/Buy', async(req, res, next) => {
                 return res.json({Error: error})
             }
 
-            const Buy = await makeBillingPlan(req.body.Category, results[0].Name);
-            
             if (results[0] == undefined) return res.json({Item: false}); else {
                 return res.json({Item: {
                     "id": results[0].id,
                     "Name": results[0].Name,
                     "IMG": results[0].IMG,
                     "Price": results[0].Price,
-                    "Option": results[0].Option,
-
-                    "Buy": Buy
+                    "Option": results[0].Option
                 }});
             }
         });
@@ -272,6 +212,25 @@ router.post('/Buy', async(req, res, next) => {
         return res.json({Error: "Error"})
     }
 });
+
+
+var Paypal = require('paypal-recurring'),
+paypal = new Paypal({
+    username:  "flabby_api1.orionpanel.com",
+    password:  "2CZ572V8AW7RZ5R9",
+    signature: "AO8AZXM1PwgejSg7A5.a6ehCwVkDA1FQ-AMCas760jQCZ16BwQcdkFIw",
+    // environment: "production" // USE WITH CARE!
+});
+
+const BuyItems = {
+    "Arma3": {
+        "VIP 1": {
+            "Price": 0.01,
+            "Length": "Month",
+            "Description": "Arma 3 VIP 1"
+        }
+    }
+};
 
 router.post('/BuyItem', async(req, res, next) => {
     try {
@@ -284,48 +243,26 @@ router.post('/BuyItem', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
-        if (req.body.buyid == undefined) return res.json({Error: "buyid Undefined"})
-        else if (req.body.buyid == "") return res.json({Error: "buyid Empty"})
+        if (req.body.Category == undefined | req.body.Item == undefined) return res.json({Category: "Option Undefined"})
+        else if (req.body.Category == "" | req.body.Item == "") return res.json({Error: "Option Empty"})
         
-        var isoDate = new Date();
-        isoDate.setSeconds(isoDate.getSeconds() + 4);
-        isoDate.toISOString().slice(0, 19) + 'Z';
+        const buy = BuyItems[req.body.Category];
+        const Buy = buy[req.body.Item];
+        const Price = Buy.Price;
+        const Description = Buy.Description;
 
-        var billingAgreementAttributes = {
-            "name": "Standard Membership",
-            "description": "Food of the World Club Standard Membership",
-            "start_date": isoDate,
-            "plan": {
-                "id": req.body.buyid
-            },
-            "payer": {
-                "payment_method": "paypal"
-            }
-        };
-
-        // Use activated billing plan to create agreement
-        paypal.billingAgreement.create(billingAgreementAttributes, function (
-            error, billingAgreement){
-            if (error) {
-                console.error(error);
-                return res.json({Error: error})
-            } else {
-                //capture HATEOAS links
-                var links = {};
-                billingAgreement.links.forEach(function(linkObj){
-                    links[linkObj.rel] = {
-                        'href': linkObj.href,
-                        'method': linkObj.method
-                    };
-                })
-
-                //if redirect url present, redirect user
-                if (links.hasOwnProperty('approval_url')){
-                    return res.send(links['approval_url'].href);
-                } else {
-                    console.error('no redirect URI present');
-                }
-            }
+        paypal.authenticate({
+            RETURNURL:                      "https://panel.orion-entertainment.net/Shop/Success",
+            CANCELURL:                      "https://panel.orion-entertainment.net/Shop/Cancel",
+            PAYMENTREQUEST_0_AMT:           Price,
+            L_BILLINGAGREEMENTDESCRIPTION0: Description
+          }, function(err, data, url) {
+            // Redirect the user if everything went well with
+            // a HTTP 302 according to PayPal's guidelines
+            if (!err) return res.json({
+                Data: Buy,
+                URL: url
+            })
         });
     } catch (error) {
         console.log(error)
@@ -346,15 +283,22 @@ router.post('/Bought', async(req, res, next) => {
 
         if (req.body.buytoken == undefined) return res.json({Error: "buytoken Undefined"})
         else if (req.body.buytoken == "") return res.json({Error: "buytoken Empty"})
-        
-        paypal.billingAgreement.execute(token, {}, function (error, 
-            billingAgreement) {
-            if (error) {
-                console.error(error);
-                return res.json({Error: error})
-            } else {
-                console.log(JSON.stringify(billingAgreement));
-                return res.send('Billing Agreement Created Successfully');
+        else if (req.body.payerid == undefined) return res.json({Error: "payerid Undefined"})
+        else if (req.body.payerid == "") return res.json({Error: "payerid Empty"})
+        else if (req.body.Buying == undefined) return res.json({Error: "Buying Undefined"})
+        else if (req.body.Buying == "") return res.json({Error: "Buying Empty"})
+
+        const Buying = req.body.Buying;
+
+        paypal.createSubscription(req.body.buytoken, req.body.payerid,{
+            AMT:              Buying["Price"],
+            DESC:             Buying["Description"],
+            BILLINGPERIOD:    Buying["Length"],
+            BILLINGFREQUENCY: 0,
+        }, function(err, data) {
+            if (!err) {
+                res.send("Success");
+                console.log("New customer with PROFILEID: " + data.PROFILEID)
             }
         });
     } catch (error) {
