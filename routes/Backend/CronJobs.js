@@ -85,7 +85,7 @@ async function Arma3ShopOld() {
                     });
 
 
-                    return;
+                    return console.log('end');
 
 
                     for (let p = 0; p < getPurchases.length; p++) {
