@@ -294,7 +294,12 @@ router.post('/Bought', async(req, res, next) => {
 
         const Buying = req.body.Buying;
 
-        console.log('start')
+        console.log('start',{
+            AMT:              Buying["Price"],
+            DESC:             Buying["Description"],
+            BILLINGPERIOD:    Buying["Length"],
+            BILLINGFREQUENCY: 1
+        })
         paypal.createSubscription(req.body.buytoken, req.body.payerid,{
             AMT:              Buying["Price"],
             DESC:             Buying["Description"],
