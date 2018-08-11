@@ -83,20 +83,20 @@ function returnResults(res, Name, Results) {
     }).end();
 }
 
-function getBillingPlan(first, second) {
+async function getBillingPlan(first, second) {
     const billingPlanAttrib = billingPlanAttribs[first];
     console.log('skrt',billingPlanAttrib)
-    paypal.billingPlan.create(billingPlanAttrib[second], function (error, billingPlan){
+    await paypal.billingPlan.create(billingPlanAttrib[second], function (error, billingPlan){
         if (error){
             console.log(error);
-            throw error;
+            return "Error";
         } else {
             // Activate the plan by changing status to Active
             paypal.billingPlan.update(billingPlan.id, billingPlanUpdateAttributes, 
                 function(error, response){
                 if (error) {
                     console.log(error);
-                    return false;
+                    return "Error";
                 } else {
                     console.log(billingPlan.id);
                     return billingPlan.id;
