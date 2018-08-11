@@ -307,9 +307,6 @@ router.post('/Bought', async(req, res, next) => {
                 break;
         }
 
-        const check = req.API.query("SELECT `id` FROM `shop_purchases` WHERE `Token`="+await QueryableEncrypt(req.body.buytoken, ShopTokenKey)+";");
-        if (check[0] !== undefined) return res.json({Error: "Already validated purchase"})
-
         paypal.createSubscription(req.body.buytoken, req.body.payerid,{
             INITAMT:          Buying["Price"],
             AMT:              Buying["Price"],
