@@ -3,11 +3,13 @@ const router = express.Router();
 const moment = require('moment');
 
 /* Set Variables */
-const IPsKey = "7831b0e33a16c72716ef2e2f5f7d2803";
+const ShopPurchasesKEY = "be455ae96dacd91223b8e583c68261cb";
+const ShopPIDKEY = "2979e32f8ed8a94ad85d505d1b193544";
 
 /* Added NPM Packages */
 const crypto = require('crypto');
 var paypal = require('paypal-rest-sdk');
+const randomString = require('random-string');
 
 /* Functions */
 async function EncryptData(key, data) {
@@ -18,9 +20,9 @@ async function EncryptData(key, data) {
 }
 async function DecryptData(key, data) {
     const decipher = crypto.createDecipher('aes-256-cbc', key);
-    let decrypted = decipher.update(data,'hex','utf8') 
-    decrypted += decipher.final('utf8'); 
-    return decrypted; 
+    let decrypted = decipher.update(data,'hex','utf8')
+    decrypted += decipher.final('utf8');
+    return decrypted;
 }
 
 function QueryableEncrypt(data, key) {
@@ -49,7 +51,7 @@ function returnResults(res, Name, Results) {
 
 function updateBillingPlan(billingPlanID) {
     // Activate the plan by changing status to Active
-    
+
 }
 
 
@@ -58,7 +60,7 @@ router.post('/', async(req, res, next) => {
     try {
         /* Check Login */
         const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
-        if (CheckLogin == false) return res.send("Invalid Login"); 
+        if (CheckLogin == false) return res.send("Invalid Login");
         const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
 
         if (TokenData == undefined) return res.json({Error: "Access Denied"})
@@ -70,7 +72,7 @@ router.post('/', async(req, res, next) => {
                 console.error(error)
                 return res.json({Error: error})
             }
-            
+
             if (results[0] == undefined) return res.json({Categories: false}); else return res.json({Categories: results});
         });
     } catch (error) {
@@ -83,7 +85,7 @@ router.post('/Category', async(req, res, next) => {
     try {
         /* Check Login */
         const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
-        if (CheckLogin == false) return res.send("Invalid Login"); 
+        if (CheckLogin == false) return res.send("Invalid Login");
         const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
 
         if (TokenData == undefined) return res.json({Error: "Access Denied"})
@@ -101,7 +103,7 @@ router.post('/Category', async(req, res, next) => {
                 console.error(error)
                 return res.json({Error: error})
             }
-            
+
             if (results[0] == undefined) return res.json({Category: false}); else {
                 let Return = [];
 
@@ -131,7 +133,7 @@ router.post('/Item', async(req, res, next) => {
     try {
         /* Check Login */
         const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
-        if (CheckLogin == false) return res.send("Invalid Login"); 
+        if (CheckLogin == false) return res.send("Invalid Login");
         const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
 
         if (TokenData == undefined) return res.json({Error: "Access Denied"})
@@ -152,7 +154,7 @@ router.post('/Item', async(req, res, next) => {
                 console.error(error)
                 return res.json({Error: error})
             }
-            
+
             if (results[0] == undefined) return res.json({Item: false}); else {
                 return res.json({Item: {
                     "id": results[0].id,
@@ -175,7 +177,7 @@ router.post('/Buy', async(req, res, next) => {
     try {
         /* Check Login */
         const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
-        if (CheckLogin == false) return res.send("Invalid Login"); 
+        if (CheckLogin == false) return res.send("Invalid Login");
         const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
 
         if (TokenData == undefined) return res.json({Error: "Access Denied"})
@@ -215,28 +217,17 @@ router.post('/Buy', async(req, res, next) => {
 
 
 var Paypal = require('paypal-recurring'),
-paypal = new Paypal({
-    username:  "flabby_api1.orionpanel.com",
-    password:  "2CZ572V8AW7RZ5R9",
-    signature: "AO8AZXM1PwgejSg7A5.a6ehCwVkDA1FQ-AMCas760jQCZ16BwQcdkFIw"
-}, "production" // USE WITH CARE!
-);
-
-const BuyItems = {
-    "Arma3": {
-        "VIP 1": {
-            "Price": 0.01,
-            "Length": "Month",
-            "Description": "Arma 3 VIP 1"
-        }
-    }
-};
+    paypal = new Paypal({
+        username:  "flabby_api1.orionpanel.com",
+        password:  "2CZ572V8AW7RZ5R9",
+        signature: "AO8AZXM1PwgejSg7A5.a6ehCwVkDA1FQ-AMCas760jQCZ16BwQcdkFIw"
+    }, "production");
 
 router.post('/BuyItem', async(req, res, next) => {
     try {
         /* Check Login */
         const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
-        if (CheckLogin == false) return res.send("Invalid Login"); 
+        if (CheckLogin == false) return res.send("Invalid Login");
         const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
 
         if (TokenData == undefined) return res.json({Error: "Access Denied"})
@@ -245,11 +236,14 @@ router.post('/BuyItem', async(req, res, next) => {
 
         if (req.body.Category == undefined | req.body.Item == undefined) return res.json({Category: "Option Undefined"})
         else if (req.body.Category == "" | req.body.Item == "") return res.json({Error: "Option Empty"})
+
+        const getItem = await req.API.query("SELECT `Price`,`Option`,`ShortDescription` FROM `shop_items` WHERE `Category`=?, AND `Name`=?;", [req.body.Category,req.body.Item]);
+        if (getItem[0] == undefined) return res.json({Error: "Item not found"})
         
-        const buy = BuyItems[req.body.Category];
-        const Buy = buy[req.body.Item];
-        const Price = Buy.Price;
-        const Description = Buy.Description;
+        //const Price = getItem[0].Price;
+        const Price = 0.02; //FOR TESTING
+        const Description = getItem[0].ShortDescription;
+        const Length = getItem[0].Option;
 
         paypal.authenticate({
             RETURNURL:                      "https://panel.orion-entertainment.net/Shop/Success",
@@ -261,7 +255,13 @@ router.post('/BuyItem', async(req, res, next) => {
             // a HTTP 302 according to PayPal's guidelines
             if (!err) {
                 return res.json({
-                    Data: Buy,
+                    Data: {
+                        Category: req.body.Category,
+                        Item: req.body.Item,
+                        Price: Price,
+                        Description: Description,
+                        Length: Length
+                    },
                     URL: url
                 })
             }
@@ -272,11 +272,34 @@ router.post('/BuyItem', async(req, res, next) => {
     }
 });
 
+async function UniqueShopID() {
+    const RandomString = await randomString({
+        length: 12,
+        numeric: true,
+        letters: true,
+        special: false
+    });
+    const ENCString = await QueryableEncrypt(RandomString, ShopPurchasesKEY);
+
+    const checkString = await req.API.query("SELECT `id` FROM `shop_purchases` WHERE `id`="+ENCString+";");
+    if (checkString[0] !== undefined) return false; else return [RandomString,ENCString];
+}
+
+function waitFor(condition, callback) {
+    const Check = await condition;
+    if (Check == false) {
+        setTimeout(waitFor.bind(null, condition, callback), 100);
+    } else {
+        callback(Check);
+    }
+}
+
+
 router.post('/Bought', async(req, res, next) => {
     try {
         /* Check Login */
         const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
-        if (CheckLogin == false) return res.send("Invalid Login"); 
+        if (CheckLogin == false) return res.send("Invalid Login");
         const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
 
         if (TokenData == undefined) return res.json({Error: "Access Denied"})
@@ -289,6 +312,8 @@ router.post('/Bought', async(req, res, next) => {
         else if (req.body.payerid == "") return res.json({Error: "payerid Empty"})
         else if (req.body.Buying == undefined) return res.json({Error: "Buying Undefined"})
         else if (req.body.Buying == "") return res.json({Error: "Buying Empty"})
+        else if (req.body.WID == undefined) return res.json({Error: "WID Undefined"})
+        else if (req.body.WID == "") return res.json({Error: "WID Empty"})
 
         const Buying = req.body.Buying;
 
@@ -299,8 +324,21 @@ router.post('/Bought', async(req, res, next) => {
             BILLINGFREQUENCY: 0
         }, function(err, data) {
             if (!err) {
-                res.send("Success");
-                console.log("New customer with PROFILEID: " + data.PROFILEID)
+                waitFor(await UniqueShopID(), (Info) => {
+                    req.API.query("INSERT INTO `shop_purchases` (`id`,`PID`,`WID`,`Category`,`Item`,`Price`,`Status`) VALUES("+Info[1]+","+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,'Active');", [req.body.WID,Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
+                        if (error) {
+                            console.error(error)
+                            return res.json({Error: error})
+                        }
+    
+                        return res.json({
+                            "id": Info[0],
+                            "Category": Buying["Category"],
+                            "Item": Buying["Item"],
+                            "Price": Buying["Price"]
+                        });
+                    });
+                })
             }
         });
     } catch (error) {
