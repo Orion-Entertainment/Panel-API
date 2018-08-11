@@ -251,6 +251,7 @@ router.post('/BuyItem', async(req, res, next) => {
         const Price = Buy.Price;
         const Description = Buy.Description;
 
+        console.log(Buy)
         paypal.authenticate({
             RETURNURL:                      "https://panel.orion-entertainment.net/Shop/Success",
             CANCELURL:                      "https://panel.orion-entertainment.net/Shop/Cancel",
@@ -259,10 +260,12 @@ router.post('/BuyItem', async(req, res, next) => {
           }, function(err, data, url) {
             // Redirect the user if everything went well with
             // a HTTP 302 according to PayPal's guidelines
-            if (!err) return res.json({
-                Data: Buy,
-                URL: url
-            })
+            if (!err) {
+                return res.json({
+                    Data: Buy,
+                    URL: url
+                })
+            }
         });
     } catch (error) {
         console.log(error)
