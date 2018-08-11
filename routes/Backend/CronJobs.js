@@ -77,10 +77,6 @@ async function Arma3ShopOld() {
                 const getPurchases = await API.query("SELECT `id`,"+await QueryableDecrypt("PID", ShopPIDKEY)+",`WID`,`item` FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`!='Ended' AND (`Last Checked` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset);
 
                 if (getPurchases[0] !== undefined) {
-                    console.log(i)
-                    //check subscription status
-                    
-
                     for (let p = 0; p < getPurchases.length; p++) {
                         pID = getPurchases[p].id;
                         wID = getPurchases[p].WID;
@@ -107,7 +103,7 @@ async function Arma3ShopOld() {
                 }
 
                 if (i + 1 == loopTotal) {
-                    return;//return;
+                    return;
                 }
             }
 
@@ -176,7 +172,7 @@ async function Arma3ShopNew() {
                 }
 
                 if (i + 1 == loopTotal) {
-                    return;//return;
+                    return;
                 }
             }
 
