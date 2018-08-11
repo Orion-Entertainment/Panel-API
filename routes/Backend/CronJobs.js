@@ -1,11 +1,15 @@
 const CronJob = require('cron').CronJob;
 const API = require('../../core/app').API;
 const ServerDBs = require('../../core/app').ServerDBs;
+const Rcon = require('./RCON').Rcon;
 
 /* Config */
 const TimeZone = 'America/New_York';
 const selectLimit = 100;
 const Config = {
+    "Shop": {
+        "Arma3": true
+    },
     "Arma3": {
         "ExpireBans": true,
         "RemoveOldHouses": false
@@ -33,8 +37,80 @@ new CronJob('0 * * * *', function() {
     true,
     TimeZone
 );
+//Minute - Every minute
+new CronJob('* * * * *', function() {
+    Arma3Shop();
+
+    }, function () {
+        return; /* This function is executed when the job stops */
+    },
+    true,
+    TimeZone
+);
 
 /* Functions */
+async function Arma3Shop() {
+    try {
+        if (Config.Shop.Arma3) {
+            const SQL = ServerDBs.maldenlife2;
+
+            const getTotalPurchases = await API.query("SELECT COUNT(`id`) AS 'Total' FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`='Active' AND `Last Checked` IS NULL;");
+            if (getTotalPurchases[0] == undefined) return;
+            const TotalPurchases = getTotalPurchases[0].Total;
+
+            let setOffset;
+            if (TotalPurchases < 1) return;
+            else if (TotalHouses <= 100) setOffset = 0;
+            else setOffset = selectLimit;
+
+            if (setOffset < 1) loopTotal = 1;
+            else loopTotal = Math.round(TotalPurchases / setOffset);
+            
+            let Offset = 0;
+            for (let i = 0; i < loopTotal; i++) {
+                const getPurchases = await API.query("SELECT `id`,`WID`,`item` FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`='Active' AND `Last Checked` IS NULL LIMIT "+selectLimit+" OFFSET "+Offset);
+
+                if (getPurchases[0] !== undefined) {
+                    for (let p = 0; p < getPurchases.length; p++) {
+                        pID = getPurchases[p].id;
+                        wID = getPurchases[p].WID;
+                        Item = getPurchases[p].item;
+
+                        switch (Item) {
+                            case "VIP 1":
+                                const getPlayer = await API.query("SELECT `Steam64ID`,`GUID` FROM `arma_players` WHERE BINARY `id`=?",[wID]);
+                                if (getPlayer[0] !== undefined) {
+                                    const check = await Rcon.checkPlayer(getPlayer[0].GUID);
+                                    if (!check) {
+                                        //await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid` = ?;",[1,getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id` = ?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
+                                        console.log(1,getPlayer[0].Steam64ID)
+                                        console.log(await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID)
+                                    }
+                                }
+                                break;
+
+                            default:
+                                console.log('Arma3Shop FNC: Undefined Item | '+Item)
+                        }
+
+                        if (p + 1 == getPurchases.length) {
+                            Offset = Offset + setOffset;
+                        }
+                    }
+                }
+
+                if (i + 1 == loopTotal) {
+                    return console.log('end');//return;
+                }
+            }
+
+        } else return;
+    } catch (error) {
+        console.log(error);
+        return;
+    }
+}
 async function RemoveOldHouses() {
     try {
         if (Config.Arma3.RemoveOldHouses) {
@@ -73,7 +149,7 @@ async function RemoveOldHouses() {
                 }
 
                 if (i + 1 == loopTotal) {
-                    return console.log('end');
+                    return;
                 }
             }
         } else return;

@@ -230,6 +230,11 @@ async function getPlayerGUID(ServerName, Name) {
     return query[0];
 }
 
+async function checkPlayer(GUID) {
+    const query = await API.query("SELECT `GUID` FROM `arma_liveplayers` WHERE BINARY `GUID`=?;", [GUID]);
+    if (query[0] == undefined) return false; else return true;
+}
+
 async function checkForBan(ServerName, GUID) {
     const query = await API.query("SELECT `id`,`Server`,`Reason`,`Expires` FROM `arma_bans` WHERE BINARY `GUID`=? AND `Expired`='False';", [GUID]);
     if (query[0] == undefined) return false;
@@ -484,5 +489,8 @@ module.exports.Rcon = {
     },
     "Ban": function(GUID, BannedBy, Notes, Reason) {
         return banPlayer(GUID, BannedBy, Notes, Reason);
+    },
+    "checkPlayer": function(GUID) {
+        return checkPlayer(GUID);
     }
 };
