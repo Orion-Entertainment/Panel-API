@@ -60,7 +60,7 @@ async function Arma3Shop() {
 
             let setOffset;
             if (TotalPurchases < 1) return;
-            else if (TotalHouses <= 100) setOffset = 0;
+            else if (TotalPurchases <= 100) setOffset = 0;
             else setOffset = selectLimit;
 
             if (setOffset < 1) loopTotal = 1;
@@ -82,8 +82,8 @@ async function Arma3Shop() {
                                 if (getPlayer[0] !== undefined) {
                                     const check = await Rcon.checkPlayer(getPlayer[0].GUID);
                                     if (!check) {
-                                        //await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid` = ?;",[1,getPlayer[0].Steam64ID]); //Update on Maldenlife
-                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id` = ?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
+                                        //await SQL.query("UPDATE `players` set `donorlevel`=? WHERE `pid`=?;",[1,getPlayer[0].Steam64ID]); //Update on Maldenlife
+                                        //await API.query("UPDATE `shop_purchases` set `Last Checked`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
                                         console.log(1,getPlayer[0].Steam64ID)
                                         console.log(await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID)
                                     }
