@@ -82,6 +82,7 @@ async function Arma3ShopOld() {
                         Item = getPurchases[p].item;
                         paypal.getSubscription(pID, async function(err, data) {
                             if (!err) {
+                                console.log(data)
                                 if (data.status !== "Active") {
                                     const getPlayer = await API.query("SELECT `Steam64ID`,`GUID` FROM `arma_players` WHERE BINARY `id`=?",[wID]);
                                     if (getPlayer[0] !== undefined) {
