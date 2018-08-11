@@ -34,6 +34,7 @@ new CronJob('0 0 * * 0', function() {
 //Hourly - Every hour
 new CronJob('0 * * * *', function() {
     if (Config.Arma3.ExpireBans) API.query("UPDATE `arma_bans` set `Expired`='True' WHERE `Expired`='False' AND (`Expires` IS NOT NULL) AND 0 > TIMESTAMPDIFF(SECOND,NOW(),`Expires`);");
+    Arma3ShopOld();
 
     }, function () {
         return; /* This function is executed when the job stops */
@@ -44,7 +45,7 @@ new CronJob('0 * * * *', function() {
 //Minute - Every minute
 new CronJob('* * * * *', function() {
     Arma3ShopNew();
-    Arma3ShopOld();
+    
 
     }, function () {
         return; /* This function is executed when the job stops */
@@ -52,6 +53,8 @@ new CronJob('* * * * *', function() {
     true,
     TimeZone
 );
+
+Arma3ShopOld();
 
 /* Functions */
 async function Arma3ShopOld() {
