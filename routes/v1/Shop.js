@@ -324,7 +324,7 @@ router.post('/Bought', async(req, res, next) => {
             BILLINGFREQUENCY: 0
         }, async function(err, data) {
             if (!err) {
-                waitFor(await UniqueShopID(), (Info) => {
+                waitFor(UniqueShopID(), async(Info) => {
                     req.API.query("INSERT INTO `shop_purchases` (`id`,`PID`,`WID`,`Category`,`Item`,`Price`,`Status`) VALUES("+Info[1]+","+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,'Active');", [req.body.WID,Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
                         if (error) {
                             console.error(error)
