@@ -259,7 +259,7 @@ router.post('/Buy', async(req, res, next) => {
                     "Price": results[0].Price,
                     "Option": results[0].Option,
 
-                    "Buy": await getBillingPlan(req.body.Category, req.body.Item)
+                    "Buy": await getBillingPlan(req.body.Category, results[0].Name)
                 }});
             }
         });
