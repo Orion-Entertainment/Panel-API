@@ -272,29 +272,6 @@ router.post('/BuyItem', async(req, res, next) => {
     }
 });
 
-async function UniqueShopID() {
-    const RandomString = await randomString({
-        length: 12,
-        numeric: true,
-        letters: true,
-        special: false
-    });
-    const ENCString = await QueryableEncrypt(RandomString, ShopPurchasesKEY);
-
-    const checkString = await req.API.query("SELECT `id` FROM `shop_purchases` WHERE `id`="+ENCString+";");
-    if (checkString[0] !== undefined) return false; else return [RandomString,ENCString];
-}
-
-async function waitFor(condition, callback) {
-    const Check = await condition;
-    if (Check == false) {
-        setTimeout(waitFor.bind(null, condition, callback), 100);
-    } else {
-        callback(Check);
-    }
-}
-
-
 router.post('/Bought', async(req, res, next) => {
     try {
         /* Check Login */
@@ -321,24 +298,23 @@ router.post('/Bought', async(req, res, next) => {
             AMT:              Buying["Price"],
             DESC:             Buying["Description"],
             BILLINGPERIOD:    Buying["Length"],
-            BILLINGFREQUENCY: 12
+            BILLINGFREQUENCY: 1,
+            PROFILESTARTDATE: new Date()
         }, async function(err, data) {
             if (!err) {
-                waitFor(UniqueShopID(), async(Info) => {
-                    req.API.query("INSERT INTO `shop_purchases` (`id`,`PID`,`WID`,`Category`,`Item`,`Price`,`Status`) VALUES("+Info[1]+","+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,'Active');", [req.body.WID,Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
-                        if (error) {
-                            console.error(error)
-                            return res.json({Error: error})
-                        }
-    
-                        return res.json({
-                            "id": Info[0],
-                            "Category": Buying["Category"],
-                            "Item": Buying["Item"],
-                            "Price": Buying["Price"]
-                        });
+                req.API.query("INSERT INTO `shop_purchases` (`id`,`PID`,`WID`,`Category`,`Item`,`Price`,`Status`) VALUES("+Info[1]+","+await QueryableEncrypt(data.PROFILEID, ShopPIDKEY)+",?,?,?,?,'Active');", [req.body.WID,Buying["Category"],Buying["Item"],Buying["Price"]], async function (error, results, fields) {
+                    if (error) {
+                        console.error(error)
+                        return res.json({Error: error})
+                    }
+
+                    return res.json({
+                        "id": results.insertId,
+                        "Category": Buying["Category"],
+                        "Item": Buying["Item"],
+                        "Price": Buying["Price"]
                     });
-                })
+                });
             }
         });
     } catch (error) {
