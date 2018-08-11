@@ -237,7 +237,7 @@ router.post('/BuyItem', async(req, res, next) => {
         if (req.body.Category == undefined | req.body.Item == undefined) return res.json({Category: "Option Undefined"})
         else if (req.body.Category == "" | req.body.Item == "") return res.json({Error: "Option Empty"})
 
-        const getItem = await req.API.query("SELECT `Price`,`Option`,`ShortDescription` FROM `shop_items` WHERE `Category`=?, AND `Name`=?;", [req.body.Category,req.body.Item]);
+        const getItem = await req.API.query("SELECT `Price`,`Option`,`ShortDescription` FROM `shop_items` WHERE `Category`=? AND `Name`=?;", [req.body.Category,req.body.Item]);
         if (getItem[0] == undefined) return res.json({Error: "Item not found"})
         
         //const Price = getItem[0].Price;
