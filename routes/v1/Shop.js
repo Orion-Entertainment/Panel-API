@@ -83,25 +83,28 @@ function returnResults(res, Name, Results) {
     }).end();
 }
 
-async function getBillingPlan(first, second) {
+async function makeBillingPlan(first, second) {
     const billingPlanAttrib = billingPlanAttribs[first];
-    console.log('skrt',billingPlanAttrib)
-    await paypal.billingPlan.create(billingPlanAttrib[second], function (error, billingPlan){
-        if (error){
+    await paypal.billingPlan.create(billingPlanAttrib[second], function (error, billingPlan) {
+        if (error) {
             console.log(error);
             return "Error";
         } else {
-            // Activate the plan by changing status to Active
-            paypal.billingPlan.update(billingPlan.id, billingPlanUpdateAttributes, 
-                function(error, response){
-                if (error) {
-                    console.log(error);
-                    return "Error";
-                } else {
-                    console.log(billingPlan.id);
-                    return billingPlan.id;
-                }
-            });
+            updateBillingPlan(billingPlan.id);
+            return billingPlan.id;
+        }
+    });
+}
+
+function updateBillingPlan(billingPlanID) {
+    // Activate the plan by changing status to Active
+    paypal.billingPlan.update(billingPlanID, billingPlanUpdateAttributes, function(error, response) {
+        if (error) {
+            console.log(error);
+            return "Error";
+        } else {
+            console.log(billingPlan.id);
+            return billingPlan.id;
         }
     });
 }
@@ -259,7 +262,7 @@ router.post('/Buy', async(req, res, next) => {
                     "Price": results[0].Price,
                     "Option": results[0].Option,
 
-                    "Buy": await getBillingPlan(req.body.Category, results[0].Name)
+                    "Buy": await makeBillingPlan(req.body.Category, results[0].Name)
                 }});
             }
         });
