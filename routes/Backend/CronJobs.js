@@ -89,7 +89,7 @@ async function Arma3ShopOld() {
                                         const check = await Rcon.checkPlayer(getPlayer[0].GUID);
                                         if (!check) {
                                             await SQL.query("UPDATE `players` set `donorlevel`='0' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
-                                            await API.query("UPDATE `shop_purchases` set `Last Checked`=?,`Status`='Ended' WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),data.STATUS,ID]);
+                                            await API.query("UPDATE `shop_purchases` set `Last Checked`=?,`Status`=? WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),data.STATUS,ID]);
                                         }
                                     }
                                 }
