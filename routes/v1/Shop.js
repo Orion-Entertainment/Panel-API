@@ -169,6 +169,7 @@ router.post('/Purchases', async(req, res, next) => {
             }
 
             if (results[0] == undefined) return res.json({Info: false}); else {
+                console.log(results)
                 let Return = [];
 
                 for (let i = 0; i < results.length; i++) {
