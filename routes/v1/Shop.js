@@ -177,7 +177,7 @@ router.post('/Purchases', async(req, res, next) => {
                         if (!err) {
                             Purchased = await moment(results[i].Purchased).format('YYYY/MM/DD HH:mm');
                             Payment = await moment(data.LASTPAYMENTDATE).add(1, 'month').format('YYYY/MM/DD');
-                            Return.push({
+                            await Return.push({
                                 "id": results[i].id,
                                 "Purchased": Purchased,
                                 "Status": results[i].Status,
