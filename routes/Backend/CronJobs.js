@@ -45,7 +45,7 @@ new CronJob('0 * * * *', function() {
 //Minute - Every minute
 new CronJob('* * * * *', function() {
     Arma3ShopNew();
-    
+
     }, function () {
         return; /* This function is executed when the job stops */
     },
@@ -163,7 +163,6 @@ async function Arma3ShopNew() {
                                 }
                             }
                         }
-                        
 
                         if (p + 1 == getPurchases.length) {
                             Offset = Offset + setOffset;
@@ -229,77 +228,3 @@ async function RemoveOldHouses() {
         return;
     }
 }
-
-
-
-/* One Time */
-const crypto = require('crypto');
-const LastIPKey = "c8e1e14744282ddc0a0dd2fab8d9f60f";
-const IPsKey = "7831b0e33a16c72716ef2e2f5f7d2803";
-const IPKey = "c5c41c1b95501f36564a288879f2beef";
-
-async function EncryptData(key, data) {
-    const cipher = crypto.createCipher('aes-256-cbc', key);
-    let encrypted = cipher.update(data,'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return encrypted;
-}
-async function DecryptData(key, data) {
-    const decipher = crypto.createDecipher('aes-256-cbc', key);
-    let decrypted = decipher.update(data,'hex','utf8') 
-    decrypted += decipher.final('utf8'); 
-    return decrypted; 
-}
-
-function QueryableEncrypt(data, key) {
-    return "AES_ENCRYPT('"+data+"', '"+key+"')";
-}
-function QueryableDecrypt(column, key) {
-    return "CONVERT(AES_DECRYPT(`"+column+"`, '"+key+"') using utf8) AS '"+column+"'";
-};
-
-async function oneTime() {
-    try {
-        const getTotalPlayers = await API.query("SELECT COUNT(`id`) AS 'TotalPlayers' FROM `arma_connect` WHERE `IP` is not null AND `IPNew` is null;");
-        if (getTotalPlayers[0] == undefined) return;
-        const TotalPlayers = getTotalPlayers[0].TotalPlayers;
-
-        let setOffset;
-        if (TotalPlayers < 1) return;
-        else if (TotalPlayers <= 100) setOffset = 0;
-        else setOffset = selectLimit;
-
-        if (setOffset < 1) loopTotal = 1;
-        else loopTotal = Math.round(TotalPlayers / setOffset);
-        
-        let Offset = 0;
-        for (let i = 0; i < loopTotal; i++) {
-            const getPlayers = await API.query("SELECT `id`,`IP` FROM `arma_connect` WHERE `IP` is not null AND `IPNew` is null LIMIT "+selectLimit+" OFFSET "+Offset);
-
-            if (getPlayers[0] !== undefined) {
-                console.log(i, getPlayers.length)
-                for (let h = 0; h < getPlayers.length; h++) {
-                    const get = getPlayers[h];
-                    ID = get["id"];
-                    IP = get["IP"];
-
-                    const ENCIP = await QueryableEncrypt(IPKey,IP);
-
-                    await API.query("UPDATE `arma_connect` set `IPNEW`="+ENCIP+" WHERE `id`=?;",[ID]);
-
-                    if (h + 1 == getPlayers.length) {
-                        Offset = Offset + setOffset;
-                    }
-                }
-            }
-
-            if (i + 1 == loopTotal) {
-                return console.log('end');
-            }
-        }
-    } catch (error) {
-        console.log(error);
-        return;
-    }
-}
-//oneTime();

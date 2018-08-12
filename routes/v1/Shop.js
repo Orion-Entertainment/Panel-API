@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
+const paypal = require('../../core/app').Paypal;
 
 /* Set Variables */
 const ShopPurchasesKEY = "be455ae96dacd91223b8e583c68261cb";
@@ -10,7 +11,6 @@ const ShopPIDKEY = "2979e32f8ed8a94ad85d505d1b193544";
 /* Added NPM Packages */
 const crypto = require('crypto');
 const randomString = require('random-string');
-const paypal = require('../../core/app').Paypal;
 
 /* Functions */
 async function EncryptData(key, data) {
@@ -200,15 +200,13 @@ router.post('/Purchases', async(req, res, next) => {
 
                 let TEST = 0;
                 for (let i = 0; i < results.length; i++) {
-                    PID = results[i].PID;
-                    console.log(results[i].PID)
-                    if (TEST < 1) {
-                        paypal.getSubscription(PID, async function(err, data) {
+                    if (TEST == 0) {
+                        paypal.getSubscription(results[i].PID, async function(err, data) {
                             if (!err) {
                                 console.log(data)
+                                TEST = 1;
                             }
-                        })
-                        TEST++
+                        });
                     }
                     Return.push({
                         "id": results[i].id,
