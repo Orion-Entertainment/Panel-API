@@ -78,7 +78,7 @@ async function Arma3ShopOld() {
                 console.log(getPurchases.length)
                 if (getPurchases[0] !== undefined) {
                     for (let p = 0; p < getPurchases.length; p++) {
-                        pID = getPurchases[p].id;
+                        pID = getPurchases[p].PID;
                         wID = getPurchases[p].WID;
                         Item = getPurchases[p].item;
                         console.log(p, pID)
