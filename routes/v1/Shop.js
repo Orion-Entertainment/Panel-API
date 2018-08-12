@@ -184,10 +184,10 @@ router.post('/Purchases', async(req, res, next) => {
                                 "Item": results[i].Item,
                                 "Payment": Payment,
                             })
-                        }
 
-                        if (i + 1 == results.length) {
-                            return res.json({Info: Return});
+                            if (Return.length == results.length) {
+                                return res.json({Info: Return});
+                            }
                         }
                     });
                 }
