@@ -174,7 +174,7 @@ router.post('/Item', async(req, res, next) => {
     }
 });
 
-let TEST = 0;
+
 router.post('/Purchases', async(req, res, next) => {
     try {
         /* Check Login */
@@ -198,10 +198,12 @@ router.post('/Purchases', async(req, res, next) => {
             if (results[0] == undefined) return res.json({Info: false}); else {
                 let Return = [];
 
+                let TEST = 0;
                 for (let i = 0; i < results.length; i++) {
+                    PID = results[i].PID;
                     console.log(results[i].PID)
                     if (TEST < 1) {
-                        paypal.getSubscription(results[i].PID, async function(err, data) {
+                        paypal.getSubscription(PID, async function(err, data) {
                             if (!err) {
                                 console.log(data)
                             }
