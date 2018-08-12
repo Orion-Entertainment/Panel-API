@@ -60,7 +60,7 @@ async function Arma3ShopOld() {
         if (Config.Shop.Arma3) {
             const SQL = ServerDBs.maldenlife2;
 
-            const getTotalPurchases = await API.query("SELECT COUNT(`id`) AS 'Total' FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`!='Ended' AND (`Last Checked` < NOW() - INTERVAL 1 MONTH);");
+            const getTotalPurchases = await API.query("SELECT COUNT(`id`) AS 'Total' FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`='Active' AND (`Last Checked` < NOW() - INTERVAL 1 MONTH);");
             if (getTotalPurchases[0] == undefined) return;
             const TotalPurchases = getTotalPurchases[0].Total;
 
@@ -74,7 +74,7 @@ async function Arma3ShopOld() {
             
             let Offset = 0;
             for (let i = 0; i < loopTotal; i++) {
-                const getPurchases = await API.query("SELECT `id`,"+await QueryableDecrypt("PID", ShopPIDKEY)+",`WID`,`item` FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`!='Ended' AND (`Last Checked` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset);
+                const getPurchases = await API.query("SELECT `id`,"+await QueryableDecrypt("PID", ShopPIDKEY)+",`WID`,`item` FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`='Active' AND (`Last Checked` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset);
                 if (getPurchases[0] !== undefined) {
                     for (let p = 0; p < getPurchases.length; p++) {
                         ID = getPurchases[p].id;
@@ -89,7 +89,7 @@ async function Arma3ShopOld() {
                                         const check = await Rcon.checkPlayer(getPlayer[0].GUID);
                                         if (!check) {
                                             await SQL.query("UPDATE `players` set `donorlevel`='0' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
-                                            await API.query("UPDATE `shop_purchases` set `Last Checked`=?,`Status`='Ended' WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),ID]);
+                                            await API.query("UPDATE `shop_purchases` set `Last Checked`=?,`Status`='Ended' WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),data.STATUS,ID]);
                                         }
                                     }
                                 }
