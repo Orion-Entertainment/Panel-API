@@ -234,20 +234,9 @@ router.post('/BuyItem', async(req, res, next) => {
         const getItem = await req.API.query("SELECT `Price`,`Option`,`ShortDescription` FROM `shop_items` WHERE `Category`=? AND `Name`=?;", [req.body.Category,req.body.Item]);
         if (getItem[0] == undefined) return res.json({Error: "Item not found"})
 
-        switch (req.body.Item) {
-            case "VIP 1":
-                const check = await req.API.query("SELECT `id` FROM `shop_purchases` WHERE `WID`=? AND `Status`='Active' AND (`ItemID`='2' OR `ItemID`='3');", [req.body.WID]);
-                if (check[0] !== undefined) return res.json({Error: "You already have an active VIP subscription"})
-            case "VIP 2":
-                //check if user has vip 1, 3
-                const check = await req.API.query("SELECT `id` FROM `shop_purchases` WHERE `WID`=? AND `Status`='Active' AND (`ItemID`='1' OR `ItemID`='3');", [req.body.WID]);
-                if (check[0] !== undefined) return res.json({Error: "You already have an active VIP subscription"})
-            case "VIP 3":
-                //check if user has vip 1, 2
-                const check = await req.API.query("SELECT `id` FROM `shop_purchases` WHERE `WID`=? AND `Status`='Active' AND (`ItemID`='1' OR `ItemID`='2');", [req.body.WID]);
-                if (check[0] !== undefined) return res.json({Error: "You already have an active VIP subscription"})
-            default:
-                
+        if (req.body.ItemID == 1 | req.body.ItemID == 2 | req.body.ItemID == 3) {
+            const check = await req.API.query("SELECT `id` FROM `shop_purchases` WHERE `WID`=? AND `Status`='Active' AND (`ItemID`='1' OR `ItemID`='2' OR `ItemID`='3');", [req.body.WID]);
+            if (check[0] !== undefined) return res.json({Error: "You already have an active VIP subscription"})
         }
         
         //const Price = getItem[0].Price;
