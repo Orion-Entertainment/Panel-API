@@ -172,27 +172,23 @@ router.post('/Purchases', async(req, res, next) => {
             if (results[0] == undefined) return res.json({Info: false}); else {
                 let Return = [];
 
-                let TEST = 0;
                 for (let i = 0; i < results.length; i++) {
-                    if (TEST == 0) {
-                        req.Paypal.getSubscription(results[i].PID, async function(err, data) {
-                            if (!err) {
-                                console.log(data)
-                                TEST = 1;
-                            }
-                        });
-                    }
-                    Return.push({
-                        "id": results[i].id,
-                        "Purchased": results[i].Purchased,
-                        "Status": results[i].Status,
-                        "Category": results[i].Category,
-                        "Item": results[i].Item
-                    })
+                    req.Paypal.getSubscription(results[i].PID, async function(err, data) {
+                        if (!err) {
+                            Return.push({
+                                "id": results[i].id,
+                                "Purchased": await moment(results[i].Purchased).format('YYYY/MM/DD HH:mm'),
+                                "Status": results[i].Status,
+                                "Category": results[i].Category,
+                                "Item": results[i].Item,
+                                "Payment": await moment(data.LASTPAYMENTDATE).add(1, 'month').format('YYYY/MM/DD'),
+                            })
 
-                    if (i + 1 == results.length) {
-                        return res.json({Info: Return});
-                    }
+                            if (i + 1 == results.length) {
+                                return res.json({Info: Return});
+                            }
+                        }
+                    });
                 }
             }
         });
