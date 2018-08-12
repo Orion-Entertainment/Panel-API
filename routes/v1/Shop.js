@@ -172,26 +172,24 @@ router.post('/Purchases', async(req, res, next) => {
                 let Return = [];
 
                 for (let i = 0; i < results.length; i++) {
-                    const getS = await req.Paypal.getSubscription(results[i].PID);
-                    return console.log(getS)
+                    req.Paypal.getSubscription(results[i].PID, async function(err, data) {
+                        if (!err) {
+                            Purchased = await moment(results[i].Purchased).format('YYYY/MM/DD HH:mm');
+                            Payment = await moment(data.LASTPAYMENTDATE).add(1, 'month').format('YYYY/MM/DD');
+                            await Return.push({
+                                "id": results[i].id,
+                                "Purchased": Purchased,
+                                "Status": results[i].Status,
+                                "Category": results[i].Category,
+                                "Item": results[i].Item,
+                                "Payment": Payment,
+                            })
+                        }
 
-                    Purchased = await moment(results[i].Purchased).format('YYYY/MM/DD HH:mm');
-                    Payment = await moment(getS.LASTPAYMENTDATE).add(1, 'month').format('YYYY/MM/DD');
-                    await Return.push({
-                        "id": results[i].id,
-                        "Purchased": Purchased,
-                        "Status": results[i].Status,
-                        "Category": results[i].Category,
-                        "Item": results[i].Item,
-                        "Payment": Payment,
-                    })
-
-                    if (i + 1 == results.length) {
-                        setTimeout(function(){
-                            console.log(Return)
+                        if (i + 1 == results.length) {
                             return res.json({Info: Return});
-                        }, 500);
-                    }
+                        }
+                    });
                 }
             }
         });
