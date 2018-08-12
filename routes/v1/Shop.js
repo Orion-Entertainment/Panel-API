@@ -222,7 +222,7 @@ router.post('/Cancel', async(req, res, next) => {
         else {
             req.Paypal.getSubscription(check[0].PID, async function(err, data) {
                 if (!err) {
-                    if (data.STATUS !== "Active") return res.send("Subscription already cancelled");
+                    if (data.STATUS !== "Active") return res.send("Subscription has already cancelled");
                     req.Paypal.modifySubscription(check[0].PID, 'Cancel' , function(err, data) {
                         if (!err) {
                             return res.send("Success");
