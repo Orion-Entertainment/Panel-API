@@ -75,26 +75,25 @@ async function Arma3ShopOld() {
             let Offset = 0;
             for (let i = 0; i < loopTotal; i++) {
                 const getPurchases = await API.query("SELECT `id`,"+await QueryableDecrypt("PID", ShopPIDKEY)+",`WID`,`item` FROM `shop_purchases` WHERE `Category`='Arma3' AND `Status`!='Ended' AND (`Last Checked` < NOW() - INTERVAL 1 MONTH) LIMIT "+selectLimit+" OFFSET "+Offset);
-                console.log(getPurchases.length)
                 if (getPurchases[0] !== undefined) {
                     for (let p = 0; p < getPurchases.length; p++) {
+                        ID = getPurchases[p].id;
                         pID = getPurchases[p].PID;
                         wID = getPurchases[p].WID;
                         Item = getPurchases[p].item;
-                        console.log(p, pID)
                         paypal.getSubscription(pID, async function(err, data) {
                             if (!err) {
-                                console.log(data.status)
-                                if (data.status !== "Active") {
+                                console.log(data.STATUS)
+                                /*if (data.status !== "Active") {
                                     const getPlayer = await API.query("SELECT `Steam64ID`,`GUID` FROM `arma_players` WHERE BINARY `id`=?",[wID]);
                                     if (getPlayer[0] !== undefined) {
                                         const check = await Rcon.checkPlayer(getPlayer[0].GUID);
                                         if (!check) {
                                             await SQL.query("UPDATE `players` set `donorlevel`='0' WHERE BINARY `pid`=?;",[getPlayer[0].Steam64ID]); //Update on Maldenlife
-                                            await API.query("UPDATE `shop_purchases` set `Last Checked`=?,`Status`='Ended' WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),pID]);
+                                            await API.query("UPDATE `shop_purchases` set `Last Checked`=?,`Status`='Ended' WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),ID]);
                                         }
                                     }
-                                }
+                                }*/
                             }
                         });
 
