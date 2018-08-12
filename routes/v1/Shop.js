@@ -302,8 +302,7 @@ router.post('/BuyItem', async(req, res, next) => {
             if (check[0] !== undefined) return res.json({Error: "You already have an active VIP subscription"})
         }
         
-        //const Price = getItem[0].Price;
-        const Price = 0.02; //FOR TESTING
+        const Price = getItem[0].Price;
         const Description = getItem[0].ShortDescription;
         const Length = getItem[0].Option;
 
