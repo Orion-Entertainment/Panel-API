@@ -83,8 +83,7 @@ async function Arma3ShopOld() {
                         Item = getPurchases[p].item;
                         paypal.getSubscription(pID, async function(err, data) {
                             if (!err) {
-                                console.log(data.STATUS)
-                                /*if (data.status !== "Active") {
+                                if (data.STATUS !== "Active") {
                                     const getPlayer = await API.query("SELECT `Steam64ID`,`GUID` FROM `arma_players` WHERE BINARY `id`=?",[wID]);
                                     if (getPlayer[0] !== undefined) {
                                         const check = await Rcon.checkPlayer(getPlayer[0].GUID);
@@ -93,7 +92,7 @@ async function Arma3ShopOld() {
                                             await API.query("UPDATE `shop_purchases` set `Last Checked`=?,`Status`='Ended' WHERE `id`=?;",[await moment(new Date()).format('YYYY/MM/DD HH:mm:ss'),ID]);
                                         }
                                     }
-                                }*/
+                                }
                             }
                         });
 
