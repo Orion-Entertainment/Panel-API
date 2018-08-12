@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
-const paypal = require('../../core/app').Paypal;
+const paypal = require('../core/app').Paypal;
 console.log(paypal)
 
 /* Set Variables */
