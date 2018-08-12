@@ -51,7 +51,7 @@ new CronJob('* * * * *', function() {
     },
     true,
     TimeZone
-);
+); 
 
 Arma3ShopOld();
 /* Functions */
