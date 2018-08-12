@@ -217,7 +217,7 @@ router.post('/Cancel', async(req, res, next) => {
         else if (req.body.ID == "") return res.json({Error: "ID Empty"})
         else if (isNaN(req.body.ID)) return res.json({Error: "ID Invalid"})
 
-        const check = await req.API.query("SELECT `id`,"+await QueryableDecrypt("PID", ShopPIDKEY)+" FROM `shop_categories` WHERE BINARY `id`=? AND BINARY `WID`=?;", [req.body.ID,req.body.WID]);
+        const check = await req.API.query("SELECT `id`,"+await QueryableDecrypt("PID", ShopPIDKEY)+" FROM `shop_purchases` WHERE BINARY `id`=? AND BINARY `WID`=?;", [req.body.ID,req.body.WID]);
         if (check[0] == undefined) return res.json({Error: "Purchase not found"})
         else {
             req.Paypal.getSubscription(check[0].PID, async function(err, data) {
