@@ -228,11 +228,27 @@ router.post('/BuyItem', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
-        if (req.body.Category == undefined | req.body.Item == undefined | req.body.ItemID == undefined) return res.json({Category: "Option Undefined"})
-        else if (req.body.Category == "" | req.body.Item == "" | req.body.ItemID =="") return res.json({Error: "Option Empty"})
+        if (req.body.Category == undefined | req.body.Item == undefined | req.body.ItemID == undefined | req.body.WID == undefined) return res.json({Category: "Option Undefined"})
+        else if (req.body.Category == "" | req.body.Item == "" | req.body.ItemID =="" | req.body.WID =="") return res.json({Error: "Option Empty"})
 
         const getItem = await req.API.query("SELECT `Price`,`Option`,`ShortDescription` FROM `shop_items` WHERE `Category`=? AND `Name`=?;", [req.body.Category,req.body.Item]);
         if (getItem[0] == undefined) return res.json({Error: "Item not found"})
+
+        switch (req.body.Item) {
+            case "VIP 1":
+                const check = await req.API.query("SELECT `id` FROM `shop_purchases` WHERE `WID`=? AND `Status`='Active' AND (`ItemID`='2' OR `ItemID`='3');", [req.body.WID]);
+                if (check[0] !== undefined) return res.json({Error: "You already have an active VIP subscription"})
+            case "VIP 2":
+                //check if user has vip 1, 3
+                const check = await req.API.query("SELECT `id` FROM `shop_purchases` WHERE `WID`=? AND `Status`='Active' AND (`ItemID`='1' OR `ItemID`='3');", [req.body.WID]);
+                if (check[0] !== undefined) return res.json({Error: "You already have an active VIP subscription"})
+            case "VIP 3":
+                //check if user has vip 1, 2
+                const check = await req.API.query("SELECT `id` FROM `shop_purchases` WHERE `WID`=? AND `Status`='Active' AND (`ItemID`='1' OR `ItemID`='2');", [req.body.WID]);
+                if (check[0] !== undefined) return res.json({Error: "You already have an active VIP subscription"})
+            default:
+                
+        }
         
         //const Price = getItem[0].Price;
         const Price = 0.02; //FOR TESTING
