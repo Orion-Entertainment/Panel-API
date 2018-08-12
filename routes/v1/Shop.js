@@ -199,6 +199,7 @@ router.post('/Purchases', async(req, res, next) => {
                 let Return = [];
 
                 for (let i = 0; i < results.length; i++) {
+                    console.log(results[i].PID)
                     if (TEST < 1) {
                         paypal.getSubscription(results[i].PID, async function(err, data) {
                             if (!err) {
