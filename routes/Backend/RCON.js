@@ -113,8 +113,8 @@ async function connectRCon (BEConfig, ServerName) {
                 if (error) throw error;
                 return;
             });
-        } else if (/\((Unknown|Vehicle|Direct|Group)\) (.+): /g.test(message)) {
-            getData = /\((Unknown|Vehicle|Direct|Group)\) (.+): (.+)/g.exec(message);
+        } else if (/\((Unknown|Vehicle|Direct|Group|Side)\)\s(.+):\s/g.test(message)) {
+            getData = /\((Unknown|Vehicle|Direct|Group|Side)\)\s(.+):\s(.+)/g.exec(message);
             getPlayer = await getPlayerGUID(ServerName, getData[2]);
             if (getPlayer !== undefined && getPlayer !== null) {
                 if (getData[3] == null) return;
