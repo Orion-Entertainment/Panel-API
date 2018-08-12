@@ -45,7 +45,6 @@ new CronJob('0 * * * *', function() {
 //Minute - Every minute
 new CronJob('* * * * *', function() {
     Arma3ShopNew();
-    //Arma3ShopOld();
 
     }, function () {
         return; /* This function is executed when the job stops */
@@ -54,6 +53,7 @@ new CronJob('* * * * *', function() {
     TimeZone
 );
 
+Arma3ShopOld();
 /* Functions */
 async function Arma3ShopOld() {
     try {
