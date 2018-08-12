@@ -10,6 +10,7 @@ const ShopPIDKEY = "2979e32f8ed8a94ad85d505d1b193544";
 /* Added NPM Packages */
 const crypto = require('crypto');
 const randomString = require('random-string');
+const paypal = require('../../core/app').Paypal;
 
 /* Functions */
 async function EncryptData(key, data) {
@@ -173,6 +174,59 @@ router.post('/Item', async(req, res, next) => {
     }
 });
 
+let TEST = 0;
+router.post('/Purchases', async(req, res, next) => {
+    try {
+        /* Check Login */
+        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
+        if (CheckLogin == false) return res.send("Invalid Login");
+        const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
+
+        if (TokenData == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
+
+        if (req.body.WID == undefined) return res.json({Error: "WID Undefined"})
+        else if (req.body.WID == "") return res.json({Error: "WID Empty"})
+
+        req.API.query("SELECT `id`,"+await QueryableDecrypt("PID", ShopPIDKEY)+",`Purchased`,`Status`,`Category`,`Item` FROM `shop_purchases` WHERE `WID`=? ORDER BY `id` DESC LIMIT 25;", [req.body.WID], async function (error, results, fields) {
+            if (error) {
+                console.error(error)
+                return res.json({Error: error})
+            }
+
+            if (results[0] == undefined) return res.json({Info: false}); else {
+                let Return = [];
+
+                for (let i = 0; i < results.length; i++) {
+                    if (TEST < 1) {
+                        paypal.getSubscription(results[i].PID, async function(err, data) {
+                            if (!err) {
+                                console.log(data)
+                            }
+                        })
+                        TEST++
+                    }
+                    Return.push({
+                        "id": results[i].id,
+                        "Purchased": results[i].Purchased,
+                        "Status": results[i].Status,
+                        "Category": results[i].Category,
+                        "Item": results[i].Item
+                    })
+
+                    if (i + 1 == results.length) {
+                        return res.json({Info: Return});
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.log(error)
+        return res.json({Error: "Error"})
+    }
+});
+
 router.post('/Buy', async(req, res, next) => {
     try {
         /* Check Login */
@@ -214,8 +268,6 @@ router.post('/Buy', async(req, res, next) => {
         return res.json({Error: "Error"})
     }
 });
-
-const paypal = require('../../core/app').Paypal;
 
 router.post('/BuyItem', async(req, res, next) => {
     try {
