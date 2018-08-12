@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
-const paypal = require('../core/app').Paypal;
-console.log(paypal)
 
 /* Set Variables */
 const ShopTokenKey = "1ca5f487e8d6529d61cc6f4231faceaa";
@@ -177,7 +175,7 @@ router.post('/Purchases', async(req, res, next) => {
                 let TEST = 0;
                 for (let i = 0; i < results.length; i++) {
                     if (TEST == 0) {
-                        paypal.getSubscription(results[i].PID, async function(err, data) {
+                        req.Paypal.getSubscription(results[i].PID, async function(err, data) {
                             if (!err) {
                                 console.log(data)
                                 TEST = 1;
@@ -273,7 +271,7 @@ router.post('/BuyItem', async(req, res, next) => {
         const Description = getItem[0].ShortDescription;
         const Length = getItem[0].Option;
 
-        paypal.authenticate({
+        req.Paypal.authenticate({
             RETURNURL:                      "https://panel.orion-entertainment.net/Shop/Success",
             CANCELURL:                      "https://panel.orion-entertainment.net/Shop/Cancel",
             PAYMENTREQUEST_0_AMT:           Price,
@@ -334,7 +332,7 @@ router.post('/Bought', async(req, res, next) => {
                 break;
         }
 
-        paypal.createSubscription(req.body.buytoken, req.body.payerid,{
+        req.Paypal.createSubscription(req.body.buytoken, req.body.payerid,{
             INITAMT:          Buying["Price"],
             AMT:              Buying["Price"],
             DESC:             Buying["Description"],

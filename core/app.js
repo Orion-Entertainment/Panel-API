@@ -122,6 +122,7 @@ app.use((req, res, next) => {
 
     req.API = API;
     req.ServerDBs = ServerDBs;
+    req.Paypal = paypal;
     next();
 });
 
