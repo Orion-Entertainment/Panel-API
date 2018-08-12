@@ -148,7 +148,6 @@ router.post('/Item', async(req, res, next) => {
     }
 });
 
-
 router.post('/Purchases', async(req, res, next) => {
     try {
         /* Check Login */
@@ -194,6 +193,39 @@ router.post('/Purchases', async(req, res, next) => {
                 }
             }
         });
+    } catch (error) {
+        console.log(error)
+        return res.json({Error: "Error"})
+    }
+});
+
+router.post('/Cancel', async(req, res, next) => {
+    try {
+        /* Check Login */
+        const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
+        if (CheckLogin == false) return res.send("Invalid Login");
+        const TokenData = await req.GetData(req.body["client_id"], req.body["token"]);
+
+        if (TokenData == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
+        else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
+
+        if (req.body.WID == undefined) return res.json({Error: "WID Undefined"})
+        else if (req.body.WID == "") return res.json({Error: "WID Empty"})
+        else if (isNaN(req.body.WID)) return res.json({Error: "WID Invalid"})
+        else if (req.body.ID == undefined) return res.json({Error: "ID Undefined"})
+        else if (req.body.ID == "") return res.json({Error: "ID Empty"})
+        else if (isNaN(req.body.ID)) return res.json({Error: "ID Invalid"})
+
+        const check = await req.API.query("SELECT `id`,"+await QueryableDecrypt("PID", ShopPIDKEY)+" FROM `shop_categories` WHERE BINARY `id`=? AND BINARY `WID`=?;", [req.body.ID,req.body.WID]);
+        if (check[0] == undefined) return res.json({Error: "Purchase not found"})
+        else {
+            req.Paypal.modifySubscription(check[0].PID, 'Cancel' , function(err, data) {
+                if (!err) {
+                    res.send("Success");
+                }
+            });
+        }
     } catch (error) {
         console.log(error)
         return res.json({Error: "Error"})
