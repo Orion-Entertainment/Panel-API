@@ -139,22 +139,24 @@ async function connectRCon (BEConfig, ServerName) {
                 addPlayer(ServerName, getData[2], getData[1])
 
                 //Save to DB
-                API.query("UPDATE `arma_connect` set `GUID`=? WHERE BINARY `Name`=? ORDER BY `Time` DESC LIMIT 1;", [getData[1],getData[2]], function (error, results, fields) {
+                /*API.query("UPDATE `arma_connect` set `GUID`=? WHERE BINARY `Name`=? ORDER BY `Time` DESC LIMIT 1;", [getData[1],getData[2]], function (error, results, fields) {
                     if (error) throw error;
                     return;
-                });
+                });*/
+                return;
             } else if (/Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.test(message)) {
-                getData = /Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.exec(message);
+                /*getData = /Player #\d+ (.+) \((\d+.\d+.\d+.\d+):\d+\) connected/g.exec(message);
 
                 //Save to DB
                 API.query("INSERT INTO `arma_connect` (`Server`,`Option`,`Name`,`IP`) VALUES(?,?,?,"+await QueryableEncrypt(IPKey,getData[2])+");", [ServerName,"Connect",getData[1]], function (error, results, fields) {
                     if (error) throw error;
                     return;
-                });
+                });*/
+                return;
             }
         } else if (/Player #\d+ (.+) disconnected/g.test(message)) {
             getData = /Player #\d+ (.+) disconnected/g.exec(message);
-            getPlayer = await getPlayerGUID(ServerName, getData[1]);
+            /*getPlayer = await getPlayerGUID(ServerName, getData[1]);
             if (getPlayer !== undefined && getPlayer !== null) {
                 //Save to DB
                 API.query("INSERT INTO `arma_connect` (`Server`,`Option`,`Name`,`GUID`) VALUES(?,?,?,?);", [ServerName,"Disconnect",getData[1],getPlayer.GUID], function (error, results, fields) {
@@ -167,9 +169,10 @@ async function connectRCon (BEConfig, ServerName) {
                     if (error) throw error;
                     return;
                 });
-            }
+            }*/
 
             removePlayer(ServerName, getData[1]);
+            return;
         } else if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: /g.test(message)) {
             if (/Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.test(message)) {
                 getData = /Player #\d+ (.+) \((.+)\) has been kicked by BattlEye: Admin Kick \((.+)\)/g.exec(message);
