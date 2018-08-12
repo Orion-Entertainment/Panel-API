@@ -220,11 +220,17 @@ router.post('/Cancel', async(req, res, next) => {
         const check = await req.API.query("SELECT `id`,"+await QueryableDecrypt("PID", ShopPIDKEY)+" FROM `shop_categories` WHERE BINARY `id`=? AND BINARY `WID`=?;", [req.body.ID,req.body.WID]);
         if (check[0] == undefined) return res.json({Error: "Purchase not found"})
         else {
-            req.Paypal.modifySubscription(check[0].PID, 'Cancel' , function(err, data) {
+            req.Paypal.getSubscription(check[0].PID, async function(err, data) {
                 if (!err) {
-                    res.send("Success");
+                    if (data.STATUS !== "Active") return res.send("Subscription already cancelled");
+                    req.Paypal.modifySubscription(check[0].PID, 'Cancel' , function(err, data) {
+                        if (!err) {
+                            return res.send("Success");
+                        }
+                    });
                 }
             });
+            
         }
     } catch (error) {
         console.log(error)
