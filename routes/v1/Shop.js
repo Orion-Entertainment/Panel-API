@@ -2,15 +2,14 @@ const express = require('express');
 const router = express.Router();
 const moment = require('moment');
 const paypal = require('../../core/app').Paypal;
+console.log(paypal)
 
 /* Set Variables */
-const ShopPurchasesKEY = "be455ae96dacd91223b8e583c68261cb";
 const ShopTokenKey = "1ca5f487e8d6529d61cc6f4231faceaa";
 const ShopPIDKEY = "2979e32f8ed8a94ad85d505d1b193544";
 
 /* Added NPM Packages */
 const crypto = require('crypto');
-const randomString = require('random-string');
 
 /* Functions */
 async function EncryptData(key, data) {
@@ -32,29 +31,6 @@ function QueryableEncrypt(data, key) {
 function QueryableDecrypt(column, key) {
     return "CONVERT(AES_DECRYPT(`"+column+"`, '"+key+"') using utf8) AS '"+column+"'";
 };
-
-function formatNumber(number) {
-    if (number == null) return null;
-    else return number.toLocaleString();
-}
-
-function returnFalse(res, Name) {
-    return res.json({
-        [Name]: false
-    }).end();
-}
-
-function returnResults(res, Name, Results) {
-    return res.json({
-        [Name]: Results
-    }).end();
-}
-
-function updateBillingPlan(billingPlanID) {
-    // Activate the plan by changing status to Active
-
-}
-
 
 /* Routers */
 router.post('/', async(req, res, next) => {
