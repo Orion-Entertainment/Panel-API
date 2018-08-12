@@ -187,6 +187,7 @@ router.post('/Purchases', async(req, res, next) => {
 
                             if (i + 1 == results.length) {
                                 setTimeout(function(){
+                                    console.log(Return)
                                     return res.json({Info: Return});
                                 }, 500);
                             }
