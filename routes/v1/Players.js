@@ -433,7 +433,7 @@ router.post('/Info', async(req, res, next) => {
                         case "MoneyLogs":
                             console.log(req.body.Private,Steam64ID)
                             if (Steam64ID == null) return returnFalse(res, Option2);
-                                else if (req.body.Private !== true && req.body.Private !== Steam64ID) return res.json({Error: "Invalid Permissions"});
+                                else if (req.body.Private != true && req.body.Private !== Steam64ID) return res.json({Error: "Invalid Permissions"});
                             req.API.query("SELECT `Server`,`Option`,`toPID`,`Item`,`Amount`,`Time` FROM `arma_money` WHERE BINARY `pid`=? ORDER BY `id` DESC LIMIT 25;", [Steam64ID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
