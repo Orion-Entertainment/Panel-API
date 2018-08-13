@@ -386,7 +386,7 @@ router.post('/Info', async(req, res, next) => {
                                     return res.json({Error: error})
                                 } else if (results[0] == undefined) return returnFalse(res, Option2); else {
                                     if (req.body.Total !== undefined) {
-                                        const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `vehicles` WHERE BINARY `pid`=? AND `alive`='1';", [Steam64ID]);
+                                        const getTotal = await req.ServerDBs.maldenlife2.query("SELECT COUNT(`id`) AS 'Total' FROM `vehicles` WHERE BINARY `pid`=? AND `alive`='1';", [Steam64ID]);
                                         return returnResults(res, Option2, {
                                             Total: getTotal[0].length,
                                             Data: results
@@ -403,7 +403,7 @@ router.post('/Info', async(req, res, next) => {
                                     return res.json({Error: error})
                                 } else if (results[0] == undefined) return returnFalse(res, Option2); else {
                                     if (req.body.Total !== undefined) {
-                                        const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `houses` WHERE BINARY `pid`=? AND `owned`='1';", [Steam64ID]);
+                                        const getTotal = await req.ServerDBs.maldenlife2.query("SELECT COUNT(`id`) AS 'Total' FROM `houses` WHERE BINARY `pid`=? AND `owned`='1';", [Steam64ID]);
                                         return returnResults(res, Option2, {
                                             Total: getTotal[0].length,
                                             Data: results
@@ -419,7 +419,7 @@ router.post('/Info', async(req, res, next) => {
                                     return res.json({Error: error})
                                 } else if (results[0] == undefined) return returnFalse(res, Option2); else {
                                     if (req.body.Total !== undefined) {
-                                        const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `containers` WHERE BINARY `pid`=? AND `owned`='1';", [Steam64ID]);
+                                        const getTotal = await req.ServerDBs.maldenlife2.query("SELECT COUNT(`id`) AS 'Total' FROM `containers` WHERE BINARY `pid`=? AND `owned`='1';", [Steam64ID]);
                                         return returnResults(res, Option2, {
                                             Total: getTotal[0].length,
                                             Data: results
