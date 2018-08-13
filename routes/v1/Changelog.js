@@ -45,7 +45,7 @@ router.post('/Admin', async(req, res, next) => {
                         return res.json({Error: error})
                     }
                     
-                    return res.send(results);
+                    return res.send(JSON.stringify(results));
                 });
                 break;
 
