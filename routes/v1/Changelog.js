@@ -39,13 +39,13 @@ router.post('/Admin', async(req, res, next) => {
 
         switch (req.body.Option) {
             case "Admin":
-                req.API.query("SELECT `id`,`Category`,`Name`,`Data` FROM `changelogs` LIMIT 10;", async function (error, results, fields) {
+                req.API.query("SELECT `id`,`Category`,`Name`,`Data`,`Time` FROM `changelogs` LIMIT 10;", async function (error, results, fields) {
                     if (error) {
                         console.error(error)
                         return res.json({Error: error})
                     }
                     
-                    return res.send(JSON.stringify(results));
+                    return res.send(results);
                 });
                 break;
 
