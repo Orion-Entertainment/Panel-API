@@ -236,14 +236,13 @@ router.post('/Info', async(req, res, next) => {
                                     console.error(error)
                                     return res.json({Error: error})
                                 } else if (results[0] == undefined) return returnFalse(res, Option2); else {
+                                    const Data = JSON.parse(results[0].Names);
                                     if (req.body.Total !== undefined) {
-                                        const getTotal = JSON.parse(results[0].Names).length
-                                        Return = {
-                                            Total: getTotal,
-                                            Data: JSON.parse(results[0].Names)
-                                        }
-                                        return returnResults(res, Option2, Return);
-                                    } else return returnResults(res, Option2, JSON.parse(results[0].Names).reverse());
+                                        return returnResults(res, Option2, {
+                                            Total: Data.length,
+                                            Data: Data.reverse()
+                                        });
+                                    } else return returnResults(res, Option2, Data.reverse());
                                 }
                             });
                             break;
@@ -276,11 +275,10 @@ router.post('/Info', async(req, res, next) => {
                                         if (i + 1 == results.length) {
                                             if (req.body.Total !== undefined) {
                                                 const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_bans` WHERE BINARY `GUID`=?"+Expired+";", [GUID]);
-                                                Return = {
+                                                return returnResults(res, Option2, {
                                                     Total: getTotal[0].length,
                                                     Data: JSON.parse(results[0].Names)
-                                                }
-                                                return returnResults(res, Option2, Return);
+                                                });
                                             } else return returnResults(res, Option2, Return);
                                         }
                                     };
@@ -304,7 +302,15 @@ router.post('/Info', async(req, res, next) => {
                                             Time: await moment(Info["Time"]).format('YYYY/MM/DD HH:mm:ss')
                                         })
 
-                                        if (i + 1 == results.length) return returnResults(res, Option2, Return);
+                                        if (i + 1 == results.length) {
+                                            if (req.body.Total !== undefined) {
+                                                const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_kick` WHERE BINARY `GUID`=?;", [GUID]);
+                                                return returnResults(res, Option2, {
+                                                    Total: getTotal[0].length,
+                                                    Data: Return
+                                                });
+                                            } else return returnResults(res, Option2, Return);
+                                        }
                                     };
                                 }
                             });
@@ -333,7 +339,15 @@ router.post('/Info', async(req, res, next) => {
                                             Time: await moment(Info["Time"]).format('YYYY/MM/DD HH:mm:ss')
                                         })
 
-                                        if (i + 1 == results.length) return returnResults(res, Option2, Return);
+                                        if (i + 1 == results.length) {
+                                            if (req.body.Total !== undefined) {
+                                                const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_kills` WHERE BINARY "+Kills+";");
+                                                return returnResults(res, Option2, {
+                                                    Total: getTotal[0].length,
+                                                    Data: Return
+                                                });
+                                            } else return returnResults(res, Option2, Return);
+                                        }
                                     };
                                 }
                             });
@@ -370,7 +384,15 @@ router.post('/Info', async(req, res, next) => {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(res, Option2); else return returnResults(res, Option2, results);
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else {
+                                    if (req.body.Total !== undefined) {
+                                        const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `vehicles` WHERE BINARY `pid`=? AND `alive`='1';", [Steam64ID]);
+                                        return returnResults(res, Option2, {
+                                            Total: getTotal[0].length,
+                                            Data: results
+                                        });
+                                    } else return returnResults(res, Option2, results);
+                                }
                             });
                             break;
                         case "Houses":
@@ -379,7 +401,14 @@ router.post('/Info', async(req, res, next) => {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(res, Option2); else return returnResults(res, Option2, results);
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else {
+                                    if (req.body.Total !== undefined) {
+                                        const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `houses` WHERE BINARY `pid`=? AND `owned`='1';", [Steam64ID]);
+                                        return returnResults(res, Option2, {
+                                            Total: getTotal[0].length,
+                                            Data: results
+                                        });
+                                    } else return returnResults(res, Option2, results);}
                             });
                             break;
                         case "HouseItems":
@@ -388,7 +417,15 @@ router.post('/Info', async(req, res, next) => {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(res, Option2); else return returnResults(res, Option2, results);
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else {
+                                    if (req.body.Total !== undefined) {
+                                        const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `containers` WHERE BINARY `pid`=? AND `owned`='1';", [Steam64ID]);
+                                        return returnResults(res, Option2, {
+                                            Total: getTotal[0].length,
+                                            Data: results
+                                        });
+                                    } else return returnResults(res, Option2, results);
+                                }
                             });
                             break;
 
@@ -403,7 +440,15 @@ router.post('/Info', async(req, res, next) => {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(res, Option2); else if (results[0].IPs == null) return returnFalse(res, Option2); else return returnResults(res, Option2, JSON.parse(await DecryptData(IPsKey, results[0].IPs)).reverse());
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else if (results[0].IPs == null) return returnFalse(res, Option2); else {
+                                    const Data = JSON.parse(await DecryptData(IPsKey, results[0].IPs));
+                                    if (req.body.Total !== undefined) {
+                                        return returnResults(res, Option2, {
+                                            Total: Data.length,
+                                            Data: Data.reverse()
+                                        });
+                                    } else return returnResults(res, Option2, Data.reverse());
+                                }
                             });
                             break;
 
