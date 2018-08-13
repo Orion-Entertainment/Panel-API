@@ -236,7 +236,7 @@ router.post('/Info', async(req, res, next) => {
                                     console.error(error)
                                     return res.json({Error: error})
                                 } else if (results[0] == undefined) return returnFalse(res, Option2); else {
-                                    if (req.body.Totals !== undefined) {
+                                    if (req.body.Total !== undefined) {
                                         const getTotal = JSON.parse(results[0].Names).length
                                         Return = {
                                             Total: getTotal,
@@ -274,7 +274,7 @@ router.post('/Info', async(req, res, next) => {
                                         })
 
                                         if (i + 1 == results.length) {
-                                            if (req.body.Totals !== undefined) {
+                                            if (req.body.Total !== undefined) {
                                                 const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_bans` WHERE BINARY `GUID`=?"+Expired+";", [GUID]);
                                                 Return = {
                                                     Total: getTotal[0].length,
