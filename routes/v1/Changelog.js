@@ -124,7 +124,7 @@ router.post('/View', async(req, res, next) => {
                 return res.json({Error: error})
             } else if(results[0] == undefined) return res.json({Error: "Changelog not found"}); else {
                 return res.json({
-                    ID: results[0].Category,
+                    ID: results[0].id,
                     Category: results[0].Category,
                     Name: results[0].Name,
                     Data: JSON.parse(await DecryptData(ChangeLogDataKEY, results[0].Data)),
