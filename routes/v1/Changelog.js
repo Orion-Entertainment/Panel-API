@@ -153,20 +153,27 @@ router.post('/Edit', async(req, res, next) => {
         else if (req.body.ID == "") return res.json({Error: "ID Empty"})
         else if (isNaN(req.body.ID)) return res.json({Error: "ID Invalid"})
 
-        req.API.query("SELECT `id`,`Category`,`Name`,`Data`,`Time` FROM `changelogs` WHERE `Time`<NOW() AND `id`=? LIMIT 1;", [req.body.ID], async function (error, results, fields) {
-            if (error) {
-                console.error(error)
-                return res.json({Error: error})
-            } else if(results[0] == undefined) return res.json({Error: "Changelog not found"}); else {
-                return res.json({
-                    ID: results[0].id,
-                    Category: results[0].Category,
-                    Name: results[0].Name,
-                    Data: JSON.parse(await DecryptData(ChangeLogDataKEY, results[0].Data)),
-                    Time: await moment(results[0].Time).format('YYYY/MM/DD HH:mm'),
-                });
-            }
-        });
+        if (req.body.Option == "Delete") {
+            req.API.query("DELETE FROM `changelogs` WHERE BINARY `id`=?", [req.body.ID], async function (error, results, fields) {
+                if (error) {
+                    console.error(error)
+                    return res.json({Error: error})
+                } else return res.send("Success");
+            });
+        } else {
+            if (req.body.Name == undefined) return res.json({Error: "Name Undefined"})
+            else if (req.body.Name == "") return res.json({Error: "Name Empty"})
+            else if (req.body.Data == undefined) return res.json({Error: "Data Undefined"})
+            else if (req.body.Data == "") return res.json({Error: "Data Empty"})
+
+            const ENCData = await EncryptData(ChangeLogDataKEY, JSON.stringify(req.body.Data));
+            req.API.query("UPDATE `changelogs` set `Name`=?,`Data`=? WHERE `id`=?;", [req.body.Name,ENCData,req.body.ID], async function (error, results, fields) {
+                if (error) {
+                    console.error(error)
+                    return res.json({Error: error})
+                } else return res.send("Success");
+            });
+        }
     } catch (error) {
         console.log(error)
         return res.json({Error: "Error"})
