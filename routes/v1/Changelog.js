@@ -38,6 +38,17 @@ router.post('/Admin', async(req, res, next) => {
         else if (req.body.Option == "") return res.json({Error: "Option Empty"})
 
         switch (req.body.Option) {
+            case "Index":
+                req.API.query("SELECT `id`,`Category`,`Name`,`Data`,`Time` FROM `changelogs` WHERE `Time`<NOW() LIMIT 15;", async function (error, results, fields) {
+                    if (error) {
+                        console.error(error)
+                        return res.json({Error: error})
+                    }
+                    
+                    return res.send(results);
+                });
+                break;
+
             case "Admin":
                 req.API.query("SELECT `id`,`Category`,`Name`,`Data`,`Time` FROM `changelogs` LIMIT 10;", async function (error, results, fields) {
                     if (error) {
