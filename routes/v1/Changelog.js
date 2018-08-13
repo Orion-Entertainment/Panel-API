@@ -123,7 +123,13 @@ router.post('/View', async(req, res, next) => {
                 console.error(error)
                 return res.json({Error: error})
             } else if(results[0] == undefined) return res.json({Error: "Changelog not found"}); else {
-                return res.send(results);
+                return res.json({
+                    ID: results[0].id,
+                    Category: results[0].Category,
+                    Name: results[0].Name,
+                    Data: JSON.parse(await DecryptData(ChangeLogDataKEY, results[0].Data)),
+                    Time: await moment(results[0].Time).format('YYYY/MM/DD HH:mm'),
+                });
             }
         });
     } catch (error) {
