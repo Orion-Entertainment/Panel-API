@@ -23,7 +23,7 @@ async function DecryptData(key, data) {
 }
 
 /* Routers */
-router.post('/Admin', async(req, res, next) => {
+router.post('/', async(req, res, next) => {
     try {
         /* Check Login */
         const CheckLogin = await req.Check(req.body["client_id"], req.body["token"]);
