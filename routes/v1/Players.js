@@ -221,6 +221,11 @@ router.post('/Info', async(req, res, next) => {
             if (getInfo[0] == undefined) return res.json({Error: "Failed Getting Player Info"});
             const GUID = getInfo[0].GUID;
             const Steam64ID = getInfo[0].Steam64ID;
+            let Private;
+    
+            if (req.body.Private == true) Private = true;
+            else if (SteamID == req.body.Private) Private = true;
+            else Private = false;
 
             switch (Option1) {
                 case "Get":
@@ -433,7 +438,7 @@ router.post('/Info', async(req, res, next) => {
                         case "MoneyLogs":
                             console.log(req.body.Private,Steam64ID)
                             if (Steam64ID == null) return returnFalse(res, Option2);
-                                else if (req.body.Private != true && req.body.Private !== Steam64ID) return res.json({Error: "Invalid Permissions"});
+                                else if (!Private) return res.json({Error: "Invalid Permissions"});
                             req.API.query("SELECT `Server`,`Option`,`toPID`,`Item`,`Amount`,`Time` FROM `arma_money` WHERE BINARY `pid`=? ORDER BY `id` DESC LIMIT 25;", [Steam64ID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
