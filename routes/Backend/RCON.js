@@ -336,7 +336,7 @@ async function updatePlayer(Name, IP, GUID) {
                 });
             }
 
-            if (Names.length > 20) { //Max to save = 20
+            if (Names.length > 30) { //Max to save = 20
                 await Names.splice(0,1);
             }
             await API.query("UPDATE `arma_players` set `Last Name`=?,`Names`=? WHERE BINARY `GUID`=?;", [Name,JSON.stringify(Names),GUID]);
@@ -372,7 +372,7 @@ async function updatePlayer(Name, IP, GUID) {
                 });
             }
 
-            if (IPs.length > 20) { //Max to save = 20
+            if (IPs.length > 30) { //Max to save = 20
                 IPs.splice(0,1);
             }
             const ENCLastIP = await QueryableEncrypt(LastIPKey,IP);
