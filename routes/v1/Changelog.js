@@ -52,6 +52,7 @@ router.post('/Admin', async(req, res, next) => {
                         return res.send("Success");
                     });
                 }
+                break;
             default:
                 return res.json({Error: "Invalid Option"})
         }
