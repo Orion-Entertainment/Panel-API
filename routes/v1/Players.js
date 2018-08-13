@@ -223,7 +223,7 @@ router.post('/Info', async(req, res, next) => {
             const Steam64ID = getInfo[0].Steam64ID;
             let Private;
     
-            if (req.body.Private == true) Private = true;
+            if (req.body.Private == true | sPermissions == true) Private = true;
             else if (Steam64ID == req.body.Private) Private = true;
             else Private = false;
 
