@@ -276,7 +276,7 @@ router.post('/Info', async(req, res, next) => {
                                             if (req.body.Total !== undefined) {
                                                 const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_bans` WHERE BINARY `GUID`=?"+Expired+";", [GUID]);
                                                 return returnResults(res, Option2, {
-                                                    Total: getTotal[0].length,
+                                                    Total: getTotal[0].Total,
                                                     Data: JSON.parse(results[0].Names)
                                                 });
                                             } else return returnResults(res, Option2, Return);
@@ -306,7 +306,7 @@ router.post('/Info', async(req, res, next) => {
                                             if (req.body.Total !== undefined) {
                                                 const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_kick` WHERE BINARY `GUID`=?;", [GUID]);
                                                 return returnResults(res, Option2, {
-                                                    Total: getTotal[0].length,
+                                                    Total: getTotal[0].Total,
                                                     Data: Return
                                                 });
                                             } else return returnResults(res, Option2, Return);
@@ -343,7 +343,7 @@ router.post('/Info', async(req, res, next) => {
                                             if (req.body.Total !== undefined) {
                                                 const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_kills` WHERE BINARY "+Kills+";");
                                                 return returnResults(res, Option2, {
-                                                    Total: getTotal[0].length,
+                                                    Total: getTotal[0].Total,
                                                     Data: Return
                                                 });
                                             } else return returnResults(res, Option2, Return);
@@ -388,7 +388,7 @@ router.post('/Info', async(req, res, next) => {
                                     if (req.body.Total !== undefined) {
                                         const getTotal = await req.ServerDBs.maldenlife2.query("SELECT COUNT(`id`) AS 'Total' FROM `vehicles` WHERE BINARY `pid`=? AND `alive`='1';", [Steam64ID]);
                                         return returnResults(res, Option2, {
-                                            Total: getTotal[0].length,
+                                            Total: getTotal[0].Total,
                                             Data: results
                                         });
                                     } else return returnResults(res, Option2, results);
@@ -405,7 +405,7 @@ router.post('/Info', async(req, res, next) => {
                                     if (req.body.Total !== undefined) {
                                         const getTotal = await req.ServerDBs.maldenlife2.query("SELECT COUNT(`id`) AS 'Total' FROM `houses` WHERE BINARY `pid`=? AND `owned`='1';", [Steam64ID]);
                                         return returnResults(res, Option2, {
-                                            Total: getTotal[0].length,
+                                            Total: getTotal[0].Total,
                                             Data: results
                                         });
                                     } else return returnResults(res, Option2, results);}
@@ -421,7 +421,7 @@ router.post('/Info', async(req, res, next) => {
                                     if (req.body.Total !== undefined) {
                                         const getTotal = await req.ServerDBs.maldenlife2.query("SELECT COUNT(`id`) AS 'Total' FROM `containers` WHERE BINARY `pid`=? AND `owned`='1';", [Steam64ID]);
                                         return returnResults(res, Option2, {
-                                            Total: getTotal[0].length,
+                                            Total: getTotal[0].Total,
                                             Data: results
                                         });
                                     } else return returnResults(res, Option2, results);
