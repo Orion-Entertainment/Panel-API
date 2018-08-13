@@ -376,10 +376,8 @@ router.post('/Info', async(req, res, next) => {
                                 }
                             });
                             break;
-
-                        /* Private Information */
                         case "Vehicles":
-                            if (Steam64ID == null) return returnFalse(res, Option2); else if (req.body.Private == undefined) return res.json({Error: "Invalid Permissions"}); else if (req.body.Private !== true && req.body.Private !== Steam64ID) return res.json({Error: "Invalid Permissions"});
+                        if (Steam64ID == null) return returnFalse(res, Option2);
                             req.ServerDBs.maldenlife2.query("SELECT `side`,`classname`,`type`,`plate`,`insert_time`,`insure` FROM `vehicles` WHERE BINARY `pid`=? AND `alive`='1' ORDER BY `id` DESC LIMIT 25;", [Steam64ID], async function (error, results, fields) {
                                 if (error) {
                                     console.error(error)
@@ -395,6 +393,8 @@ router.post('/Info', async(req, res, next) => {
                                 }
                             });
                             break;
+
+                        /* Private Information */
                         case "Houses":
                             if (Steam64ID == null) return returnFalse(res, Option2); else if (req.body.Private == undefined) return res.json({Error: "Invalid Permissions"}); else if (req.body.Private !== true && req.body.Private !== Steam64ID) return res.json({Error: "Invalid Permissions"});
                             req.ServerDBs.maldenlife2.query("SELECT `id`,`pos`,`insert_time` FROM `houses` WHERE BINARY `pid`=? AND `owned`='1' ORDER BY `id` DESC LIMIT 25;", [Steam64ID], async function (error, results, fields) {
