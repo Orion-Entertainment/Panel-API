@@ -428,6 +428,23 @@ router.post('/Info', async(req, res, next) => {
                                 }
                             });
                             break;
+                        case "MoneyLogs":
+                            if (Steam64ID == null) return returnFalse(res, Option2); else if (req.body.Private == undefined) return res.json({Error: "Invalid Permissions"}); else if (req.body.Private !== true && req.body.Private !== Steam64ID) return res.json({Error: "Invalid Permissions"});
+                            req.API.query("SELECT `Server`,`Option`,`toPID`,`Item`,`Amount`,`Time` FROM `arma_money` WHERE BINARY `pid`=? ORDER BY `id` DESC LIMIT 25;", [Steam64ID], async function (error, results, fields) {
+                                if (error) {
+                                    console.error(error)
+                                    return res.json({Error: error})
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else {
+                                    if (req.body.Total !== undefined) {
+                                        const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_money` WHERE BINARY `pid`=?;", [Steam64ID]);
+                                        return returnResults(res, Option2, {
+                                            Total: getTotal[0].Total,
+                                            Data: results
+                                        });
+                                    } else return returnResults(res, Option2, results);
+                                }
+                            });
+                            break;
 
                         /* Staff Information */
                         case "IPs":
