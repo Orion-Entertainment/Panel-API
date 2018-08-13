@@ -235,7 +235,16 @@ router.post('/Info', async(req, res, next) => {
                                 if (error) {
                                     console.error(error)
                                     return res.json({Error: error})
-                                } else if (results[0] == undefined) return returnFalse(res, Option2); else return returnResults(res, Option2, JSON.parse(results[0].Names).reverse());
+                                } else if (results[0] == undefined) return returnFalse(res, Option2); else {
+                                    if (req.body.Totals !== undefined) {
+                                        const getTotal = JSON.parse(results[0].Names).length
+                                        Return = {
+                                            Total: getTotal,
+                                            Data: JSON.parse(results[0].Names)
+                                        }
+                                        return returnResults(res, Option2, Return);
+                                    } else return returnResults(res, Option2, JSON.parse(results[0].Names).reverse());
+                                }
                             });
                             break;
                         case "Bans":
@@ -264,7 +273,16 @@ router.post('/Info', async(req, res, next) => {
                                             Expires: Expires
                                         })
 
-                                        if (i + 1 == results.length) return returnResults(res, Option2, Return);
+                                        if (i + 1 == results.length) {
+                                            if (req.body.Totals !== undefined) {
+                                                const getTotal = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_bans` WHERE BINARY `GUID`=?"+Expired+";", [GUID]);
+                                                Return = {
+                                                    Total: getTotal[0].length,
+                                                    Data: JSON.parse(results[0].Names)
+                                                }
+                                                return returnResults(res, Option2, Return);
+                                            } else return returnResults(res, Option2, Return);
+                                        }
                                     };
                                 }
                             });
