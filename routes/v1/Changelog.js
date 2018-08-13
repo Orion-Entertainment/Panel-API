@@ -34,7 +34,7 @@ router.post('/', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
-        req.API.query("SELECT `id`,`Category`,`Name`,`Data`,`Time` FROM `changelogs` WHERE `Time`<NOW() LIMIT 15;", async function (error, results, fields) {
+        req.API.query("SELECT `id`,`Category`,`Name`,`Data`,`Time` FROM `changelogs` WHERE `Time`<NOW() ORDER BY `id` DESC LIMIT 15;", async function (error, results, fields) {
             if (error) {
                 console.error(error)
                 return res.json({Error: error})
@@ -89,7 +89,7 @@ router.post('/Admin', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel == undefined) return res.json({Error: "Access Denied"})
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
-        req.API.query("SELECT `id`,`Category`,`Name`,`Data`,`Time` FROM `changelogs` LIMIT 10;", async function (error, results, fields) {
+        req.API.query("SELECT `id`,`Category`,`Name`,`Data`,`Time` FROM `changelogs` ORDER BY `id` DESC LIMIT 10;", async function (error, results, fields) {
             if (error) {
                 console.error(error)
                 return res.json({Error: error})
