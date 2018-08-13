@@ -38,6 +38,17 @@ router.post('/Admin', async(req, res, next) => {
         else if (req.body.Option == "") return res.json({Error: "Option Empty"})
 
         switch (req.body.Option) {
+            case "Admin":
+                req.API.query("SELECT `id`,`Category`,`Name`,`Data` FROM `changelogs` LIMIT 10;", [req.body.Category,req.body.Name,ENCData,req.body.Time], async function (error, results, fields) {
+                    if (error) {
+                        console.error(error)
+                        return res.json({Error: error})
+                    }
+                    
+                    return res.send(results);
+                });
+                break;
+
             case "Create":
                 if (req.body.Name == undefined | req.body.Category == undefined | req.body.Time == undefined | req.body.Data == undefined) return res.json({Error: "Input Undefined"})
                 else if (req.body.Name == "" | req.body.Category == "" | req.body.Time == "" | req.body.Data == "") return res.json({Error: "Input empty"})
