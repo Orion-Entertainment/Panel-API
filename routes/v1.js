@@ -7,5 +7,6 @@ const A3 = require('./v1/A3'); app.use('/A3', A3);
 const Players = require('./v1/Players'); app.use('/Players', Players);
 const Shop = require('./v1/Shop'); app.use('/Shop', Shop);
 const Changelog = require('./v1/Changelog'); app.use('/Changelog', Changelog);
+const Home = require('./v1/Home'); app.use('/Home', Home);
 
 module.exports = app;
