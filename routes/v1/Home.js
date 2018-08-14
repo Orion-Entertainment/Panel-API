@@ -21,10 +21,11 @@ router.post('/GetData', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
         const totalPlayers = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_players` LIMIT 1;");
+        let totalPlayersTotal = totalPlayers[0].Total;
 
         return res.json({
             TotalPlayers: {
-                Total: totalPlayers[0].Total.toLocalString()
+                Total: totalPlayersTotal.toLocalString()
             }
         });
     } catch (error) {
