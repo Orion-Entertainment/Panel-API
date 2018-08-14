@@ -23,7 +23,7 @@ router.post('/GetData', async(req, res, next) => {
         const totalPlayers = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_players` LIMIT 1;");
         const totalPlayersNewMonth = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_players` WHERE (`First Seen` > NOW() - INTERVAL 1 MONTH) LIMIT 1;");
         const totalPlayersMonth = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_players` WHERE (`Last Seen` > NOW() - INTERVAL 1 MONTH) LIMIT 1;");
-        const totalBans = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_bans` LIMIT 1;");
+        const totalBans = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_bans` WHERE (`Created` > NOW() - INTERVAL 1 MONTH) LIMIT 1;");
 
         return res.json({
             TotalPlayers: {
