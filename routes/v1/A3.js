@@ -79,22 +79,27 @@ router.post('/Addon', async(req, res, next) => {
 
                             req.API.query("INSERT INTO `arma_kills` (`Server`,`KillerName`,`Killer`,`KillerGroup`,`KilledName`,`Killed`,`KilledGroup`,`Weapon`,`Distance`) VALUES(?,?,?,?,?,?,?,?,?);", [ServerName,KillerName,KillerPID,KillerGroup,KilledName,KilledPID,KilledGroup,Weapon,Distance]);
                             return res.send("Success");
+                            break;
 
                         case "Withdraw":
                             req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Withdraw",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
                             return res.send("Success");
+                            break;
 
                         case "Deposit":
                             req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
                             return res.send("Success");
+                            break;
 
                         case "Pickup":
                             req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
                             return res.send("Success");
+                            break;
 
                         case "Hand":
                             req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
                             return res.send("Success");
+                            break;
 
                         case "Transfer":
                             if (Data[1] == Data[2]) {
@@ -106,11 +111,13 @@ router.post('/Addon', async(req, res, next) => {
                             }
                             req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`toPID`,`Price`) VALUES(?,?,?,?,?);", [ServerName,"Transfer",Data[1],toPID,parseFloat(Data[3].replace(/,/g,''))]);
                             return res.send("Success");
+                            break;
 
                         default:
                             console.log("Invalid Log Action: ",Action,Option,Data)
                             return res.send("Invalid Log Action: "+Action);
                     }
+                    break;
                 
                 default:
                     return res.send("Invalid Option: "+Option);
