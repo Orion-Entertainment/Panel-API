@@ -16,14 +16,13 @@ const Config = {
     },
     "Arma3": {
         "ExpireBans": true,
-        "RemoveOldHouses": false
+        "RemoveOldHouses": true
     }
 };
 
 /* Crons */
 //Weekly - Every sunday at midnight
 new CronJob('0 0 * * 0', function() {
-    RemoveOldHouses();
     
     }, function () {
         return; /* This function is executed when the job stops */
@@ -53,6 +52,7 @@ new CronJob('* * * * *', function() {
     TimeZone
 ); 
 
+RemoveOldHouses();
 
 /* Functions */
 async function Arma3ShopOld() {
@@ -209,7 +209,8 @@ async function RemoveOldHouses() {
 
                         const checkPlayer = await API.query("SELECT `id` FROM `arma_players` WHERE BINARY `Steam64id`=? AND (`Last Seen` < NOW() - INTERVAL 1 MONTH)",[PID]);
                         if (checkPlayer[0] !== undefined) {
-                            await SQL.query("DELETE FROM `houses` WHERE `id`=?;",[HouseID]);
+                            console.log(PID,HouseID)
+                            //await SQL.query("DELETE FROM `houses` WHERE `id`=?;",[HouseID]);
                         }
 
                         if (h + 1 == getHouses.length) {
