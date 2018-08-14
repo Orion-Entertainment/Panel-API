@@ -113,8 +113,8 @@ async function connectRCon (BEConfig, ServerName) {
                 if (error) throw error;
                 return;
             });
-        } else if (/\((Unknown|Vehicle|Direct|Group|Side)\)\s(.+):\s/g.test(message)) {
-            getData = /\((Unknown|Vehicle|Direct|Group|Side)\)\s(.+):\s(.+)/g.exec(message);
+        } else if (/\((Unknown|Vehicle|Direct|Group|Side)\) (.+): /g.test(message)) {
+            getData = /\((Unknown|Vehicle|Direct|Group|Side)\) (.+): (.+)/g.exec(message);
             getPlayer = await getPlayerGUID(ServerName, getData[2]);
             if (getPlayer !== undefined && getPlayer !== null) {
                 if (getData[3] == null) return;
@@ -196,9 +196,7 @@ async function connectRCon (BEConfig, ServerName) {
                     //Add ban for hacking
                     banPlayer(getData[2],1,getData[3],"+Flabby - Perm - Hacking")
                 }
-
-                //Temp fix
-                if (getData[3] == "Bad Player Name") return console.log(message);
+                else if (getData[3] == "Bad Player Name") return;
 
                 //Save kick
                 API.query("INSERT INTO `arma_kick` (`Server`,`By`,`Name`,`GUID`,`Reason`) VALUES(?,?,?,?,?);", [ServerName,"Battleye",getData[1],getData[2],getData[3]], function (error, results, fields) {
@@ -398,12 +396,12 @@ async function checkPlayers(time) {
                             const GetPlayers = players;
                             const First = await GetPlayers.replace(/Players on server:|\[#\] \[IP Address\]:\[Port\] \[Ping\] \[GUID\] \[Name\]/g, '');
                             if (First == null) return;
-                            const Players = First.match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/g);
+                            const Players = First.match(/(\d+) +(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b +(\d+) +([0-9a-fA-F]+)\(\w+\) ([  ]+)/g);
                             if (Players == null) return;
                             for (let p = 0; p < Players.length; p++) {
-                                const getInfo = Players[p].match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\)\s([\S ]+)/)
+                                const getInfo = Players[p].match(/(\d+) +(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b +(\d+) +([0-9a-fA-F]+)\(\w+\) ([  ]+)/)
 
-                                const Name = getInfo[5].replace(/\s(\(Lobby\))/, '');
+                                const Name = getInfo[5].replace(/ (\(Lobby\))/, '');
                                 const IP = getInfo[2];
                                 const GUID = getInfo[4];
                                 const Ping = getInfo[3];
