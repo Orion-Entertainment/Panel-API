@@ -28,9 +28,9 @@ router.post('/GetData', async(req, res, next) => {
 
         /* Kills */
         const totalKills = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_kills` WHERE `killer`!=`killed` LIMIT 1;");
-        const totalKillsCop = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_kills` WHERE `killer` IS NOT NULL AND `killer`!=`killed` AND `KillerGroup`='Police' LIMIT 1;");
-        const totalKillsCivilians = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_kills` WHERE `killer` IS NOT NULL AND `killer`!=`killed` AND `KillerGroup`!='Police' LIMIT 1;");
-        const totalKillsSuicide = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_kills` WHERE `killer`=`killed` LIMIT 1;");
+        const totalKillsCop = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_kills` WHERE `killer` IS NOT NULL AND `killer`!=`killed` AND `KillerGroup`='Police' AND (`Time` > NOW() - INTERVAL 1 MONTH) LIMIT 1;");
+        const totalKillsCivilians = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_kills` WHERE `killer` IS NOT NULL AND `killer`!=`killed` AND `KillerGroup`!='Police' AND (`Time` > NOW() - INTERVAL 1 MONTH) LIMIT 1;");
+        const totalKillsSuicide = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_kills` WHERE `killer`=`killed` AND (`Time` > NOW() - INTERVAL 1 MONTH) LIMIT 1;");
 
         return res.json({
             TotalPlayers: {
