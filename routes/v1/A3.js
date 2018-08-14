@@ -44,6 +44,7 @@ router.post('/Addon', async(req, res, next) => {
             return res.send("Invalid Login")
         } else {
             const ServerName = JSON.parse(TokenData).Server;
+            if (ServerName == null) return res.send("Success");
             const Option = JSON.parse(req.body["option"]);
             if (/<NULL-object>|B Alpha 1-\d:\d+/g.test(req.body["data"])) {
                 const fix = await req.body["data"].match(/(.+)(<NULL-object>|B Alpha 1-\d:\d+)(.+)/);
@@ -57,8 +58,6 @@ router.post('/Addon', async(req, res, next) => {
                     const Action = Data[0];
                     switch (Action) {
                         case "Killed":
-                            if (ServerName == null) return res.send("Success");
-                            
                             let KilledName = Data[1];
                             const KilledPID = Data[2];
                             let KilledGroup = Data[3];
