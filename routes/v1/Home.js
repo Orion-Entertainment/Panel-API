@@ -21,10 +21,17 @@ router.post('/GetData', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
         const totalPlayers = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_players` LIMIT 1;");
+        const totalPlayersNewMonth = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_players` WHERE (`First Seen` > NOW() - INTERVAL 1 MONTH) LIMIT 1;");
+        const totalPlayersMonth = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_players` WHERE (`Last Seen` > NOW() - INTERVAL 1 MONTH) LIMIT 1;");
+        const totalBans = await req.API.query("SELECT COUNT(`id`) AS 'Total' FROM `arma_bans` LIMIT 1;");
 
         return res.json({
             TotalPlayers: {
-                Total: totalPlayers[0].Total.toLocaleString()
+                Total: totalPlayers[0].Total.toLocaleString(),
+
+                TotalNewMonth: totalPlayersNewMonth[0].Total,
+                TotalMonth: totalPlayersMonth[0].Total,
+                TotalBans: totalBans[0].Total
             }
         });
     } catch (error) {
