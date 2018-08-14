@@ -21,7 +21,7 @@ router.post('/GetData', async(req, res, next) => {
         else if (JSON.parse(TokenData).Panel !== true) return res.json({Error: "Access Denied"})
 
         return res.json({
-            TotalPlayers: 10000
+            TotalPlayers: 10069
         });
         if (req.body.limit !== undefined) limit = req.body.limit; else limit = 15;
         req.API.query("SELECT `id`,`Category`,`Name`,`Data`,`Time` FROM `changelogs` WHERE `Time`<NOW() ORDER BY `id` DESC LIMIT "+limit+";", async function (error, results, fields) {
