@@ -92,12 +92,12 @@ router.post('/Addon', async(req, res, next) => {
                             break;
 
                         case "Pickup":
-                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Pickup",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
                             return res.send("Success");
                             break;
 
                         case "Hand":
-                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Deposit",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
+                            req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Hand",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
                             return res.send("Success");
                             break;
 
