@@ -395,6 +395,7 @@ async function checkPlayers(time) {
                         BE.sendCommand('players', async function(players) {
                             const GetPlayers = players;
                             const First = await GetPlayers.replace(/Players on server:|\[#\] \[IP Address\]:\[Port\] \[Ping\] \[GUID\] \[Name\]/g, '');
+                            console.log(First)
                             if (First == null) return;
                             const Players = First.match(/(\d+) +(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b +(\d+) +([0-9a-fA-F]+)\(\w+\) ([  ]+)/g);
                             if (Players == null) return;
@@ -406,7 +407,6 @@ async function checkPlayers(time) {
                                 const GUID = getInfo[4];
                                 const Ping = getInfo[3];
                                 const ID = getInfo[1];
-                                console.log(Name,GUID,Ping,ID)
 
                                 if (Name !== null && IP !== null && GUID !== null && Ping !== null && ID !== null) {
                                     API.query("SELECT "+await QueryableDecrypt("IP", IPKey)+",`GUID`,`Ping`,`ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID], async function (error, results, fields) {
