@@ -239,7 +239,6 @@ async function checkPlayer(GUID) {
 async function checkForBan(ServerName, GUID) {
     const query = await API.query("SELECT `id`,`Server`,`Reason`,`Expires` FROM `arma_bans` WHERE BINARY `GUID`=? AND `Expired`='False';", [GUID]);
     if (query[0] == undefined) return false;
-    console.log(query[0])
     if (query[0] == null) return false;
     else if (query[0].Server !== ServerName && query[0].Server !== null) return false;
     else if (query[0].Expires !== null) {
@@ -407,6 +406,7 @@ async function checkPlayers(time) {
                                 const GUID = getInfo[4];
                                 const Ping = getInfo[3];
                                 const ID = getInfo[1];
+                                console.log(Name,GUID,Ping,ID)
 
                                 if (Name !== null && IP !== null && GUID !== null && Ping !== null && ID !== null) {
                                     API.query("SELECT "+await QueryableDecrypt("IP", IPKey)+",`GUID`,`Ping`,`ID` FROM `arma_liveplayers` WHERE BINARY `Server`=? AND BINARY `GUID`=?;", [ServerName,GUID], async function (error, results, fields) {
