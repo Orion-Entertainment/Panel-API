@@ -396,11 +396,10 @@ async function checkPlayers(time) {
                             const GetPlayers = players;
                             const First = await GetPlayers.replace(/Players on server:|\[#\] \[IP Address\]:\[Port\] \[Ping\] \[GUID\] \[Name\]/g, '');
                             if (First == null) return;
-                            const Players = First.match(/(\d+) +(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b +(\d+) +([0-9a-fA-F]+)\(\w+\) ([  ]+)/g);
-                            console.log(Players)
+                            const Players = First.match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\) (.+)/g);
                             if (Players == null) return;
                             for (let p = 0; p < Players.length; p++) {
-                                const getInfo = Players[p].match(/(\d+) +(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b +(\d+) +([0-9a-fA-F]+)\(\w+\) ([  ]+)/)
+                                const getInfo = Players[p].match(/(\d+)\s+(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):\d+\b\s+(\d+)\s+([0-9a-fA-F]+)\(\w+\) (.+)/)
 
                                 const Name = getInfo[5].replace(/ (\(Lobby\))/, '');
                                 const IP = getInfo[2];
