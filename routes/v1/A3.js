@@ -96,7 +96,6 @@ router.post('/Addon', async(req, res, next) => {
                             break;
 
                         case "Hand":
-                            console.log(ServerName,"Hand",Data[1],parseFloat(Data[2].replace(/,/g,'')))
                             req.API.query("INSERT INTO `arma_money` (`Server`,`Option`,`PID`,`Price`) VALUES(?,?,?,?);", [ServerName,"Hand",Data[1],parseFloat(Data[2].replace(/,/g,''))]);
                             return res.send("Success");
                             break;
